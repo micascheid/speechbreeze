@@ -73,8 +73,8 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
       <>
         <Formik
             initialValues={{
-              email: 'info@codedthemes.com',
-              password: '123456',
+              email: 'amazingSLP@gmail.com',
+              password: 'pass123',
               submit: null
             }}
             validationSchema={Yup.object().shape({
@@ -227,28 +227,7 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
                 }
                 return (
                     <Box key={provider.name} sx={{ width: '100%' }}>
-                      {provider.id === 'google' && (
-                          <Button
-                              variant="outlined"
-                              color="secondary"
-                              fullWidth={!matchDownSM}
-                              startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
-                              onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                          >
-                            {!matchDownSM && 'Google'}
-                          </Button>
-                      )}
-                      {provider.id === 'auth0' && (
-                          <Button
-                              variant="outlined"
-                              color="secondary"
-                              fullWidth={!matchDownSM}
-                              startIcon={<Image src={Auth0} alt="Twitter" width={16} height={16} />}
-                              onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                          >
-                            {!matchDownSM && 'Auth0'}
-                          </Button>
-                      )}
+
                       {provider.id === 'cognito' && (
                           <Button
                               variant="outlined"

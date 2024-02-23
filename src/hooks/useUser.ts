@@ -30,7 +30,7 @@ const useUser = () => {
       email: user!.email!,
       avatar: user?.image!,
       thumb,
-      role: 'UI/UX Designer'
+      role: 'SLP'
     };
 
     return newUser;

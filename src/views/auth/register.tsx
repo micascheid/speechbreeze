@@ -14,7 +14,6 @@ import AuthRegister from '@/sections/auth/auth-forms/AuthRegister';
 export default async function Register() {
   const csrfToken = await getCsrfToken();
   const providers = await getProviders();
-
   return (
     <AuthWrapper>
       <Grid container spacing={3}>

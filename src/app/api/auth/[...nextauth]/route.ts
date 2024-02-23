@@ -1,20 +1,18 @@
 import NextAuth from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import CognitoProvider from "next-auth/providers/cognito";
 import axios from '@/utils/axios';
-
-export let users = [
-    {
-        id: 1,
-        name: 'Jane Doe',
-        email: 'info@codedthemes.com',
-        password: '123456'
-    }
-];
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET_KEY,
     providers: [
+        CognitoProvider({
+            name: 'Cognito',
+            clientId: process.env.COGNITO_CLIENT_ID as string,
+            clientSecret: process.env.COGNITO_CLIENT_SECRET as string,
+            issuer: `https://cognito-idp.${process.env.COGNITO_REGION}.amazonaws.com/${process.env.COGNITO_POOL_ID}`,
+        }),
         CredentialsProvider({
             id: 'login',
             name: 'login',
@@ -60,7 +58,7 @@ export const authOptions: NextAuthOptions = {
                     });
 
                     if (user) {
-                        users.push(user.data);
+                        // users.push(user.data);
                         return user.data;
                     }
                 } catch (e: any) {
@@ -68,7 +66,8 @@ export const authOptions: NextAuthOptions = {
                     throw new Error(errorMessage);
                 }
             }
-        })
+        }),
+
     ],
     callbacks: {
         jwt: async ({ token, user, account }) => {
