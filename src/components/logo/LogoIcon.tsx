@@ -9,11 +9,11 @@ import { useTheme } from '@mui/material/styles';
 
 // ==============================|| LOGO ICON SVG ||============================== //
 
-const LogoIcon = () => {
+const LogoIcon = ({width = 35, height = 35} : {width?: number, height?: number}) => {
   const theme = useTheme();
 
   return (
-     <Image src={theme.palette.mode === ThemeMode.DARK ? logoIconDark : logoIcon} alt="SpeechBreeze" width={35} height={35} />
+     <Image src={theme.palette.mode === ThemeMode.DARK ? logoIconDark : logoIcon} alt="SpeechBreeze" width={width} height={height} />
   );
 };
 

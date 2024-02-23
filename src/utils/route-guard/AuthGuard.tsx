@@ -23,7 +23,7 @@ const AuthGuard = ({ children }: GuardProps) => {
             const res = await fetch('/api/auth/protected');
             const json = await res?.json();
             if (!json?.protected) {
-                router.push('/login');
+                router.push('/');
             }
         };
         fetchData();

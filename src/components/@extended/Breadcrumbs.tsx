@@ -83,10 +83,6 @@ const Breadcrumbs = ({
 
   let customLocation = location;
 
-  // only used for component demo breadcrumbs
-  if (customLocation.includes('/components-overview/breadcrumbs')) {
-    customLocation = '/apps/customer/card';
-  }
 
   useEffect(() => {
     navigation?.items?.map((menu: NavItemType) => {

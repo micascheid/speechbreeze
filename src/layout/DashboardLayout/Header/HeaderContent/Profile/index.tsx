@@ -84,7 +84,7 @@ const Profile = () => {
                 signOut({redirect: false});
         }
 
-        router.push('/login');
+        router.push('/');
     };
 
     const anchorRef = useRef<any>(null);

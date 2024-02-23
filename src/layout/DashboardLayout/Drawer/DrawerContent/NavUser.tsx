@@ -72,7 +72,7 @@ const NavUser = () => {
                 signOut({redirect: false});
         }
 
-        router.push('/login');
+        router.push('/');
     };
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
