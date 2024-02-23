@@ -1,0 +1,116 @@
+.logo-customizable {
+  max-width: 60%; /* Adjusted to match image */
+  max-height: 30%; /* Adjusted to match image */
+  border-radius: 5px;
+}
+
+.banner-customizable {
+  padding: 25px 0px;
+  background-color: #f0f4f8; /* Light blue background */
+  border-radius: 5px;
+}
+
+.label-customizable {
+  font-weight: 400;
+  color: #495057; /* Darker label color as per the image */
+}
+
+.textDescription-customizable {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: block;
+  font-size: 16px;
+}
+
+.idpDescription-customizable {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: block;
+  font-size: 14px; /* Adjust font-size to match image */
+}
+
+.legalText-customizable {
+  color: #6c757d; /* Light gray color as per the image */
+  font-size: 12px; /* Slightly bigger font-size */
+}
+
+.submitButton-customizable {
+  font-size: 16px; /* Larger font size for the button */
+  font-weight: bold;
+  margin: 20px 0px;
+  height: 50px; /* Taller button */
+  width: 100%;
+  color: #fff;
+  background-color: #007bff; /* Blue color for the button */
+}
+
+.submitButton-customizable:hover {
+  color: #fff;
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.errorMessage-customizable {
+  padding: 5px;
+  font-size: 14px;
+  width: 100%;
+  background: #F5F5F5;
+  border: 2px solid #D64958;
+  color: #D64958;
+}
+
+.inputField-customizable {
+  width: 100%;
+  height: 40px; /* Increased field height */
+  padding: 10px; /* Padding for text inside the input */
+  color: #495057; /* Darker text color */
+  background-color: #fff;
+  border: 1px solid #ced4da; /* Lighter border color */
+  border-radius: 5px;
+}
+
+.inputField-customizable:focus {
+  border-color: #80bdff;
+  outline: 0;
+}
+
+.idpButton-customizable {
+  height: 40px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 15px;
+  color: #fff;
+  background-color: #5bc0de;
+  border-color: #46b8da;
+  border-radius: 5px; /* Identity provider buttons are standalone elements */
+}
+
+.idpButton-customizable:hover {
+  color: #fff;
+  background-color: #31b0d5;
+}
+
+.socialButton-customizable {
+  border-radius: 2px; /* This already has a border-radius, adjusting it to 5px might be needed based on your requirement */
+  height: 40px;
+  margin-bottom: 15px;
+  padding: 1px;
+  text-align: left;
+  width: 100%;
+}
+
+.redirect-customizable {
+  text-align: center;
+}
+
+.passwordCheck-notValid-customizable {
+  color: #DF3312;
+}
+
+.passwordCheck-valid-customizable {
+  color: #19BF00;
+}
+
+.background-customizable {
+  background-color: #f5f7fa; /* Light blue background */
+  border-radius: 5px;
+}
