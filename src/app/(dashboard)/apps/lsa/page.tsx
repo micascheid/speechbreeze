@@ -15,9 +15,6 @@ import useUser from "@/hooks/useUser";
 // Define the fetcher function using Axios
 export default function LsaTool() {
     const user = useUser();
-    const { mlu, isError, isLoading }  = useMLU();
-
-
 
     return (
         <MainCard>
@@ -26,7 +23,6 @@ export default function LsaTool() {
                 <PatientInfo />
                 <AudioChoice />
                 <Transcription />
-                <Typography>{mlu?.total}</Typography>
             </Stack>
 
         </MainCard>
