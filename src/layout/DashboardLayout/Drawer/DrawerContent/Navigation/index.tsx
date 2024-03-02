@@ -19,6 +19,7 @@ import { useGetMenu, useGetMenuMaster } from '@/api/menu';
 // types
 import { NavItemType } from '@/types/menu';
 import { MenuOrientation } from '@/types/config';
+import menuItems from "@/menu-items";
 
 function isFound(arr: any, str: string) {
   return arr.items.some((element: any) => {
@@ -34,20 +35,14 @@ function isFound(arr: any, str: string) {
 const Navigation = () => {
   const theme = useTheme();
   const { menuOrientation } = useConfig();
-  const { menuLoading } = useGetMenu();
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
   const [selectedItems, setSelectedItems] = useState<string | undefined>('');
   const [selectedLevel, setSelectedLevel] = useState<number>(0);
-  const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [] });
-
-
-  useLayoutEffect(() => {
-    setMenuItems( {items: [...menuItem.items]})
-    // eslint-disable-next-line
-  }, [menuLoading]);
+  //const [menuItems, setMenuItems] = useState<{ items: NavItemType[] }>({ items: [...menuItem.items] });
+  const menuItems: {items: NavItemType[]} = {items: [...menuItem.items]};
 
 
 

@@ -113,4 +113,5 @@
 .background-customizable {
   background-color: #f5f7fa; /* Light blue background */
   border-radius: 5px;
+  box-shadow: 0px 2px 20px rgba(0, 0, 0, 20%), 0 0 0 10000px #fafafa;
 }

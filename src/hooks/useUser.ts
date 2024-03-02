@@ -2,6 +2,7 @@
 import { useSession } from 'next-auth/react';
 
 interface UserProps {
+  uid: string;
   name: string;
   email: string;
   avatar: string;
@@ -26,16 +27,17 @@ const useUser = () => {
     }
 
     const newUser: UserProps = {
+      uid: session!.id!,
       name: user!.name!,
       email: user!.email!,
       avatar: user?.image!,
       thumb,
-      role: 'SLP'
+      role: 'SLP',
     };
 
     return newUser;
   }
-  return false;
+  return null;
 };
 
 export default useUser;

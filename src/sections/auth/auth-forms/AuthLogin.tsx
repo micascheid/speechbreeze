@@ -93,7 +93,7 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
                       setErrors({ submit: res.error });
                       setSubmitting(false);
                     } else {
-                      preload('api/menu/dashboard', fetcher); // load menu on login success
+                      // preload('api/menu/dashboard', fetcher); // load menu on login success
                       setSubmitting(false);
                     }
                   },

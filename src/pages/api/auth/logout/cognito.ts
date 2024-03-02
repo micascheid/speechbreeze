@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("cognito logout handler");
+
     const returnTo = encodeURI(`${process.env.NEXTAUTH_URL}/api/auth/callback/cognito`);
     const logoutTo = encodeURI(`${process.env.NEXTAUTH_URL}/`);
     res.redirect(
