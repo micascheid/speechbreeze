@@ -1,13 +1,30 @@
-import {Button, Card, Typography} from "@mui/material";
-import MainCard from "@/components/MainCard";
+'use client'
+import { useState } from 'react';
+import { Button, Card, Stack, Typography } from '@mui/material';
+import MainCard from '@/components/MainCard';
+import axios from 'axios';
+import useSWR from 'swr';
+import useMLU from "@/hooks/lsa/useMLU";
+import AudioChoice from "@/components/lsa/AudioChoice";
+import Transcription from "@/components/lsa/Transcription";
+import PatientInfo from "@/components/lsa/PatientInfo";
+import useUser from "@/hooks/useUser";
+// import {fetcher} from "@/utils/axios";
 
 
-export default function LsaTool () {
+// Define the fetcher function using Axios
+export default function LsaTool() {
+    const user = useUser();
+
     return (
         <MainCard>
-            <Typography>
-                Let the fun begin! This is where the analyzing of speech samples will be happening
-            </Typography>
+            <Stack spacing={2}>
+                <Typography>Hello user: {user?.uid}</Typography>
+                <PatientInfo />
+                <AudioChoice />
+                <Transcription />
+            </Stack>
+
         </MainCard>
-    )
+    );
 }
