@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { Button, Card, Stack, Typography } from '@mui/material';
+import {Button, Card, Grid, Stack, Typography} from '@mui/material';
 import MainCard from '@/components/MainCard';
 import axios from 'axios';
 import useSWR from 'swr';
@@ -9,6 +9,8 @@ import AudioChoice from "@/components/lsa/AudioChoice";
 import Transcription from "@/components/lsa/Transcription";
 import PatientInfo from "@/components/lsa/PatientInfo";
 import useUser from "@/hooks/useUser";
+import AudioPlayer from "@/components/AudioPlayer";
+import PatientSelector from "@/components/lsa/PatientSelector";
 // import {fetcher} from "@/utils/axios";
 
 
@@ -18,13 +20,23 @@ export default function LsaTool() {
 
     return (
         <MainCard>
-            <Stack spacing={2}>
-                <Typography>Hello user: {user?.uid}</Typography>
-                <PatientInfo />
-                <AudioChoice />
-                <Transcription />
-            </Stack>
-
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <Typography>Hello user: {user?.uid}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <PatientSelector />
+                </Grid>
+                <Grid item xs={12}>
+                    <AudioChoice />
+                </Grid>
+                <Grid item xs={12}>
+                    <AudioPlayer />
+                </Grid>
+                <Grid item xs={12}>
+                    <Transcription />
+                </Grid>
+            </Grid>
         </MainCard>
     );
 }
