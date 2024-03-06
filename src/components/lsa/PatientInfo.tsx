@@ -16,7 +16,8 @@ import usePatients from "@/hooks/lsa/usePatients";
 import useUser from "@/hooks/useUser";
 
 type Patient = {
-    slp_id: string
+    patient_id: number,
+    slp_id: string,
     name: string,
     birthdate: string
 }
@@ -95,7 +96,7 @@ export default function PatientInfo() {
                     <em>Select or add a new Patient...</em>
                 </MenuItem>
                 {patients.map((patient: Patient) => (
-                    <MenuItem key={patient.slp_id} value={patient.name}>
+                    <MenuItem key={patient.patient_id} value={patient.name}>
                         {patient.name}
                     </MenuItem>
                 ))}
