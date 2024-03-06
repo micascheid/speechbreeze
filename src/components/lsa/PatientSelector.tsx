@@ -15,9 +15,10 @@ import {
 import usePatients from "@/hooks/lsa/usePatients";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
-import { Lsa } from "@/data/Lsa";
-import { PatientNew, Patient} from "@/data/Patients";
+import {Lsa} from "@/data/Lsa";
+import {PatientNew, Patient} from "@/data/Patients";
 import useLsa from "@/hooks/lsa/useLsa";
+import TableRowsSkeleton from "@/components/skeletons/TableRowsSkeleton";
 
 export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -26,16 +27,16 @@ export default function PatientSelector() {
     const [saving, setSaving] = useState(false); // New state for handling the saving state
     const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', birthdate: new Date()});
     const [saveError, setSaveError] = useState<string | null>(null);
-    const { patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients } = usePatients();
-    const { uid: slp_id } = useUser() || {};
-    const { lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas } = useLsa();
+    const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
+    const {uid: slp_id} = useUser() || {};
+    const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsa();
     useEffect(() => {
         if (saveError) {
             setTimeout(() => {
                 setSaveError(null);
             }, 5000)
         }
-    },[saveError]);
+    }, [saveError]);
 
     if (isPatientsError) return <div>Error loading patients</div>;
     if (isPatientsError || !patients) return <div>Loading...</div>;
@@ -46,8 +47,8 @@ export default function PatientSelector() {
         setSelectedPatient(null);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement> ) => {
-        setNewPatientData({ ...newPatientData, [e.target.name]: e.target.value });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewPatientData({...newPatientData, [e.target.name]: e.target.value});
     };
 
     const checkName = (): boolean => {
@@ -62,7 +63,7 @@ export default function PatientSelector() {
         if (!checkName()) return;
         setSaving(true);
         try {
-            const response = await axios.post('http://127.0.0.1:5000/add-patient', { ...newPatientData, slp_id: slp_id });
+            const response = await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
             await mutatePatients(`/patients?uid=${slp_id}`);
             handleClose();
             // setSelectedPatient(newPatientData);
@@ -83,38 +84,49 @@ export default function PatientSelector() {
     const handleLsaRowClick = (lsa: Lsa) => {
         setSelectedLsa(lsa);
     };
-
+    const emptyRows = Math.max(0, 5 - (isPatientsLoading ? 0 : patients.length));
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
                 <TableContainer component={Paper}>
-                    <Box style={{ maxHeight: 48 * 5, overflow: 'auto'}}>
-                        <Table>
+                    <Box style={{ maxHeight: 48 * 5 + 'px', overflow: 'auto' }}>
+                        <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>ID</TableCell>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Birthdate</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {patients && patients.map((patient: Patient, i: number) => (
-                                    <TableRow key={i} onClick={() => handlePatientRowClick(patient)}>
-                                        <TableCell>{patient.slp_uid}</TableCell>
-                                        <TableCell>{patient.name}</TableCell>
-                                        <TableCell>{patient.birthdate.toDateString()}</TableCell>
-                                    </TableRow>
-                                ))}
+                                {isPatientsLoading ? (
+                                <TableRowsSkeleton rows={5} />
+                                ) : (
+                                    // Display patient data
+                                    <>
+                                        {patients.map((patient, i) => (
+                                            <TableRow key={i} onClick={() => handlePatientRowClick(patient)}>
+                                                <TableCell>{patient.name}</TableCell>
+                                                <TableCell>{typeof patient.birthdate === 'object' ? patient.birthdate.toDateString() : patient.birthdate}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                        {/* Add empty rows if there are fewer than 5 patients */}
+                                        {Array.from(new Array(emptyRows)).map((_, index) => (
+                                            <TableRow key={`empty-${index}`} style={{ height: 48 /* Row height */ }}>
+                                                <TableCell component="th" scope="row" colSpan={3} />
+                                            </TableRow>
+                                        ))}
+                                    </>
+                                )}
                             </TableBody>
                         </Table>
                     </Box>
                 </TableContainer>
             </Grid>
 
-            <Grid item container xs={12} sm={6} spacing={2} style={{ flexGrow: 1 }}>
-                <Grid item xs={12} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <TableContainer component={Paper} style={{ height: 48 * 5, marginBottom: '16px' }}>
-                        <Box style={{ maxHeight: 48 * 5, overflow: 'auto'}}>
+            <Grid item container xs={12} sm={6} spacing={2} style={{flexGrow: 1}}>
+                <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+                    <TableContainer component={Paper} style={{height: 48 * 5, marginBottom: '16px'}}>
+                        <Box style={{maxHeight: 48 * 5, overflow: 'auto'}}>
                             <Table>
                                 <TableHead>
                                     <TableRow>
