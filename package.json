@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/nunito": "^5.0.16",
     "@mui/base": "^5.0.0-beta.36",
+    "@mui/icons-material": "^5.15.12",
     "@mui/lab": "^5.0.0-alpha.165",
     "@mui/material": "^5.15.10",
     "@mui/system": "^5.15.9",
