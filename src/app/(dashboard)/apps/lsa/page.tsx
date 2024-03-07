@@ -22,9 +22,6 @@ export default function LsaTool() {
         <MainCard>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <Typography>Hello user: {user?.uid}</Typography>
-                </Grid>
-                <Grid item xs={12}>
                     <PatientSelector />
                 </Grid>
                 <Grid item xs={12}>

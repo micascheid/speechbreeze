@@ -14,13 +14,7 @@ import axios from 'axios';
 import { mutate } from 'swr';
 import usePatients from "@/hooks/lsa/usePatients";
 import useUser from "@/hooks/useUser";
-
-type Patient = {
-    patient_id: number,
-    slp_id: string,
-    name: string,
-    birthdate: string
-}
+import {Patient} from "@/data/Patients";
 
 export default function PatientInfo() {
     const [open, setOpen] = useState(false);
