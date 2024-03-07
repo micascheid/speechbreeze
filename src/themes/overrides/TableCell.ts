@@ -12,7 +12,8 @@ export default function TableCell(theme: Theme) {
         content: '""',
         backgroundColor: theme.palette.divider,
         width: 1,
-        height: 'calc(100% - 30px)',
+        // height: 'calc(100% - 30px)',
+        // height: '36px',
         right: 0,
         top: 16
       }
@@ -24,7 +25,7 @@ export default function TableCell(theme: Theme) {
       styleOverrides: {
         root: {
           fontSize: '0.875rem',
-          padding: 12,
+          padding: 2,
           borderColor: theme.palette.divider,
           '&.cell-right': {
             justifyContent: 'flex-end',

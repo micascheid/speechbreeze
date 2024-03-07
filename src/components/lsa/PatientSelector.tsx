@@ -96,7 +96,7 @@ export default function PatientSelector() {
             <Grid item xs={12} sm={6}>
                 <TableContainer component={Paper}>
                     <Box flexDirection={"row"} sx={{display: 'flex', justifyContent: 'space-between'}}>
-                        <Typography variant="h3" sx={{ mb: 1, ml: 1 }}>
+                        <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
                         <IconButton size={"large"} onClick={handlePatientAdd}>
@@ -104,7 +104,7 @@ export default function PatientSelector() {
                         </IconButton>
                     </Box>
 
-                    <Box style={{ minHeight: `${48*5}px`, overflow: 'auto' }}>
+                    <Box style={{minHeight: `${36 * 5}px`, overflow: 'auto'}}>
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
@@ -128,8 +128,8 @@ export default function PatientSelector() {
                                             </TableRow>
                                         ))}
                                         {Array.from(new Array(emptyRowsCountPatients), (x, i) => i).map((index) => (
-                                            <TableRow key={`empty-${index}`} style={{ height: 48 }}>
-                                                <TableCell colSpan={2} />
+                                            <TableRow key={`empty-${index}`}>
+                                                <TableCell colSpan={2}/>
                                             </TableRow>
                                         ))}
                                     </>
@@ -146,7 +146,7 @@ export default function PatientSelector() {
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patient LSA&apos;s
                         </Typography>
-                        <Box style={{ minHeight: `${48*5}px`, overflow: 'auto' }}>
+                        <Box style={{minHeight: `${36 * 5}px`, overflow: 'auto'}}>
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -164,15 +164,24 @@ export default function PatientSelector() {
                                         // Display the LSAs data
                                         lsas
                                             .filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
-                                            .map((lsa: Lsa, i: number) => (
-                                                <TableRow key={i} onClick={() => handleLsaRowClick(lsa)}>
-                                                    <TableCell>{lsa.date}</TableCell>
-                                                    <TableCell>{lsa.mlu}</TableCell>
-                                                    <TableCell>{lsa.tnw}</TableCell>
-                                                    <TableCell>{lsa.wps}</TableCell>
-                                                    <TableCell>{lsa.cps}</TableCell>
-                                                </TableRow>
-                                            ))
+                                            .map((lsa: Lsa, i: number) => {
+                                                const date = new Date(lsa.date);
+                                                const formattedDate = date.toLocaleDateString();
+                                                const formattedTime = date.toLocaleTimeString('en-us', {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: true
+                                                });
+                                                return (
+                                                    <TableRow key={i} onClick={() => handleLsaRowClick(lsa)}>
+                                                        <TableCell sx={{ width: '40%'}}>{`${formattedDate} ${formattedTime}`}</TableCell>
+                                                        <TableCell>{lsa.mlu}</TableCell>
+                                                        <TableCell>{lsa.tnw}</TableCell>
+                                                        <TableCell>{lsa.wps}</TableCell>
+                                                        <TableCell>{lsa.cps}</TableCell>
+                                                    </TableRow>
+                                                )
+                                            })
                                     )}
                                 </TableBody>
                             </Table>
@@ -211,7 +220,7 @@ export default function PatientSelector() {
                         name="birthdate"
                         value={newPatientData.birthdate}
                         onChange={handleChange}
-                        InputLabelProps={{ shrink: true }}
+                        InputLabelProps={{shrink: true}}
                     />
                 </DialogContent>
                 <DialogActions>

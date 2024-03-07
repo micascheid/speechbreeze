@@ -17,7 +17,8 @@ export default function TableRow() {
             '&:first-of-type': {
               paddingLeft: 24
             }
-          }
+          },
+          height: '36px'
         }
       }
     }
