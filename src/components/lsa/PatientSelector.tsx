@@ -90,79 +90,76 @@ export default function PatientSelector() {
         setOpen(true);
     }
     const emptyRowsCountPatients = 5 - (isPatientsLoading ? 0 : patients.length);
-    const emptyRowsCountLsa = 5 - (isLsasLoading ? 0 : lsas.length);
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={{maxHeight: `${36 * 8}px`, overflow: 'auto'}}>
                     <Box flexDirection={"row"} sx={{display: 'flex', justifyContent: 'space-between'}}>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
-                        <IconButton size={"large"} onClick={handlePatientAdd}>
+                        <IconButton onClick={handlePatientAdd}>
                             <AddBoxIcon fontSize={"large"} color={"primary"}/>
                         </IconButton>
                     </Box>
-
-                    <Box style={{minHeight: `${36 * 5}px`, overflow: 'auto'}}>
-                        <Table stickyHeader>
-                            <TableHead>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Birthdate</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {isPatientsLoading ? (
+                                <TableRowsSkeleton rows={5} columns={2} animate={true}/>
+                            ) : isPatientsError ? (
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Birthdate</TableCell>
+                                    <TableCell colSpan={2} align="center">{"Error fetching patients"}</TableCell>
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {isPatientsLoading ? (
-                                    <TableRowsSkeleton rows={5} columns={2} animate={true}/>
-                                ) : isPatientsError ? (
-                                    <TableRow>
-                                        <TableCell colSpan={2} align="center">{"Error fetching patients"}</TableCell>
-                                    </TableRow>
-                                ) : (
-                                    <>
-                                        {patients.map((patient, i) => (
-                                            <TableRow key={i} onClick={() => handlePatientRowClick(patient)}>
-                                                <TableCell>{patient.name}</TableCell>
-                                                <TableCell>{typeof patient.birthdate === 'object' ? patient.birthdate.toDateString() : patient.birthdate}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                        {Array.from(new Array(emptyRowsCountPatients), (x, i) => i).map((index) => (
-                                            <TableRow key={`empty-${index}`}>
-                                                <TableCell colSpan={2}/>
-                                            </TableRow>
-                                        ))}
-                                    </>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </Box>
+                            ) : (
+                                <>
+                                    {patients.map((patient, i) => (
+                                        <TableRow key={i} onClick={() => handlePatientRowClick(patient)}>
+                                            <TableCell>{patient.name}</TableCell>
+                                            <TableCell>{typeof patient.birthdate === 'object' ? patient.birthdate.toDateString() : patient.birthdate}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {Array.from(new Array(emptyRowsCountPatients), (x, i) => i).map((index) => (
+                                        <TableRow key={`empty-${index}`}>
+                                            <TableCell colSpan={2}/>
+                                        </TableRow>
+                                    ))}
+                                </>
+                            )}
+                        </TableBody>
+                    </Table>
+                    {/*</Box>*/}
                 </TableContainer>
             </Grid>
 
             <Grid item container xs={12} sm={6} spacing={2} style={{flexGrow: 1}}>
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <TableContainer component={Paper} sx={{mb: 2}}>
+                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 8}px`, minHeight: `${36 * 7}px`,  overflow: 'auto'}}>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patient LSA&apos;s
                         </Typography>
-                        <Box style={{minHeight: `${36 * 5}px`, overflow: 'auto'}}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>MLU</TableCell>
-                                        <TableCell>TNW</TableCell>
-                                        <TableCell>WPS</TableCell>
-                                        <TableCell>CPS</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {!selectedPatient ? (
-                                        <TableRowsSkeleton rows={5} columns={5} animate={false}/>
-                                    ) : (
-                                        // Display the LSAs data
-                                        lsas
+                        <Table stickyHeader>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Date</TableCell>
+                                    <TableCell>MLU</TableCell>
+                                    <TableCell>TNW</TableCell>
+                                    <TableCell>WPS</TableCell>
+                                    <TableCell>CPS</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {!selectedPatient ? (
+                                    <TableRowsSkeleton rows={5} columns={5} animate={false}/>
+                                ) : (
+                                    // Display the LSAs data
+                                    <>
+                                        {lsas
                                             .filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
                                             .map((lsa: Lsa, i: number) => {
                                                 const date = new Date(lsa.date);
@@ -174,18 +171,33 @@ export default function PatientSelector() {
                                                 });
                                                 return (
                                                     <TableRow key={i} onClick={() => handleLsaRowClick(lsa)}>
-                                                        <TableCell sx={{ width: '40%'}}>{`${formattedDate} ${formattedTime}`}</TableCell>
+                                                        <TableCell sx={{width: '40%'}}>{`${formattedDate} ${formattedTime}`}</TableCell>
                                                         <TableCell>{lsa.mlu}</TableCell>
                                                         <TableCell>{lsa.tnw}</TableCell>
                                                         <TableCell>{lsa.wps}</TableCell>
                                                         <TableCell>{lsa.cps}</TableCell>
                                                     </TableRow>
-                                                )
+                                                );
                                             })
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </Box>
+                                        }
+                                        {/* After the LSAs data */}
+                                        {
+                                            (() => {
+                                                const numLsas = lsas.filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id).length;
+                                                const emptyRowsToRender = Math.max(0, 5 - numLsas);
+                                                return Array.from({ length: emptyRowsToRender }, (_, index) => (
+                                                    <TableRow key={`empty-${index}`} style={{ height: 36 }}>
+                                                        <TableCell colSpan={5} />
+                                                    </TableRow>
+                                                ));
+                                            })()
+                                        }
+                                    </>
+
+                                )}
+
+                            </TableBody>
+                        </Table>
                     </TableContainer>
                     <Stack direction={"row"} spacing={1}>
                         <Button variant="contained" color="primary" disabled={!selectedPatient}>
