@@ -1,6 +1,7 @@
 export type Lsa = {
-    id: number;
+    lsa_id: number;
     patient_id: number;
+    name: string;
     date: string;
     audiofile_url: string;
     transcription: string;
