@@ -7,7 +7,6 @@ export default function useLsa() {
     const user = useUser();
     const { data, isLoading, error } = useSWR(`/lsa?uid=${user?.uid}`, fetcher);
 
-    console.log("LSA DATA:", data);
     return {
         lsas: data,
         isLoading,

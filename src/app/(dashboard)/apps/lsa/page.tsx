@@ -7,7 +7,6 @@ import useSWR from 'swr';
 import useMLU from "@/hooks/lsa/useMLU";
 import AudioChoice from "@/components/lsa/AudioChoice";
 import Transcription from "@/components/lsa/Transcription";
-import PatientInfo from "@/components/lsa/PatientInfo";
 import useUser from "@/hooks/useUser";
 import AudioPlayer from "@/components/AudioPlayer";
 import PatientSelector from "@/components/lsa/PatientSelector";
