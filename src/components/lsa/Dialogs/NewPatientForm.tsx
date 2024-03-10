@@ -58,7 +58,7 @@ export const NewPatientForm = () => {
             handleClose();
         } catch (error) {
             console.error(error);
-            setSaveError('Failed to save the patient');
+            setSaveError('Failed to save the patient. Contact us or try again later');
         } finally {
             setSaving(false);
         }
@@ -69,7 +69,12 @@ export const NewPatientForm = () => {
             <IconButton onClick={handleOpen} disabled={isPatientsLoading}>
                 <AddBoxIcon fontSize={"large"} color={"primary"}/>
             </IconButton>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} sx={{
+                "& .MuiDialog-paper": {
+                    width: { xs: '80%', sm: '30%' },
+                    mx: 'auto',
+                },
+            }}>
                 <DialogTitle>Add Patient</DialogTitle>
                 <DialogContent>
                     <TextField

@@ -22,44 +22,15 @@ import useLsa from "@/hooks/lsa/useLsa";
 import TableRowsSkeleton from "@/components/skeletons/TableRowsSkeleton";
 import {useTheme} from "@mui/material/styles";
 import {NewPatientForm} from "@/components/lsa/Dialogs/NewPatientForm";
+import NewLsaForm from "@/components/lsa/Dialogs/NewLsaForm";
 
 export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [selectedLsa, setSelectedLsa] = useState<Lsa | null>(null);
-    const [open, setOpen] = useState(false);
-    const [saving, setSaving] = useState(false); // New state for handling the saving state
-    const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', birthdate: new Date()});
-    const [saveError, setSaveError] = useState<string | null>(null);
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
-    const [lsaDialogOpen, setLsaDialogOpen] = useState(false);
-    const [savingLsa, setSavingLsa] = useState(false);
-    const [newLsaData, setNewLsaData] = useState<{ name: string }>({ name: '' });
-    const [lsaSaveError, setLsaSaveError] = useState<string | null>(null);
-    const {uid: slp_id} = useUser() || {};
+
     const theme = useTheme();
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsa();
-
-
-    const handleLsaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewLsaData({ name: e.target.value });
-    };
-
-
-
-    const saveNewLsa = async () => {
-        setSavingLsa(true);
-        try {
-            const response = await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id});
-            await mutateLsas(`/lsa?uid=${slp_id}`);
-            setLsaDialogOpen(false);
-            setNewLsaData({ name: '' });
-            setSavingLsa(false);
-        } catch (error) {
-            console.error(error);
-            setSavingLsa(false);
-        }
-    };
-
 
     // Handle patient row click
     const handlePatientRowClick = (patient: Patient) => {
@@ -74,7 +45,6 @@ export default function PatientSelector() {
 
     const emptyRowsCountPatients = 5 - (isPatientsLoading ? 0 : patients.length);
 
-    console.log("Patients: ", patients);
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
@@ -145,10 +115,10 @@ export default function PatientSelector() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {!selectedPatient ? (
+
+                                {!selectedPatient || isPatientsError ? (
                                     <TableRowsSkeleton rows={5} columns={6} animate={false}/>
                                 ) : (
-                                    // Display the LSAs data
                                     <>
                                         {lsas
                                             .filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
@@ -160,7 +130,6 @@ export default function PatientSelector() {
                                                     minute: '2-digit',
                                                     hour12: true
                                                 });
-                                                console.log(i);
                                                 return (
                                                     <TableRow key={i} onClick={() => handleLsaRowClick(lsa)}
                                                               sx={{
@@ -197,41 +166,9 @@ export default function PatientSelector() {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Stack direction={"row"} spacing={1}>
-                        <Button variant={"contained"} onClick={() => setLsaDialogOpen(true)} color="primary" disabled={!selectedPatient}>
-                            Start New LSA
-                        </Button>
-                        <Button variant={"contained"} color="secondary" disabled={!selectedLsa}>
-                            Continue LSA
-                        </Button>
-                    </Stack>
+                    <NewLsaForm selectedPatient={selectedPatient} selectedLsa={selectedLsa}/>
                 </Grid>
             </Grid>
-            <Dialog open={lsaDialogOpen} onClose={() => setLsaDialogOpen(false)}>
-                <DialogTitle>Add LSA</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Name"
-                        type="text"
-                        fullWidth
-                        name="name"
-                        value={newLsaData.name}
-                        onChange={handleLsaChange}
-                        error={!!lsaSaveError}
-                        helperText={lsaSaveError}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setLsaDialogOpen(false)} color="primary" disabled={savingLsa}>
-                        Cancel
-                    </Button>
-                    <Button onClick={saveNewLsa} color="primary" disabled={savingLsa}>
-                        {savingLsa ? 'Saving...' : 'Save'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Grid>
     );
 }
