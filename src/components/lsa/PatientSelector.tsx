@@ -21,6 +21,7 @@ import {PatientNew, Patient} from "@/data/Patients";
 import useLsa from "@/hooks/lsa/useLsa";
 import TableRowsSkeleton from "@/components/skeletons/TableRowsSkeleton";
 import {useTheme} from "@mui/material/styles";
+import {NewPatientForm} from "@/components/lsa/Dialogs/NewPatientForm";
 
 export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -37,61 +38,17 @@ export default function PatientSelector() {
     const {uid: slp_id} = useUser() || {};
     const theme = useTheme();
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsa();
-    useEffect(() => {
-        if (saveError) {
-            setTimeout(() => {
-                setSaveError(null);
-            }, 5000)
-        }
-    }, [saveError]);
 
-
-    const handleClose = () => {
-        setOpen(false);
-        setSaving(false);
-        setSelectedPatient(null);
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewPatientData({...newPatientData, [e.target.name]: e.target.value});
-    };
 
     const handleLsaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewLsaData({ name: e.target.value });
     };
 
-    const checkName = (): boolean => {
-        const duplicate = patients.some((patient: Patient) => patient.name === newPatientData.name);
-        if (duplicate) {
-            setSaveError('Patient name already exists');
-            return false;
-        }
-        return true;
-    };
 
-
-    const saveNewPatient = async () => {
-        if (!checkName()) return;
-        setSaving(true);
-        try {
-            const response = await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
-            await mutatePatients(`/patients?uid=${slp_id}`);
-            handleClose();
-            // setSelectedPatient(newPatientData);
-        } catch (error) {
-            console.error(error);
-            setSaveError('Failed to save the patient');
-        } finally {
-            setSaving(false);
-        }
-    };
 
     const saveNewLsa = async () => {
         setSavingLsa(true);
         try {
-            // Here you'd do the actual post request to save the LSA
-            // await axios.post(...)
-            // Close the dialog box and reset the fields after successful submission
             const response = await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id});
             await mutateLsas(`/lsa?uid=${slp_id}`);
             setLsaDialogOpen(false);
@@ -115,9 +72,6 @@ export default function PatientSelector() {
         setSelectedLsa(lsa);
     };
 
-    const handlePatientAdd = () => {
-        setOpen(true);
-    }
     const emptyRowsCountPatients = 5 - (isPatientsLoading ? 0 : patients.length);
 
     console.log("Patients: ", patients);
@@ -129,9 +83,7 @@ export default function PatientSelector() {
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
-                        <IconButton onClick={handlePatientAdd}>
-                            <AddBoxIcon fontSize={"large"} color={"primary"}/>
-                        </IconButton>
+                        <NewPatientForm />
                     </Box>
                     <Table stickyHeader>
                         <TableHead>
@@ -255,41 +207,6 @@ export default function PatientSelector() {
                     </Stack>
                 </Grid>
             </Grid>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Add Patient</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Name"
-                        type="text"
-                        fullWidth
-                        name="name"
-                        value={newPatientData.name}
-                        onChange={handleChange}
-                        error={!!saveError}
-                        helperText={saveError}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Birthdate"
-                        type="date"
-                        fullWidth
-                        name="birthdate"
-                        value={newPatientData.birthdate}
-                        onChange={handleChange}
-                        InputLabelProps={{shrink: true}}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary" disabled={saving}>
-                        Cancel
-                    </Button>
-                    <Button onClick={saveNewPatient} color="primary" disabled={saving}>
-                        {saving ? 'Saving...' : 'Save'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
             <Dialog open={lsaDialogOpen} onClose={() => setLsaDialogOpen(false)}>
                 <DialogTitle>Add LSA</DialogTitle>
                 <DialogContent>
