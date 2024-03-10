@@ -53,13 +53,13 @@ export default function TableCell(theme: Theme) {
         head: {
           fontSize: '0.75rem',
           fontWeight: 700,
-          textTransform: 'uppercase',
-          ...commonCell
+          textTransform: 'uppercase'
+          // Removed commonCell styles from head to avoid potential conflicts with stickyHeader
         },
         footer: {
           fontSize: '0.75rem',
-          textTransform: 'uppercase',
-          ...commonCell
+          textTransform: 'uppercase'
+          // Similarly, removed commonCell styles from footer
         }
       }
     }

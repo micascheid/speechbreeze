@@ -43,12 +43,12 @@ export default function PatientSelector() {
         setSelectedLsa(lsa);
     };
 
-    const emptyRowsCountPatients = 5 - (isPatientsLoading ? 0 : patients.length);
+    const emptyRowsCountPatients = patients.length > 5 ? 0 : (5 - (isPatientsLoading ? 0 : patients.length));
 
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-                <TableContainer component={Paper} style={{maxHeight: `${36 * 8}px`, overflow: 'auto'}}>
+                <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
                     <Box flexDirection={"row"} sx={{display: 'flex', justifyContent: 'space-between'}}>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
@@ -99,7 +99,7 @@ export default function PatientSelector() {
 
             <Grid item container xs={12} sm={6} spacing={2} style={{flexGrow: 1}}>
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 8}px`, minHeight: `${36 * 7}px`,  overflow: 'auto'}}>
+                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patient LSA&apos;s
                         </Typography>
