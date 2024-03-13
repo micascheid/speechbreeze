@@ -1,11 +1,13 @@
 import {Patient, PatientNew} from "@/data/Patients";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField} from "@mui/material";
 import React, {useState} from "react";
 import {bool} from "yup";
 import {Lsa} from "@/data/Lsa";
 import axios, { AxiosError } from "axios";
-import useLsa from "@/hooks/lsa/useLsa";
+import useLsas from "@/hooks/lsa/useLsas";
 import useUser from "@/hooks/useUser";
+import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 
 type NewLsaFormProps = {
@@ -18,8 +20,10 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
     const [savingLsa, setSavingLsa] = useState(false);
     const [newLsaData, setNewLsaData] = useState<{ name: string }>({ name: '' });
     const [lsaSaveError, setLsaSaveError] = useState<string | null>(null);
-    const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsa();
+    const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
     const {uid: slp_id} = useUser() || {};
+
+    const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
 
     const handleClose = () => {
         setOpen(false);
@@ -32,10 +36,44 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
         setNewLsaData({ name: e.target.value });
     };
 
+    const validateLsaName = (name: string): string => {
+        const maxLength = 255;
+        const regex = /^[a-zA-Z0-9-_ ]+$/; // Allow letters, numbers, hyphens, underscores, and spaces
+
+        if (name.length === 0) {
+            return "Name cannot be empty.";
+        }
+        if (name.length > maxLength) {
+            return "Name must be 255 characters or less.";
+        }
+        if (!regex.test(name)) {
+            return "Name contains invalid characters. Only letters, numbers, hyphens, underscores, and spaces are allowed.";
+        }
+        // Trim leading and trailing spaces (consider doing this before setting the state)
+        if (name.trim() !== name) {
+            return "Name cannot start or end with a space.";
+        }
+        return ""; // Return an empty string to indicate valid name
+    };
+
+    const handleContinue = () => {
+        if (selectedLsa) {
+            setSelectedLsaId(selectedLsa.lsa_id);
+        }
+    }
+
+
     const saveNewLsa = async () => {
+        const validationError = validateLsaName(newLsaData.name);
+        if (validationError !== "") {
+            setLsaSaveError(validationError);
+            setSavingLsa(false);
+            return; // Prevent further execution
+        }
+
         setSavingLsa(true);
         try {
-            await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id});
+            await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});
             await mutateLsas(`/lsa?uid=${slp_id}`);
             handleClose();
         } catch (error: any) {
@@ -44,7 +82,7 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
             let errorMsg = 'Error saving LSA. Please, try again.';
             if (error.response) {
                 // The request was made and server responded with a status outside of the 2xx range
-                errorMsg = error.response.data.message;
+                errorMsg = error.response.data.message || 'Error saving LSA. Please, try again.';
             } else if (error.request) {
                 // The request was made but no response was received
                 errorMsg = 'We\'re having trouble saving at this time. Contact us or try again later';
@@ -53,15 +91,16 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
         }
     };
 
+
     return (
         <>
             <Stack direction={"row"} spacing={1}>
-                <Button variant={"contained"} onClick={() => setOpen(true)} color="primary" disabled={!selectedPatient}>
-                    Start New LSA
-                </Button>
-                <Button variant={"contained"} color="secondary" disabled={!selectedLsa}>
-                    Continue LSA
-                </Button>
+                <IconButton onClick={() => setOpen(true)} disabled={!selectedPatient}>
+                    <AddBoxIcon fontSize={"large"} color={!selectedPatient ? "secondary" : "primary"}/>
+                </IconButton>
+                {/*<Button variant={"contained"} color="secondary" disabled={!selectedLsa} onClick={handleContinue}>*/}
+                {/*    Continue LSA*/}
+                {/*</Button>*/}
             </Stack>
             <Dialog open={open} onClose={handleClose} sx={{
                 "& .MuiDialog-paper": {

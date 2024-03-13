@@ -18,19 +18,23 @@ import axios from "axios";
 import useUser from "@/hooks/useUser";
 import {Lsa} from "@/data/Lsa";
 import {PatientNew, Patient} from "@/data/Patients";
-import useLsa from "@/hooks/lsa/useLsa";
+import useLsas from "@/hooks/lsa/useLsas";
 import TableRowsSkeleton from "@/components/skeletons/TableRowsSkeleton";
 import {useTheme} from "@mui/material/styles";
 import {NewPatientForm} from "@/components/lsa/Dialogs/NewPatientForm";
 import NewLsaForm from "@/components/lsa/Dialogs/NewLsaForm";
+import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
+import AnimateButton from "@/components/@extended/AnimateButton";
+import ButtonPulsing from "@/components/ButtonPulsing";
+import useLsa from "@/hooks/lsa/useLsa";
 
 export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [selectedLsa, setSelectedLsa] = useState<Lsa | null>(null);
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
-
+    const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
     const theme = useTheme();
-    const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsa();
+    const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
 
     // Handle patient row click
     const handlePatientRowClick = (patient: Patient) => {
@@ -43,18 +47,24 @@ export default function PatientSelector() {
         setSelectedLsa(lsa);
     };
 
-    const emptyRowsCountPatients = 5 - (isPatientsLoading ? 0 : patients.length);
+    const handleChosenLsa = () => {
+        if (selectedLsa){
+            setSelectedLsaId(selectedLsa.lsa_id);
+        }
+    }
+
+    const emptyRowsCountPatients = patients.length > 5 ? 0 : (5 - (isPatientsLoading ? 0 : patients.length));
 
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-                <TableContainer component={Paper} style={{maxHeight: `${36 * 8}px`, overflow: 'auto'}}>
-                    <Box flexDirection={"row"} sx={{display: 'flex', justifyContent: 'space-between'}}>
+                <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
+                    <Stack direction={"row"}>
+                        <NewPatientForm />
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
-                        <NewPatientForm />
-                    </Box>
+                    </Stack>
                     <Table stickyHeader>
                         <TableHead>
                             <TableRow>
@@ -99,10 +109,14 @@ export default function PatientSelector() {
 
             <Grid item container xs={12} sm={6} spacing={2} style={{flexGrow: 1}}>
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 8}px`, minHeight: `${36 * 7}px`,  overflow: 'auto'}}>
-                        <Typography variant="h3" sx={{mb: 1, ml: 1}}>
-                            Patient LSA&apos;s
-                        </Typography>
+                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
+                        <Stack direction={"row"}>
+                            <NewLsaForm selectedPatient={selectedPatient} selectedLsa={selectedLsa}/>
+                            <Typography variant="h3" sx={{mb: 1, ml: 1}}>
+                                Patient LSA&apos;s
+                            </Typography>
+                        </Stack>
+
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
@@ -166,8 +180,18 @@ export default function PatientSelector() {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <NewLsaForm selectedPatient={selectedPatient} selectedLsa={selectedLsa}/>
+
                 </Grid>
+            </Grid>
+            <Grid item xs={12}>
+                <ButtonPulsing
+                    disabled={!selectedLsa || (selectedLsa.lsa_id === selectedLsaId)} // Disable button after click or if no LSA is selected
+                    shouldPulse={!!selectedLsa && (selectedLsa.lsa_id !== selectedLsaId)} // Pulse only if an LSA is selected and button hasn't been clicked
+                    onClick={handleChosenLsa}
+                    variant={"outlined"}
+                >
+                    Proceed With: {selectedLsa?.name}
+                </ButtonPulsing>
             </Grid>
         </Grid>
     );

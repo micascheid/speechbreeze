@@ -2,15 +2,22 @@ import useUser from "@/hooks/useUser";
 import useSWR, {mutate} from "swr";
 import {fetcher} from "@/utils/axios";
 import { Patient} from "@/data/Patients";
+import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
+import {useEffect} from "react";
 
 export default function useLsa() {
-    const user = useUser();
-    const { data, isLoading, error } = useSWR(`/lsa?uid=${user?.uid}`, fetcher);
+    const { selectedLsaId } = useSelectedLSA();
+    const { data, isLoading, error } = useSWR(!!selectedLsaId ? `/lsa?lsaId=${selectedLsaId}` : null, fetcher);
+
+    useEffect(() => {
+        console.log("getting called");
+        mutate(`/lsa?lsaId=${selectedLsaId}`)
+    }, [selectedLsaId]);
 
     return {
-        lsas: data,
+        lsa: data,
         isLoading,
         isError: error,
-        mutateLsas: mutate,
+        mutateLsa: mutate,
     }
 }
