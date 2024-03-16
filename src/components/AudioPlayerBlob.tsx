@@ -1,18 +1,12 @@
 import { WaveSurfer, WaveForm } from "wavesurfer-react";
 import MainCard from "@/components/MainCard";
-import {Card, Typography, Button} from "@mui/material";
-import RegionsPlugin from "wavesurfer.js/plugins/regions";
-import TimelinePlugin from "wavesurfer.js/plugins/timeline";
-import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
-import useSWR from "swr";
-import {fetcher} from "@/utils/axios";
+import { Card, Typography, Button } from "@mui/material";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import TimelinePlugin from "wavesurfer.js/plugins/timeline";
 
-
-export default function AudioPlayer() {
+// Assuming blobUrl is passed as a prop to this component
+export default function AudioPlayerBlob({ blobUrl }: { blobUrl: string | null }) {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    const { selectedLsaId, audioFileUrl } = useSelectedLSA();
-    const { data, isLoading, error } = useSWR(selectedLsaId ? `/get-audio-url?lsa_id=${selectedLsaId}` : null, fetcher);
     const plugins = useMemo(() => {
         return [
             {
@@ -20,40 +14,36 @@ export default function AudioPlayer() {
                 plugin: TimelinePlugin,
                 options: {
                     height: 20,
+                    container: "#timeline",
                     style: {
                         color: "#6A3274",
                     },
                 },
             },
-        ].filter(Boolean);
+        ];
     }, []);
 
-    const wavesurferRef = useRef();
+    const wavesurferRef = useRef<any>(null);
+
     const handleWSMount = useCallback((waveSurfer: any) => {
         wavesurferRef.current = waveSurfer;
-        if (wavesurferRef.current) {
-            if(data && data.url) {            // Check if data and data.url exists
-                console.log("url", data?.url);
-                waveSurfer.load(data.url);
-            }
+        if (wavesurferRef.current && blobUrl) {
+            waveSurfer.load(blobUrl);
         }
-
-    }, [data]);
+    }, [blobUrl]);
 
     const handlePlayPause = () => {
         if (wavesurferRef.current) {
-            // @ts-ignore
             wavesurferRef.current.playPause();
-            setIsPlaying(!isPlaying);
+            setIsPlaying(prevIsPlaying => !prevIsPlaying);
         }
     };
 
     useEffect(() => {
-        if (wavesurferRef.current && data?.url) {
-            // @ts-ignore
-            wavesurferRef.current.load(data.url);
+        if (wavesurferRef.current && blobUrl) {
+            wavesurferRef.current.load(blobUrl);
         }
-    }, [data]);
+    }, [blobUrl]);
 
     return (
         <Card>
@@ -63,9 +53,10 @@ export default function AudioPlayer() {
                 cursorColor={"#000"}
                 container={"#waveform"}
                 cursorWidth={2}
+
             >
-                <WaveForm id={"waveform"}/>
-                <div id="timeline"/>
+                <WaveForm id={"waveform"} />
+                <div id="timeline" />
             </WaveSurfer>
             <Button variant={"outlined"} onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</Button>
         </Card>

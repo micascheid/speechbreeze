@@ -13,6 +13,7 @@ import PatientSelector from "@/components/lsa/PatientSelector";
 import {SelectedLSAProvider, useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import useLsas from "@/hooks/lsa/useLsas";
 import useLsa from "@/hooks/lsa/useLsa";
+import AudioRecord from "@/components/AudioRecord";
 
 
 
@@ -29,8 +30,11 @@ function Content() {
                         <AudioChoice/>
                     </Grid>
                     <Grid item xs={12}>
-                        <AudioPlayer/>
+                        <AudioRecord/>
                     </Grid>
+                    {/*<Grid item xs={12}>*/}
+                    {/*    <AudioPlayer/>*/}
+                    {/*</Grid>*/}
                     <Grid item xs={12}>
                         <Transcription/>
                     </Grid>
