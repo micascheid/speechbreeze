@@ -190,7 +190,7 @@ const AudioRecorder = () => {
                 </Button>
                 <Button variant="outlined" onClick={togglePlayPause} disabled={!recordedBlobUrl}
                         sx={{width: 75}}>{isPlaying ? "Pause" : "Play"}</Button>
-                <Button variant="outlined" disabled={!recordedBlobUrl} component="a" href={recordedBlobUrl}
+                <Button variant="outlined" disabled={!recordedBlobUrl} component="a" href={recordedBlobUrl || '#'}
                         download="recording.mp3">Save</Button>
                 <Button variant="outlined" disabled={!recordedBlobUrl} onClick={handleDiscardRecording}>Discard </Button>
 
