@@ -5,7 +5,8 @@ import {Button, Select, MenuItem, Stack, SelectChangeEvent} from '@mui/material'
 import TimelinePlugin from "wavesurfer.js/plugins/timeline";
 import MainCard from '@/components/MainCard';
 import RegionsPlugin from "wavesurfer.js/plugins/regions";
-import WarningModal from "@/components/WarningModal"; // Assuming this is your custom component
+import WarningModal from "@/components/WarningModal";
+import {useTheme} from "@mui/material/styles"; // Assuming this is your custom component
 
 interface DeviceInfo {
     deviceId: string;
@@ -22,12 +23,15 @@ const AudioRecorder = () => {
     const [recordingState, setRecordingState] = useState<"stopped" | "recording" | "paused">("stopped");
     const [isRecording, setIsRecording] = useState(false);
     const wavesurferRef = useRef(null);
+    const discardWarning = "Are you sure you want to discard your recording?\n IT WILL BE ERASED AND UNSAVED";
+    const continueWarning = "You have an existing recording.\n Do you want to discard it and start a new recording?"
+    const theme = useTheme();
     const warningMessage = modalAction === 'startRecording'
-        ? 'You have an existing recording. Do you want to discard it and start a new recording?'
-        : 'Are you sure you want to discard your recording?';
+        ? `${continueWarning}`
+        : `${discardWarning}`;
     const waveformStylingProps = {
-        waveColor: "#ff0000",
-        progressColor: "#00ff00",
+        waveColor: theme.palette.secondary.main,
+        progressColor: "#000",
         barGap: 1,
         barWidth: 2,
         cursorWidth: 2,
