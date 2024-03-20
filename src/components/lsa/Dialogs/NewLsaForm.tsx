@@ -73,14 +73,6 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
 
 
     const saveNewLsa = async () => {
-        console.log("clicked");
-        // const validationError = validateName(newLsaData.name);
-        // if (validationError) {
-        //     setLsaSaveError('');
-        //     setSavingLsa(false);
-        //     return; // Prevent further execution
-        // }
-
         setSavingLsa(true);
         try {
             await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});

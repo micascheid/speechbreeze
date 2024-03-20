@@ -6,8 +6,11 @@ import useUser from "@/hooks/useUser";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import usePatients from "@/hooks/lsa/usePatients";
 
+type NewPatientFormProps = {
+    onPatientAdd: (patient: Patient) => void;
+}
 
-export const NewPatientForm = () => {
+export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', birthdate: new Date()});
@@ -53,9 +56,16 @@ export const NewPatientForm = () => {
         setSaving(true);
         try {
             console.log("in try", slp_id);
-            await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
-            await mutatePatients(`/patients?uid=${slp_id}`);
-            handleClose();
+            const response = await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
+            const updatedPatients = await mutatePatients(`/patients?uid=${slp_id}`);
+            if (updatedPatients && updatedPatients.length > 0)
+            {
+                // Call the callback function with the latest patient (assumed to be last in the array)
+                onPatientAdd(updatedPatients[updatedPatients.length - 1]);
+                handleClose();
+            } else {
+                setSaveError('Failed to fetch the patient. Contact us or try again later');
+            }
         } catch (error) {
             console.error(error);
             setSaveError('Failed to save the patient. Contact us or try again later');

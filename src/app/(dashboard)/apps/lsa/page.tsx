@@ -130,7 +130,6 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
                     ) : (
                         <>
                             {audio_url ? (
-
                                 <Grid item xs={12}>
                                     <AudioPlayer/>
                                 </Grid>

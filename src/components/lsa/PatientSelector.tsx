@@ -61,7 +61,7 @@ export default function PatientSelector() {
             <Grid item xs={12} sm={6}>
                 <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
                     <Stack direction={"row"}>
-                        <NewPatientForm />
+                        <NewPatientForm onPatientAdd={(newPatient: Patient) => setSelectedPatient(newPatient)}/>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
