@@ -19,14 +19,15 @@ import useUser from "@/hooks/useUser";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import {event} from "next/dist/build/output/log";
+import {update} from "lodash-es";
 
 
 type NewLsaFormProps = {
     selectedPatient: Patient | null;
-    selectedLsa: Lsa | null;
+    onLsaAdd: (selectedLsa: Lsa) => void;
 }
 
-export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormProps) {
+export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps) {
     const [open, setOpen] = useState<boolean>(false);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState('');
@@ -76,8 +77,13 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
         setSavingLsa(true);
         try {
             await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});
-            await mutateLsas(`/lsas?uid=${slp_id}`);
-            handleClose();
+            const updatesLsas = await mutateLsas(`/lsas?uid=${slp_id}`);
+            if (updatesLsas && updatesLsas.length > 0)
+            {
+                console.log(updatesLsas[updatesLsas.length - 1]);
+                onLsaAdd(updatesLsas[updatesLsas.length - 1]);
+                handleClose();
+            }
         } catch (error: any) {
             console.error(error);
             setSavingLsa(false);

@@ -60,7 +60,6 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
             const updatedPatients = await mutatePatients(`/patients?uid=${slp_id}`);
             if (updatedPatients && updatedPatients.length > 0)
             {
-                // Call the callback function with the latest patient (assumed to be last in the array)
                 onPatientAdd(updatedPatients[updatedPatients.length - 1]);
                 handleClose();
             } else {

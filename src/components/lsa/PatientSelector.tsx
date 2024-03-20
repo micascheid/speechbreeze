@@ -111,7 +111,7 @@ export default function PatientSelector() {
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
                         <Stack direction={"row"}>
-                            <NewLsaForm selectedPatient={selectedPatient} selectedLsa={selectedLsa}/>
+                            <NewLsaForm selectedPatient={selectedPatient} onLsaAdd={(selectedLsa: Lsa) => {setSelectedLsa(selectedLsa)}}/>
                             <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                                 Patient LSA&apos;s
                             </Typography>
