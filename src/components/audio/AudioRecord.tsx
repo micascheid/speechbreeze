@@ -6,7 +6,8 @@ import TimelinePlugin from "wavesurfer.js/plugins/timeline";
 import MainCard from '@/components/MainCard';
 import RegionsPlugin from "wavesurfer.js/plugins/regions";
 import WarningModal from "@/components/WarningModal";
-import {useTheme} from "@mui/material/styles"; // Assuming this is your custom component
+import {useTheme} from "@mui/material/styles";
+import {useSelectedLSA} from "@/contexts/SelectedLSAContext"; // Assuming this is your custom component
 
 interface DeviceInfo {
     deviceId: string;
@@ -26,6 +27,7 @@ const AudioRecorder = () => {
     const discardWarning = "Are you sure you want to discard your recording?\n IT WILL BE ERASED AND UNSAVED";
     const continueWarning = "You have an existing recording.\n Do you want to discard it and start a new recording?"
     const theme = useTheme();
+    const { setLocalAudioSource } = useSelectedLSA();
     const warningMessage = modalAction === 'startRecording'
         ? `${continueWarning}`
         : `${discardWarning}`;
@@ -82,11 +84,13 @@ const AudioRecorder = () => {
 
             recordPluginInstance.on('record-start', (event: any) => {
                 setRecordedBlobUrl(null);
+                setLocalAudioSource(null);
             });
 
             recordPluginInstance.on('record-end', (blob: any) => {
                 const url = URL.createObjectURL(blob);
                 setRecordedBlobUrl(url);
+                setLocalAudioSource(url);
             });
         }
     }, []);
@@ -109,6 +113,7 @@ const AudioRecorder = () => {
         const recordPlugin = wavesurferRef.current.getActivePlugins()[0];
         recordPlugin.startRecording();
         setRecordedBlobUrl(null);
+        setLocalAudioSource(null);
         setIsRecording(true);
     };
 
@@ -139,6 +144,7 @@ const AudioRecorder = () => {
 
     const discardRecording = () => {
         setRecordedBlobUrl(null);
+        setLocalAudioSource(null);
         if (wavesurferRef.current) {
             // @ts-ignore
             wavesurferRef.current.empty();

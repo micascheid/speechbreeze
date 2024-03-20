@@ -7,6 +7,7 @@ export default function useLsas() {
     const user = useUser();
     const { data, isLoading, error } = useSWR(`/lsas?uid=${user?.uid}`, fetcher);
 
+
     return {
         lsas: data,
         isLoading,

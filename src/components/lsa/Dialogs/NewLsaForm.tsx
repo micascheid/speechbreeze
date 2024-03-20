@@ -1,5 +1,15 @@
 import {Patient, PatientNew} from "@/data/Patients";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField} from "@mui/material";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle, FormControl, FormControlLabel,
+    IconButton, Radio, RadioGroup, Select,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
 import React, {useState} from "react";
 import {bool} from "yup";
 import {Lsa} from "@/data/Lsa";
@@ -8,6 +18,7 @@ import useLsas from "@/hooks/lsa/useLsas";
 import useUser from "@/hooks/useUser";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import {event} from "next/dist/build/output/log";
 
 
 type NewLsaFormProps = {
@@ -17,64 +28,63 @@ type NewLsaFormProps = {
 
 export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormProps) {
     const [open, setOpen] = useState<boolean>(false);
+    const [name, setName] = useState('');
+    const [nameError, setNameError] = useState('');
     const [savingLsa, setSavingLsa] = useState(false);
-    const [newLsaData, setNewLsaData] = useState<{ name: string }>({ name: '' });
+    const [newLsaData, setNewLsaData] = useState<{ name: string, audio_type: string | null }>({ name: '', audio_type: null });
     const [lsaSaveError, setLsaSaveError] = useState<string | null>(null);
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
     const {uid: slp_id} = useUser() || {};
 
     const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
-
+    const [audioSelection, setAudioSelection] = useState<"record" | "upload" | "noaudio" | null>(null);
     const handleClose = () => {
         setOpen(false);
+        setName('');
         setSavingLsa(false);
-        setNewLsaData({ name: '' });
+        setAudioSelection(null);
+        setNewLsaData({ name: '', audio_type: null});
         setLsaSaveError(null);
     }
 
-    const handleLsaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewLsaData({ name: e.target.value });
-    };
 
-    const validateLsaName = (name: string): string => {
-        const maxLength = 255;
-        const regex = /^[a-zA-Z0-9-_ ]+$/; // Allow letters, numbers, hyphens, underscores, and spaces
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
 
-        if (name.length === 0) {
-            return "Name cannot be empty.";
+        if (!validateName(event.target.value)) {
+            if (event.target.value.length > 255) {
+                setNameError('Input is not valid. Maximum length is 255 characters.')
+            } else {
+                setNameError('Input is not valid. Only numbers, characters, _, - and spaces are allowed.')
+            }
+        } else {
+            setNameError('');
+            setNewLsaData(prevState => {
+                return { ...prevState, name: event.target.value };
+            });
         }
-        if (name.length > maxLength) {
-            return "Name must be 255 characters or less.";
-        }
-        if (!regex.test(name)) {
-            return "Name contains invalid characters. Only letters, numbers, hyphens, underscores, and spaces are allowed.";
-        }
-        // Trim leading and trailing spaces (consider doing this before setting the state)
-        if (name.trim() !== name) {
-            return "Name cannot start or end with a space.";
-        }
-        return ""; // Return an empty string to indicate valid name
-    };
+    }
 
-    const handleContinue = () => {
-        if (selectedLsa) {
-            setSelectedLsaId(selectedLsa.lsa_id);
-        }
+    const validateName = (name: string): boolean => {
+        // Regex explanation: start^ with a-z A-Z 0-9 _ - characters
+        const validName = /^[a-zA-Z0-9-_ ]{1,255}$/;
+        return validName.test(name);
     }
 
 
     const saveNewLsa = async () => {
-        const validationError = validateLsaName(newLsaData.name);
-        if (validationError !== "") {
-            setLsaSaveError(validationError);
-            setSavingLsa(false);
-            return; // Prevent further execution
-        }
+        console.log("clicked");
+        // const validationError = validateName(newLsaData.name);
+        // if (validationError) {
+        //     setLsaSaveError('');
+        //     setSavingLsa(false);
+        //     return; // Prevent further execution
+        // }
 
         setSavingLsa(true);
         try {
             await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});
-            await mutateLsas(`/lsa?uid=${slp_id}`);
+            await mutateLsas(`/lsas?uid=${slp_id}`);
             handleClose();
         } catch (error: any) {
             console.error(error);
@@ -98,9 +108,6 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
                 <IconButton onClick={() => setOpen(true)} disabled={!selectedPatient}>
                     <AddBoxIcon fontSize={"large"} color={!selectedPatient ? "secondary" : "primary"}/>
                 </IconButton>
-                {/*<Button variant={"contained"} color="secondary" disabled={!selectedLsa} onClick={handleContinue}>*/}
-                {/*    Continue LSA*/}
-                {/*</Button>*/}
             </Stack>
             <Dialog open={open} onClose={handleClose} sx={{
                 "& .MuiDialog-paper": {
@@ -117,17 +124,45 @@ export default function NewLsaForm({selectedPatient, selectedLsa}: NewLsaFormPro
                         type="text"
                         fullWidth
                         name="name"
-                        value={newLsaData.name}
-                        onChange={handleLsaChange}
-                        error={!!lsaSaveError}
-                        helperText={lsaSaveError}
+                        value={name}
+                        onChange={handleNameChange}
+                        error={!!nameError}
+                        helperText={nameError}
+                        sx={{mb: 2}}
                     />
+                    <Typography variant={"subtitle1"}>Please select the audio you&apos;ll be using.</Typography>
+
+                    <FormControl component="fieldset">
+                        <RadioGroup
+                            aria-label="audio selection"
+                            defaultValue=""
+                            name="radio-buttons-group"
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                const value = event.target.value;
+                                if (["record", "upload", "noaudio"].includes(value)) {
+                                    setAudioSelection(value as "record" | "upload" | "noaudio");
+                                    setNewLsaData(prevState => {
+                                        return { ...prevState, audio_type: value };
+                                    })
+                                }
+                            }}
+                        >
+                            <FormControlLabel value="record" control={<Radio />} label="Record" />
+                            <FormControlLabel value="upload" control={<Radio />} label="Upload Audio" />
+                            <FormControlLabel value="noaudio" control={<Radio />} label="No Audio" />
+                        </RadioGroup>
+                    </FormControl>
                 </DialogContent>
+
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)} color="primary" disabled={savingLsa}>
+                    <Button onClick={() => setOpen(false)} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={saveNewLsa} color="primary" disabled={savingLsa}>
+                    <Button
+                        onClick={saveNewLsa}
+                        color="primary"
+                        disabled={((!!nameError || !name) || !audioSelection) || savingLsa}
+                    >
                         {savingLsa ? 'Saving...' : 'Save'}
                     </Button>
                 </DialogActions>

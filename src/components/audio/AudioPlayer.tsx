@@ -25,7 +25,7 @@ export default function AudioPlayer() {
                     },
                 },
             },
-        ].filter(Boolean);
+        ];
     }, []);
 
     const wavesurferRef = useRef();

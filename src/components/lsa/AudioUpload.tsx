@@ -16,33 +16,22 @@ import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import {useTheme} from "@mui/material/styles";
 import ContactUsBox from "@/components/ContactUsBox";
 
-interface AudioChoiceProps {
+interface AudioUploadPropse {
     setAudioSelection: (value: "record" | "upload" | "noaudio" | null) => void;
 }
 
-export default function AudioChoice({ setAudioSelection }: AudioChoiceProps) {
+export default function AudioUpload() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);  // controls the modal visibility
     const [uploadStatus, setUploadStatus] = useState<'loading' | 'success' | 'error'>('loading');
-    const {selectedLsaId, setAudioFileUrl} = useSelectedLSA();
+    const {selectedLsaId, setAudioFileUrl, setLocalAudioSource} = useSelectedLSA();
     const theme = useTheme();
 
-
-
     const handleUpload = () => {
-        setAudioSelection("upload");
         fileInputRef.current?.click();
     };
-
-    const handleRecord = () => {
-        setAudioSelection("record");
-    }
-
-    const handleNoAudio = () => {
-        setAudioSelection("noaudio");
-    }
 
     const uploadAudio = async (file: any) => {
         setOpen(true);
@@ -85,8 +74,7 @@ export default function AudioChoice({ setAudioSelection }: AudioChoiceProps) {
         if (file) {
             // Check if the file type is allowed
             if (["audio/mpeg", "audio/ogg", "audio/wav"].includes(file.type)) {
-                console.log("File chosen:", file.name);
-                await uploadAudio(file);
+                setLocalAudioSource(file);
             } else {
                 // Handle unsupported file type
                 console.log("Unsupported file type:", file.type);
@@ -128,7 +116,6 @@ export default function AudioChoice({ setAudioSelection }: AudioChoiceProps) {
     return (
         <Card>
             <Stack direction={"row"} spacing={2}>
-                <Button onClick={handleRecord}>Record</Button>
                 <Button onClick={handleUpload}>Upload File</Button>
                 <input
                     type="file"
@@ -137,9 +124,6 @@ export default function AudioChoice({ setAudioSelection }: AudioChoiceProps) {
                     onChange={handleFileChange}
                     accept=".mp3,.ogg,.wav"
                 />
-                <Button onClick={handleNoAudio}>
-                    No Audio
-                </Button>
             </Stack>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity="error" sx={{width: '100%'}}>
