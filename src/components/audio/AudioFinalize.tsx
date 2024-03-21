@@ -24,8 +24,6 @@ export default function AudioFinalize({setFinalize, disabled}: AudioFinalizeProp
 
     return (
         <>
-
-
             <Button variant={"outlined"} onClick={handleOpen} disabled={disabled}>Finalize Audio Choice</Button>
             <Dialog
                 open={open}

@@ -15,6 +15,7 @@ import axios from "axios";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import {useTheme} from "@mui/material/styles";
 import ContactUsBox from "@/components/ContactUsBox";
+import AudioPlayerLocal from "../audio/AudioPlayerLocal";
 
 interface AudioUploadPropse {
     setAudioSelection: (value: "record" | "upload" | "noaudio" | null) => void;
@@ -26,7 +27,8 @@ export default function AudioUpload() {
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);  // controls the modal visibility
     const [uploadStatus, setUploadStatus] = useState<'loading' | 'success' | 'error'>('loading');
-    const {selectedLsaId, setAudioFileUrl, setLocalAudioSource} = useSelectedLSA();
+    const [fileName, setFileName] = useState('');
+    const {selectedLsaId, setAudioFileUrl, localAudioSource, setLocalAudioSource} = useSelectedLSA();
     const theme = useTheme();
 
     const handleUpload = () => {
@@ -73,6 +75,7 @@ export default function AudioUpload() {
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
             // Check if the file type is allowed
+            setFileName(file.name);
             if (["audio/mpeg", "audio/ogg", "audio/wav"].includes(file.type)) {
                 setLocalAudioSource(file);
             } else {
@@ -114,9 +117,9 @@ export default function AudioUpload() {
     }
 
     return (
-        <Card>
-            <Stack direction={"row"} spacing={2}>
-                <Button onClick={handleUpload}>Upload File</Button>
+        <Box sx={{mb:1}} >
+            <Stack>
+                <Button variant={"outlined"} onClick={handleUpload} sx={{maxWidth: 150}}>Upload File</Button>
                 <input
                     type="file"
                     style={{display: "none"}}
@@ -124,6 +127,12 @@ export default function AudioUpload() {
                     onChange={handleFileChange}
                     accept=".mp3,.ogg,.wav"
                 />
+                {fileName && (
+                    <Typography>{fileName}</Typography>
+                )}
+                {localAudioSource && (
+                    <AudioPlayerLocal />
+                )}
             </Stack>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity="error" sx={{width: '100%'}}>
@@ -143,6 +152,6 @@ export default function AudioUpload() {
                     </Box>
                 </DialogContent>
             </Dialog>
-        </Card>
+        </Box>
     );
 }

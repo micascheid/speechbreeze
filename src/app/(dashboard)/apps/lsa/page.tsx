@@ -1,6 +1,6 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {Box, Button, Card, Grid, Skeleton, Stack, Tab, Tabs, Typography} from '@mui/material';
+import {Box, Button, Card, CircularProgress, Grid, Skeleton, Stack, Tab, Tabs, Typography} from '@mui/material';
 import MainCard from '@/components/MainCard';
 import Transcription from "@/components/lsa/Transcription";
 import useUser from "@/hooks/useUser";
@@ -14,6 +14,9 @@ import AudioNone from "@/components/audio/AudioNone";
 import axios from "axios";
 import AudioUpload from "@/components/lsa/AudioUpload";
 import ContactUsBox from "@/components/ContactUsBox";
+import AudioUploadStatus from "@/components/lsa/Dialogs/AudioUploadStatus";
+import {IconButton, Collapse} from "@mui/material";
+import {ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon} from "@mui/icons-material";
 
 interface ContentProps {
     audioSelection: "record" | "upload" | "noaudio" | null;
@@ -21,11 +24,13 @@ interface ContentProps {
 }
 
 function Content({audioSelection, setAudioSelection}: ContentProps) {
-    const {lsa, isLoading, isError} = useLsa();
+    const {lsa, isLoading, isError, mutateLsa} = useLsa();
     const isDisabled = !lsa;
     const audio_type = lsa?.audio_type;
     const audio_url = lsa?.audiofile_url;
     const [finalize, setFinalize] = useState<boolean>(false);
+    const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error' | null>(null);
+
 
     const {selectedLsaId, localAudioSource} = useSelectedLSA();
 
@@ -94,17 +99,23 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
         console.log("audio type", audio_type);
         if (audio_type === 'record') {
             try {
-                console.log("uploading blob url");
+                setUploadStatus('uploading');
                 await uploadAudioBlobUrl(localAudioSource as string);
+                await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
+                setUploadStatus('success');
             } catch (error) {
                 console.log("error uploading recording", error);
+                setUploadStatus('error');
             }
         } else if (audio_type === 'upload') {
             try {
-                console.log("uploading file url");
+                setUploadStatus('uploading');
                 await uploadAudio(localAudioSource as File);
+                await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
+                setUploadStatus('success');
             } catch (error) {
                 console.log("error uploading file", error);
+                setUploadStatus('error');
             }
         }
         setFinalize(false);
@@ -116,26 +127,28 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
             console.log("you getting called?");
             finalizeAudio();
         }
-    }, [finalize, finalizeAudio]);
+    }, [finalize]);
 
 
     return (
         <Grid item xs={12}>
-            <MainCard title={`Working LSA: ${!lsa?.name ? "Select or Start LSA Above" : lsa.name}`}>
+            <MainCard title={`Working LSA: ${!lsa?.name ? "Select or Start LSA Above" : lsa.name}`} collapsible={true}>
                 <Grid container spacing={2}>
-
                     {!selectedLsaId ? (
                         <Grid item xs={12}>
-                            <Skeleton variant={'rectangular'} animation={false} height={200}/>
+                            <Skeleton variant={'rounded'} animation={false} height={200}/>
                         </Grid>
                     ) : isLoading ? (
                         <Grid item xs={12}>
-                            <Skeleton variant={'rounded'} animation={"wave"} height={200}/>
+                            <Box height={200}>
+                                <CircularProgress/>
+                            </Box>
                         </Grid>
                     ) : isError ? (
                         <Grid item xs={12}>
-                            <Typography variant={"subtitle1"}>We are having troubles loading this LSA at this time. Try reloading, or feel free to reach out.</Typography>
-                            <ContactUsBox />
+                            <Typography variant={"subtitle1"}>We are having troubles loading this LSA at this time. Try
+                                reloading, or feel free to reach out.</Typography>
+                            <ContactUsBox/>
                         </Grid>
                     ) : (
                         <>
@@ -151,7 +164,7 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
                                 </Grid>
                             ) : audio_type === 'upload' ? (
                                 <Grid item xs={12}>
-                                    <AudioUpload />
+                                    <AudioUpload/>
                                     <AudioFinalize setFinalize={setFinalize} disabled={!localAudioSource}/>
                                 </Grid>
                             ) : (
@@ -165,6 +178,9 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
 
                 </Grid>
             </MainCard>
+            {finalize && (
+                <AudioUploadStatus uploadStatus={uploadStatus} setUploadStatus={setUploadStatus}/>
+            )}
         </Grid>
     )
 }
@@ -172,18 +188,20 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
 export default function LsaTool() {
     const user = useUser();
     const [audioSelection, setAudioSelection] = useState<"record" | "upload" | "noaudio" | null>(null);
-
+    const [isExpanded, setIsExpanded] = useState(false);
+    const handleExpandClick = () => {
+        setIsExpanded(!isExpanded);
+    };
     return (
         <SelectedLSAProvider>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <MainCard title={"Patient Management"}>
+                    <MainCard title={"Patient Management"} collapsible={true}>
                         <PatientSelector/>
                     </MainCard>
                 </Grid>
                 <Content audioSelection={audioSelection} setAudioSelection={setAudioSelection}/>
             </Grid>
-
         </SelectedLSAProvider>
     );
 }

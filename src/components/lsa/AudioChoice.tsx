@@ -129,7 +129,7 @@ export default function AudioChoice({ setAudioSelection }: AudioChoiceProps) {
         <Card>
             <Stack direction={"row"} spacing={2}>
                 <Button onClick={handleRecord}>Record</Button>
-                <Button onClick={handleUpload}>Upload File</Button>
+                <Button onClick={handleUpload} >Upload File</Button>
                 <input
                     type="file"
                     style={{display: "none"}}
