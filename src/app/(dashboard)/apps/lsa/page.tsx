@@ -13,6 +13,7 @@ import AudioFinalize from "@/components/audio/AudioFinalize";
 import AudioNone from "@/components/audio/AudioNone";
 import axios from "axios";
 import AudioUpload from "@/components/lsa/AudioUpload";
+import ContactUsBox from "@/components/ContactUsBox";
 
 interface ContentProps {
     audioSelection: "record" | "upload" | "noaudio" | null;
@@ -115,7 +116,7 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
             console.log("you getting called?");
             finalizeAudio();
         }
-    }, [finalize]);
+    }, [finalize, finalizeAudio]);
 
 
     return (
@@ -126,6 +127,15 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
                     {!selectedLsaId ? (
                         <Grid item xs={12}>
                             <Skeleton variant={'rectangular'} animation={false} height={200}/>
+                        </Grid>
+                    ) : isLoading ? (
+                        <Grid item xs={12}>
+                            <Skeleton variant={'rounded'} animation={"wave"} height={200}/>
+                        </Grid>
+                    ) : isError ? (
+                        <Grid item xs={12}>
+                            <Typography variant={"subtitle1"}>We are having troubles loading this LSA at this time. Try reloading, or feel free to reach out.</Typography>
+                            <ContactUsBox />
                         </Grid>
                     ) : (
                         <>

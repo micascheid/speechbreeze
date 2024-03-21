@@ -13,7 +13,7 @@ const ContactUsBox = () => {
 
     return (
         <Stack>
-            <Typography variant={"subtitle2"}>Info:</Typography>
+            <Typography variant={"subtitle1"}>Info:</Typography>
             <Typography variant="body1">
                 Email: micalinscheid@speechbreeze.com
             </Typography>
