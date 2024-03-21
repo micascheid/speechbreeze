@@ -32,7 +32,7 @@ export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [selectedLsa, setSelectedLsa] = useState<Lsa | null>(null);
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
-    const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
+    const { selectedLsaId, setSelectedLsaId, resetLsa } = useSelectedLSA();
     const theme = useTheme();
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
 
@@ -49,6 +49,7 @@ export default function PatientSelector() {
 
     const handleChosenLsa = () => {
         if (selectedLsa){
+            resetLsa();
             setSelectedLsaId(selectedLsa.lsa_id);
         }
     }
@@ -60,7 +61,7 @@ export default function PatientSelector() {
             <Grid item xs={12} sm={6}>
                 <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
                     <Stack direction={"row"}>
-                        <NewPatientForm />
+                        <NewPatientForm onPatientAdd={(newPatient: Patient) => setSelectedPatient(newPatient)}/>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
@@ -103,7 +104,6 @@ export default function PatientSelector() {
                             )}
                         </TableBody>
                     </Table>
-                    {/*</Box>*/}
                 </TableContainer>
             </Grid>
 
@@ -111,12 +111,11 @@ export default function PatientSelector() {
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
                         <Stack direction={"row"}>
-                            <NewLsaForm selectedPatient={selectedPatient} selectedLsa={selectedLsa}/>
+                            <NewLsaForm selectedPatient={selectedPatient} onLsaAdd={(selectedLsa: Lsa) => {setSelectedLsa(selectedLsa)}}/>
                             <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                                 Patient LSA&apos;s
                             </Typography>
                         </Stack>
-
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
@@ -137,7 +136,7 @@ export default function PatientSelector() {
                                         {lsas
                                             .filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
                                             .map((lsa: Lsa, i: number) => {
-                                                const date = new Date(lsa.date);
+                                                const date = new Date(lsa.timestamp);
                                                 const formattedDate = date.toLocaleDateString();
                                                 const formattedTime = date.toLocaleTimeString('en-us', {
                                                     hour: '2-digit',

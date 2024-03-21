@@ -35,7 +35,6 @@ const Landing = () => {
     const router = useRouter();
 
     const handleLogin = () => {
-        console.log("getting called?");
         signIn('cognito', { callbackUrl: APP_DEFAULT_PATH });
     }
 

@@ -1,19 +1,15 @@
-import { WaveSurfer, WaveForm, Region, Marker} from "wavesurfer-react";
+import { WaveSurfer, WaveForm } from "wavesurfer-react";
 import MainCard from "@/components/MainCard";
-import {Card, Typography, Button} from "@mui/material";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { Card, Typography, Button } from "@mui/material";
 import RegionsPlugin from "wavesurfer.js/plugins/regions";
 import TimelinePlugin from "wavesurfer.js/plugins/timeline";
-import waveSurfer from "wavesurfer-react/src/containers/WaveSurfer";
-import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
-import useSWR from "swr";
-import {fetcher} from "@/utils/axios";
-
+import { useSelectedLSA } from "@/contexts/SelectedLSAContext";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export default function AudioPlayer() {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    const { selectedLsaId, audioFileUrl } = useSelectedLSA();
-    const { data, isLoading, error } = useSWR(selectedLsaId ? `/get-audio-url?lsa_id=${selectedLsaId}` : null, fetcher);
+    const { localAudioSource } = useSelectedLSA();
+
     const plugins = useMemo(() => {
         return [
             {
@@ -26,20 +22,18 @@ export default function AudioPlayer() {
                     },
                 },
             },
-        ].filter(Boolean);
+        ];
     }, []);
 
     const wavesurferRef = useRef();
     const handleWSMount = useCallback((waveSurfer: any) => {
         wavesurferRef.current = waveSurfer;
-        if (wavesurferRef.current) {
-            if(data && data.url) {            // Check if data and data.url exists
-                console.log("url", data?.url);
-                waveSurfer.load(data.url);
-            }
+        if (wavesurferRef.current && localAudioSource && localAudioSource instanceof File) {
+            const url = URL.createObjectURL(localAudioSource);
+            waveSurfer.load(url);
+            URL.revokeObjectURL(url); // Revoke the blob URL
         }
-
-    }, [data]);
+    }, [localAudioSource]);
 
     const handlePlayPause = () => {
         if (wavesurferRef.current) {
@@ -50,19 +44,22 @@ export default function AudioPlayer() {
     };
 
     useEffect(() => {
-        if (wavesurferRef.current && data?.url) {
+        if (wavesurferRef.current && localAudioSource && localAudioSource instanceof File) {
+            const url = URL.createObjectURL(localAudioSource);
             // @ts-ignore
-            wavesurferRef.current.load(data.url);
+            wavesurferRef.current.load(url);
+            URL.revokeObjectURL(url); // Revoke the blob URL
         }
-    }, [data]);
+    }, [localAudioSource]);
 
     return (
         <Card>
             <WaveSurfer
                 onMount={handleWSMount}
                 plugins={plugins}
-                cursorColor={"transparent"}
+                cursorColor={"#000"}
                 container={"#waveform"}
+                cursorWidth={2}
             >
                 <WaveForm id={"waveform"}/>
                 <div id="timeline"/>
