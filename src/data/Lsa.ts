@@ -4,6 +4,7 @@ export type Lsa = {
     name: string;
     timestamp: string;
     audiofile_url: string;
+    audio_type: string;
     transcription: string;
     mlu: number;
     tnw: number;

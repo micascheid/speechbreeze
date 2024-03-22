@@ -10,7 +10,6 @@ export default function useLsa() {
     const { data, isLoading, error } = useSWR(!!selectedLsaId ? `/lsa?lsaId=${selectedLsaId}` : null, fetcher);
 
     useEffect(() => {
-        console.log("being called");
         mutate(`/lsa?lsaId=${selectedLsaId}`)
     }, [selectedLsaId]);
 
