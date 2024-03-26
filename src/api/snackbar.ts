@@ -26,7 +26,7 @@ const initialState: SnackbarProps = {
   actionButton: false,
   maxStack: 3,
   dense: false,
-  iconVariant: 'usedefault'
+  iconVariant: 'usedefault',
 };
 
 export function useGetSnackbar() {

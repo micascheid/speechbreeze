@@ -77,7 +77,7 @@ export default function AudioPlayer() {
             >
                 <WaveForm id={"waveform"}>
                     {!isWavesurferLoaded && (
-                        <CircularProgress />
+                        <CircularProgress sx={{m: 3}}/>
                     )}
                 </WaveForm>
                 <div id="timeline"/>

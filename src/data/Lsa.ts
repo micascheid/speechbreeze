@@ -6,6 +6,8 @@ export type Lsa = {
     audiofile_url: string;
     audio_type: string;
     transcription: string;
+    transcription_automated: boolean;
+    transcription_final: boolean;
     mlu: number;
     tnw: number;
     wps: number;

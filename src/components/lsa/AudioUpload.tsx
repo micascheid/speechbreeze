@@ -35,41 +35,6 @@ export default function AudioUpload() {
         fileInputRef.current?.click();
     };
 
-    const uploadAudio = async (file: any) => {
-        setOpen(true);
-        setUploadStatus('loading');
-        const formData = new FormData();
-        formData.append('audio', file);
-        if (selectedLsaId !== null) {
-            formData.append('lsa_id', selectedLsaId.toString());
-        }
-        try {
-            const response = await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // This header tells the server about the type of the content
-                },
-            });
-            setUploadStatus('success');
-            setAudioFileUrl(response.data.file_url);
-
-        } catch (error: any) {
-            console.log("Error message", error.message);
-            setUploadStatus('error');
-            if (error.response) {
-                //The request was made and the server responded with a status code that falls out of the range of 2xx
-                console.log("Error data", error.response.data);
-                console.log("Error status", error.response.status);
-                console.log("Error headers", error.response.headers);
-            } else if (error.request) {
-                //The request was made but no response was received
-                console.log("No response received", error.request);
-            }
-
-            console.error("Error uploading audio:", error);
-        }
-    }
-
-
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log("handle file change");
         const file = event.target.files ? event.target.files[0] : null;

@@ -55,7 +55,7 @@ export default function AudioChoice({ setAudioSelection }: AudioChoiceProps) {
         try {
             const response = await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data', // This header tells the server about the type of the content
+                    'Content-Type': 'multipart/form-data',
                 },
             });
             setUploadStatus('success');

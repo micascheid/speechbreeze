@@ -4,7 +4,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle, FormControl, FormControlLabel,
+    DialogTitle, FormControl, FormControlLabel, FormLabel,
     IconButton, Radio, RadioGroup, Select,
     Stack,
     TextField,
@@ -35,6 +35,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
     const [newLsaData, setNewLsaData] = useState<{ name: string, audio_type: string | null }>({ name: '', audio_type: null });
     const [lsaSaveError, setLsaSaveError] = useState<string | null>(null);
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
+    const [isTranscriptionAutomated, setIsTranscriptionAutomated] = useState<boolean | null>(null);
     const {uid: slp_id} = useUser() || {};
 
     const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
@@ -46,6 +47,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
         setAudioSelection(null);
         setNewLsaData({ name: '', audio_type: null});
         setLsaSaveError(null);
+        setIsTranscriptionAutomated(null);
     }
 
 
@@ -90,7 +92,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
             let errorMsg = 'Error saving LSA. Please, try again.';
             if (error.response) {
                 // The request was made and server responded with a status outside of the 2xx range
-                errorMsg = error.response.data.message || 'Error saving LSA. Please, try again.';
+                errorMsg = error.message || 'Error saving LSA. Please, try again.';
             } else if (error.request) {
                 // The request was made but no response was received
                 errorMsg = 'We\'re having trouble saving at this time. Contact us or try again later';
@@ -128,40 +130,69 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
                         helperText={nameError}
                         sx={{mb: 2}}
                     />
-                    <Typography variant={"subtitle1"}>Please select the audio you&apos;ll be using.</Typography>
-
-                    <FormControl component="fieldset">
-                        <RadioGroup
-                            aria-label="audio selection"
-                            defaultValue=""
-                            name="radio-buttons-group"
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                const value = event.target.value;
-                                if (["record", "upload", "noaudio"].includes(value)) {
-                                    setAudioSelection(value as "record" | "upload" | "noaudio");
+                    <Stack spacing={2}>
+                        <FormControl component="fieldset">
+                            <FormLabel component={"legend"}><Typography variant={"subtitle1"} color={"#000"}>Please select the audio you&apos;ll be using.</Typography></FormLabel>
+                            <RadioGroup
+                                aria-label="audio selection"
+                                defaultValue=""
+                                name="radio-buttons-group"
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    const value = event.target.value;
+                                    if (["record", "upload", "noaudio"].includes(value)) {
+                                        setAudioSelection(value as "record" | "upload" | "noaudio");
+                                        if (value === "noaudio") {
+                                            setIsTranscriptionAutomated(false);
+                                        }
+                                        setNewLsaData(prevState => {
+                                            return { ...prevState, audio_type: value };
+                                        })
+                                    }
+                                }}
+                            >
+                                <FormControlLabel value="record" control={<Radio />} label="Record" />
+                                <FormControlLabel value="upload" control={<Radio />} label="Upload Audio" />
+                                <FormControlLabel value="noaudio" control={<Radio />} label="No Audio" />
+                            </RadioGroup>
+                        </FormControl>
+                        <FormControl component="fieldset" disabled={audioSelection === "noaudio"}>
+                            <FormLabel component={"legend"}><Typography variant={"subtitle1"} color={"#000"}>Transcription Type</Typography></FormLabel>
+                            <RadioGroup
+                                aria-label="transcription type"
+                                name="transcription-type"
+                                value={isTranscriptionAutomated === null ? '' : isTranscriptionAutomated ? 'auto' : 'manual'}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    const isAutomated = event.target.value === "auto";
+                                    console.log("auto", isAutomated);
+                                    setIsTranscriptionAutomated(isAutomated);
                                     setNewLsaData(prevState => {
-                                        return { ...prevState, audio_type: value };
-                                    })
-                                }
-                            }}
-                        >
-                            <FormControlLabel value="record" control={<Radio />} label="Record" />
-                            <FormControlLabel value="upload" control={<Radio />} label="Upload Audio" />
-                            <FormControlLabel value="noaudio" control={<Radio />} label="No Audio" />
-                        </RadioGroup>
-                    </FormControl>
+                                        return { ...prevState, transcription_automated: isAutomated };
+                                    });
+                                }}
+                                // disabled={audioSelection === "noaudio"} // disable if "No Audio" is selected
+                            >
+                                <FormControlLabel value="auto" control={<Radio />} label="Automated" />
+                                <FormControlLabel value="manual" control={<Radio />} label="Manual" />
+                            </RadioGroup>
+                        </FormControl>
+                    </Stack>
+
+                    <Typography color="error">{lsaSaveError}</Typography>
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)} color="primary">
+
+                    <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
                     <Button
                         onClick={saveNewLsa}
                         color="primary"
-                        disabled={((!!nameError || !name) || !audioSelection) || savingLsa}
+                        disabled={
+                            savingLsa || !name || !!nameError || !audioSelection || (audioSelection !== "noaudio" && isTranscriptionAutomated === null)
+                        }
                     >
-                        {savingLsa ? 'Saving...' : 'Save'}
+                        {savingLsa ? 'Creating...' : 'Create'}
                     </Button>
                 </DialogActions>
             </Dialog>
