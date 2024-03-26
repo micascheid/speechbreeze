@@ -1,7 +1,5 @@
-import { WaveSurfer, WaveForm } from "wavesurfer-react";
-import MainCard from "@/components/MainCard";
-import {Card, Typography, Button} from "@mui/material";
-import RegionsPlugin from "wavesurfer.js/plugins/regions";
+import {WaveSurfer, WaveForm} from "wavesurfer-react";
+import {Card, Typography, Button, Skeleton, CircularProgress, Box} from "@mui/material";
 import TimelinePlugin from "wavesurfer.js/plugins/timeline";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import useSWR from "swr";
@@ -11,8 +9,10 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 export default function AudioPlayer() {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    const { selectedLsaId, audioFileUrl } = useSelectedLSA();
-    const { data, isLoading, error } = useSWR(selectedLsaId ? `/get-audio-url?lsa_id=${selectedLsaId}` : null, fetcher);
+    const {selectedLsaId, audioFileUrl} = useSelectedLSA();
+    const {data, isLoading, error} = useSWR(selectedLsaId ? `/get-audio-url?lsa_id=${selectedLsaId}` : null, fetcher);
+    const [isWavesurferLoaded, setIsWaversurferLoaded] = useState(false);
+    console.log("audioplayer");
     const plugins = useMemo(() => {
         return [
             {
@@ -32,10 +32,21 @@ export default function AudioPlayer() {
     const handleWSMount = useCallback((waveSurfer: any) => {
         wavesurferRef.current = waveSurfer;
         if (wavesurferRef.current) {
-            if(data && data.url) {            // Check if data and data.url exists
+            if (data && data.url) {            // Check if data and data.url exists
                 console.log("url", data?.url);
                 waveSurfer.load(data.url);
             }
+
+            // @ts-ignore
+            wavesurferRef.current.on("loading", () => {
+                console.log("loading");
+            });
+
+            // @ts-ignore
+            wavesurferRef.current.on("ready", () => {
+                console.log("ready");
+                setIsWaversurferLoaded(true);
+            });
         }
 
     }, [data]);
@@ -64,7 +75,11 @@ export default function AudioPlayer() {
                 container={"#waveform"}
                 cursorWidth={2}
             >
-                <WaveForm id={"waveform"}/>
+                <WaveForm id={"waveform"}>
+                    {!isWavesurferLoaded && (
+                        <CircularProgress sx={{m: 3}}/>
+                    )}
+                </WaveForm>
                 <div id="timeline"/>
             </WaveSurfer>
             <Button variant={"outlined"} onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</Button>

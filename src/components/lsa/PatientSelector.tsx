@@ -60,7 +60,7 @@ export default function PatientSelector() {
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
                 <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
-                    <Stack direction={"row"}>
+                    <Stack direction={"row"} >
                         <NewPatientForm onPatientAdd={(newPatient: Patient) => setSelectedPatient(newPatient)}/>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
@@ -134,7 +134,7 @@ export default function PatientSelector() {
                                 ) : (
                                     <>
                                         {lsas
-                                            .filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
+                                            ?.filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
                                             .map((lsa: Lsa, i: number) => {
                                                 const date = new Date(lsa.timestamp);
                                                 const formattedDate = date.toLocaleDateString();

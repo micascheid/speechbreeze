@@ -45,10 +45,11 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
 
         if (selectedLsaId !== null) {
             formData.append('lsa_id', selectedLsaId.toString());
+            formData.append('transcription_automated', lsa.transcription_automated);
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
+            await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -72,9 +73,10 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
         formData.append('audio', file);
         if (selectedLsaId !== null) {
             formData.append('lsa_id', selectedLsaId.toString());
+            formData.append('transcription_automated', lsa.transcription_automated);
         }
         try {
-            const response = await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
+            await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // This header tells the server about the type of the content
                 },
@@ -201,6 +203,11 @@ export default function LsaTool() {
                     </MainCard>
                 </Grid>
                 <Content audioSelection={audioSelection} setAudioSelection={setAudioSelection}/>
+                <Grid item xs={12}>
+                    <MainCard title={"Transcription"} collapsible={true}>
+                        <Transcription />
+                    </MainCard>
+                </Grid>
             </Grid>
         </SelectedLSAProvider>
     );
