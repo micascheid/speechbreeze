@@ -5,6 +5,7 @@ import ContactUsBox from "@/components/ContactUsBox";
 import React from "react";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 import TranscriptionEdit from "@/components/lsa/TranscriptionEdit";
+import UtteranceBuilder from "@/components/lsa/UtteranceBuilder";
 
 export default function Transcription() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
@@ -29,7 +30,10 @@ export default function Transcription() {
                     <ContactUsBox/>
                 </Grid>
             ) : lsa?.transcription_final ? (
-                <Typography>{lsa.transcription}</Typography>
+                <Grid xs={12}>
+                    <Typography>Lets build your utterances and get final results!</Typography>
+                    <UtteranceBuilder transcription={lsa.transcription}/>
+                </Grid>
             ) : (
                 <Grid item xs={12}>
                     <TranscriptionEdit />
