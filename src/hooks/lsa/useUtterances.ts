@@ -9,7 +9,6 @@ export default function useUtterances() {
     const { selectedLsaId } = useSelectedLSA();
     const { data, isLoading, error } = useSWR(!!selectedLsaId ? `http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances/get`: null, fetcher);
 
-    console.log("DATA:", data);
     const handleBatchUpdate = async (utterances: Utterance[]) => {
         try {
             console.log("UTTERANCES BEFORE PUT:", utterances);

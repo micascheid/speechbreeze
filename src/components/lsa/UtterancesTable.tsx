@@ -9,7 +9,7 @@ interface UtteranceTablesProps {
 const UtterancesTable = ({ utterances }: UtteranceTablesProps) => {
     // Ensure the array is at least 10 items long by filling with empty objects if necessary
     const filledUtterances = [...utterances, ...Array(Math.max(0, 10 - utterances.length)).fill({ text: '' })];
-
+    console.log("utterances", utterances);
     return (
         <TableContainer component={Paper} sx={{ maxHeight: 440}}>
             <Table stickyHeader sx={{ minWidth: 300 }} aria-label="simple table">

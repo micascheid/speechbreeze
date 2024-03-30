@@ -19,6 +19,17 @@ interface UtteranceBuilderProps {
     transcription: string;
 }
 
+const TransparentText = styled(Typography)(() => ({
+    color: 'transparent',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    transform: "translateY(-8px)",
+    '&::selection': {
+        background: 'rgba(0,0,0,0.5)' // Adjust this color as needed (currently semi-transparent black)
+    }
+}));
+
 const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
     const [selectionRange, setSelectionRange] = useState<HighlightRange | null>(null);
     const [selectionRanges, setSelectionRanges] = useState<HighlightRange[]>([]);
@@ -32,10 +43,20 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0 && selection.toString().trim().length > 0) {
             const range = selection.getRangeAt(0);
+            const parentElement = range.startContainer.parentElement;
             const text = selection.toString();
-            const start = transcription.indexOf(text);
-            const end = start + text.length;
+            let start = 0;
+            for (const node of parentElement.childNodes) {
+                if (node === range.startContainer) {
+                    start += range.startOffset;
+                    break;
+                } else {
+                    start += node.textContent.length;
+                }
+            }
+            console.log("start", start);
 
+            const end = start + text.length;
             // Store the selected text together with range
             setSelectionRange({start, end, text});
 
@@ -79,9 +100,13 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         }
     };
 
-    const orderedUtterances = localUtterances?.sort((a, b) => {
-        return transcription.indexOf(a.utterance_text) - transcription.indexOf(b.utterance_text);
-    });
+    let orderedUtterances: Utterance[] = [];
+    if (localUtterances) {
+        const sortedUtterances = [...localUtterances].sort((a, b) => a.start - b.start || a.end - b.end);
+        orderedUtterances = sortedUtterances.map((utterance, index) => {
+            return {...utterance, utterance_order: index};
+        });
+    }
 
     // Function to render text with highlights
     const renderTextWithHighlights = () => {
@@ -138,13 +163,21 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         <Grid container spacing={2}>
             <Grid item xs={12} sm={9}>
                 <Card>
-                    <Typography
-                        onMouseUp={handleTextMouseUp}
-                        sx={{m: 1}}
-                        fontSize={18}
-                    >
-                        {renderTextWithHighlights()}
-                    </Typography>
+                    <Box sx={{position: 'relative'}}>
+                        <Typography
+                            sx={{m: 1, userSelect: 'none'}}
+                            fontSize={18}
+                        >
+                            {renderTextWithHighlights()}
+                        </Typography>
+                        <TransparentText
+                            onMouseUp={handleTextMouseUp}
+                            sx={{m: 1, userSelect: 'text', position: 'absolute', top: 0, left: 0}}
+                            fontSize={18}
+                        >
+                            {transcription}
+                        </TransparentText>
+                    </Box>
                 </Card>
 
                 <Popper open={open} anchorEl={popperAnchorEl} placement="bottom">

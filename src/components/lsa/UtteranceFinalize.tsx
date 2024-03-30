@@ -18,7 +18,12 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
     const { handleBatchUpdate } = useUtterances();
     const handleSubmitUtterances = async () => {
         try {
-            await handleBatchUpdate(utterances);
+            let orderedUtterances;
+            const sortedUtterances = [...utterances].sort((a, b) => a.start - b.start || a.end - b.end);
+            orderedUtterances = sortedUtterances.map((utterance, index) => {
+                return {...utterance, utterance_order: index};
+            });
+            await handleBatchUpdate(orderedUtterances);
         } catch (error) {
             openSnackbar({
                 open: true,

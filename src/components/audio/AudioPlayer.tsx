@@ -12,7 +12,6 @@ export default function AudioPlayer() {
     const {selectedLsaId, audioFileUrl} = useSelectedLSA();
     const {data, isLoading, error} = useSWR(selectedLsaId ? `/get-audio-url?lsa_id=${selectedLsaId}` : null, fetcher);
     const [isWavesurferLoaded, setIsWaversurferLoaded] = useState(false);
-    console.log("audioplayer");
     const plugins = useMemo(() => {
         return [
             {
@@ -39,7 +38,7 @@ export default function AudioPlayer() {
 
             // @ts-ignore
             wavesurferRef.current.on("loading", () => {
-                console.log("loading");
+                // console.log("loading");
             });
 
             // @ts-ignore
