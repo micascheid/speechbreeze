@@ -7,6 +7,7 @@ import UtterancesTable from "@/components/lsa/UtterancesTable";
 import UtteranceFinalize from "@/components/lsa/UtteranceFinalize";
 import useUtterances from "@/hooks/lsa/useUtterances";
 import {Utterance} from "@/data/Utterance";
+import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 
 interface HighlightRange {
     start: number;
@@ -25,6 +26,7 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
     const {utterances, isLoading, isError} = useUtterances();
     const [popperAnchorEl, setPopperAnchorEl] = useState<HTMLElement | null>(null);
     const [open, setOpen] = useState(false);
+    const {selectedLsaId} = useSelectedLSA();
 
     const handleTextMouseUp = (event: React.MouseEvent) => {
         const selection = window.getSelection();
@@ -67,6 +69,7 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
             setSelectionRanges(prev => [...prev, selectionRange]); // Add the selectionRange to selectionRanges array
             setLocalUtterances(prev => [...prev,
                 {
+                    lsa_id: selectedLsaId as number,
                     utterance_text: selectionRange.text,
                     utterance_order: prev.length,
                     start: selectionRange.start,
