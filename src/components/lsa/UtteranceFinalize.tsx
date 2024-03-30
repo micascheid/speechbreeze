@@ -40,7 +40,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
 
     return (
         <Box>
-            <Button onClick={handleSubmitUtterances}>Save Utterances</Button>
+            <Button variant={"outlined"} onClick={handleSubmitUtterances}>Save Utterances</Button>
         </Box>
     )
 }
