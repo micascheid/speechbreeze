@@ -26,7 +26,7 @@ const TransparentText = styled(Typography)(() => ({
     left: 0,
     transform: "translateY(-8px)",
     '&::selection': {
-        background: 'rgba(0,0,0,0.5)' // Adjust this color as needed (currently semi-transparent black)
+        background: 'rgba(255,255,0,0.5)' // Adjust this color as needed (currently semi-transparent black)
     }
 }));
 
