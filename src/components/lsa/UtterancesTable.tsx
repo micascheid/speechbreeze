@@ -1,10 +1,6 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-
-
-interface Utterance {
-    text: string;
-}
+import {Utterance} from "@/data/Utterance";
 
 interface UtteranceTablesProps {
     utterances: Utterance[];
@@ -32,7 +28,7 @@ const UtterancesTable = ({ utterances }: UtteranceTablesProps) => {
                             <TableCell component="th" scope="row" sx={{ width: '1%', whiteSpace: 'nowrap' }}>
                                 {index + 1}
                             </TableCell>
-                            <TableCell>{utterance.text}</TableCell>
+                            <TableCell>{utterance.utterance_text}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

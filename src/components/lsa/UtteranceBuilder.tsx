@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Typography, Box, Popper, IconButton, ButtonGroup, Card, Grid} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {styled} from '@mui/system';
 import UtterancesTable from "@/components/lsa/UtterancesTable";
-
-interface Utterance {
-    text: string;
-}
+import UtteranceFinalize from "@/components/lsa/UtteranceFinalize";
+import useUtterances from "@/hooks/lsa/useUtterances";
+import {Utterance} from "@/data/Utterance";
 
 interface HighlightRange {
     start: number;
@@ -22,7 +21,8 @@ interface UtteranceBuilderProps {
 const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
     const [selectionRange, setSelectionRange] = useState<HighlightRange | null>(null);
     const [selectionRanges, setSelectionRanges] = useState<HighlightRange[]>([]);
-    const [utterances, setUtterances] = useState<Utterance[]>([]);
+    const [localUtterances, setLocalUtterances] = useState<Utterance[]>([]);
+    const {utterances, isLoading, isError} = useUtterances();
     const [popperAnchorEl, setPopperAnchorEl] = useState<HTMLElement | null>(null);
     const [open, setOpen] = useState(false);
 
@@ -65,47 +65,70 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
     const handleConfirm = () => {
         if (selectionRange) {
             setSelectionRanges(prev => [...prev, selectionRange]); // Add the selectionRange to selectionRanges array
-            setUtterances(prev => [...prev, {text: selectionRange.text}]); // Add the selected text to utterances array
+            setLocalUtterances(prev => [...prev,
+                {
+                    utterance_text: selectionRange.text,
+                    utterance_order: prev.length,
+                    start: selectionRange.start,
+                    end: selectionRange.end
+                }]);
             handleClose();
         }
     };
 
+    const orderedUtterances = localUtterances?.sort((a, b) => {
+        return transcription.indexOf(a.utterance_text) - transcription.indexOf(b.utterance_text);
+    });
+
     // Function to render text with highlights
-        const renderTextWithHighlights = () => {
-            let lastIndex = 0;
-            const parts = [];
+    const renderTextWithHighlights = () => {
+        let lastIndex = 0;
+        const parts = [];
 
-            // Sort the selectionRanges by start index
-            const sortedRanges = [...selectionRanges].sort((a, b) => a.start - b.start);
+        // Sort the selectionRanges by start index
+        const sortedRanges = [...selectionRanges].sort((a, b) => a.start - b.start);
 
-            sortedRanges.forEach((range, index) => {
-                // add normal (not highlighted)
-                if (range.start > lastIndex) {
-                    parts.push(
-                        <span key={`normal-${index}`}>
+        sortedRanges.forEach((range, index) => {
+            // add normal (not highlighted)
+            if (range.start > lastIndex) {
+                parts.push(
+                    <span key={`normal-${index}`}>
           {transcription.slice(lastIndex, range.start)}
         </span>
-                    );
-                }
+                );
+            }
 
-                // add highlighted
-                parts.push(
-                    <span
-                        key={`highlight-${index}`}
-                        style={{backgroundColor: 'yellow'}}
-                    >
+            // add highlighted
+            parts.push(
+                <span
+                    key={`highlight-${index}`}
+                    style={{backgroundColor: 'yellow'}}
+                >
         {range.text}
       </span>
-                );
+            );
 
-                lastIndex = range.end;
+            lastIndex = range.end;
+        });
+
+        parts.push(<span key="remaining">{transcription.slice(lastIndex)}</span>);
+
+        return parts;
+    };
+
+    useEffect(() => {
+        if (!isLoading && utterances) {
+            console.log("Received utterances: ", utterances);
+            setLocalUtterances(utterances);
+            const newSelectionRanges = utterances.map((utterance: Utterance) => {
+                const start = utterance.start;
+                const end = utterance.end;
+                return {start, end, text: utterance.utterance_text};
             });
 
-            // Append any remaining normal text
-            parts.push(<span key="remaining">{transcription.slice(lastIndex)}</span>);
-
-            return parts;
-        };
+            setSelectionRanges(newSelectionRanges);
+        }
+    }, [isLoading, utterances]);
 
     return (
 
@@ -137,7 +160,10 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
                 </Popper>
             </Grid>
             <Grid item xs={12} sm={3}>
-                <UtterancesTable utterances={utterances} />
+                <UtterancesTable utterances={orderedUtterances}/>
+            </Grid>
+            <Grid item xs={12}>
+                <UtteranceFinalize utterances={localUtterances}/>
             </Grid>
         </Grid>
     );

@@ -1,6 +1,5 @@
 import {Box, Button, CircularProgress, Grid, Skeleton, Stack, Typography} from "@mui/material";
 import useLsa from "@/hooks/lsa/useLsa";
-import useTranscription from "@/hooks/lsa/useTranscription";
 import ContactUsBox from "@/components/ContactUsBox";
 import React from "react";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
