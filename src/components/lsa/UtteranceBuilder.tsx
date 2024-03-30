@@ -74,8 +74,23 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         setSelectionRange(null); // Clear the current selection range
     };
 
+    const handleDeleteUtterance = (index: number) => {
+        setLocalUtterances(prevState => prevState.filter((_, i) => i !== index));
+        setSelectionRanges(prevState => prevState.filter((_, i) => i !== index));
+    }
+
     const handleConfirm = () => {
         if (selectionRange) {
+            // Prevent saving overlapping utterances
+            const isOverlap = selectionRanges.some(
+                (range) => !(selectionRange.end <= range.start || selectionRange.start >= range.end)
+            );
+            if (isOverlap) {
+                window.alert('Overlap with existing utterance not allowed.'); // Provide feedback to user
+                handleClose();
+                return; // Do not proceed with the saving
+            }
+
             setSelectionRanges(prev => [...prev, selectionRange]); // Add the selectionRange to selectionRanges array
             setLocalUtterances(prev => [...prev,
                 {
@@ -185,7 +200,7 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
                 </Popper>
             </Grid>
             <Grid item xs={12} sm={3}>
-                <UtterancesTable utterances={orderedUtterances}/>
+                <UtterancesTable utterances={orderedUtterances} onDelete={handleDeleteUtterance}/>
             </Grid>
             <Grid item xs={12}>
                 <UtteranceFinalize utterances={localUtterances}/>
