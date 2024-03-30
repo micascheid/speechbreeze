@@ -43,19 +43,8 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0 && selection.toString().trim().length > 0) {
             const range = selection.getRangeAt(0);
-            const parentElement = range.startContainer.parentElement;
             const text = selection.toString();
-            let start = 0;
-            for (const node of parentElement.childNodes) {
-                if (node === range.startContainer) {
-                    start += range.startOffset;
-                    break;
-                } else {
-                    start += node.textContent.length;
-                }
-            }
-            console.log("start", start);
-
+            const start = range.startOffset;
             const end = start + text.length;
             // Store the selected text together with range
             setSelectionRange({start, end, text});
