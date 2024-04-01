@@ -43,7 +43,7 @@ export default function AudioPlayer() {
 
             // @ts-ignore
             wavesurferRef.current.on("ready", () => {
-                console.log("ready");
+
                 setIsWaversurferLoaded(true);
             });
         }
