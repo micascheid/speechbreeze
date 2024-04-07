@@ -44,9 +44,24 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         if (selection && selection.rangeCount > 0 && selection.toString().trim().length > 0) {
             const range = selection.getRangeAt(0);
             const text = selection.toString();
-            const start = range.startOffset;
+            const rangeStart = range.startOffset;
+            const rangeEnd = rangeStart + text.length;
+            const clickedElement = event.target as Element;
+
+            // Find the text index of the paragraph in the transcription
+            const paragraphIndex =   Array.from(clickedElement.parentElement?.children || []).findIndex(para => para === clickedElement);
+
+            // Count characters in all paragraphs before this one
+            let charsBefore = 0;
+            for (let i = 0; i < paragraphIndex; i++) {
+                // "+ 1" to count the previously stripped newline character
+                charsBefore += clickedElement.parentElement?.children.item(i)?.textContent?.length + 1 || 0;
+            }
+
+            // Set the selection range to account for characters in previous paragraphs
+            const start = charsBefore + rangeStart;
             const end = start + text.length;
-            // Store the selected text together with range
+
             setSelectionRange({start, end, text});
 
             // Prepare and show the popper for confirmation
@@ -82,16 +97,20 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
     const handleConfirm = () => {
         if (selectionRange) {
             // Prevent saving overlapping utterances
+            // This checks if the start OR end of the new range falls within any existing range.
             const isOverlap = selectionRanges.some(
-                (range) => !(selectionRange.end <= range.start || selectionRange.start >= range.end)
+                (range) => (selectionRange.start >= range.start && selectionRange.start <= range.end) ||
+                    (selectionRange.end >= range.start && selectionRange.end <= range.end)
             );
+
             if (isOverlap) {
                 window.alert('Overlap with existing utterance not allowed.'); // Provide feedback to user
                 handleClose();
                 return; // Do not proceed with the saving
             }
 
-            setSelectionRanges(prev => [...prev, selectionRange]); // Add the selectionRange to selectionRanges array
+            // If no overlaps, proceed as normal
+            setSelectionRanges(prev => [...prev, selectionRange]);
             setLocalUtterances(prev => [...prev,
                 {
                     lsa_id: selectedLsaId as number,
@@ -99,7 +118,8 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
                     utterance_order: prev.length,
                     start: selectionRange.start,
                     end: selectionRange.end
-                }]);
+                }
+            ]);
             handleClose();
         }
     };
@@ -114,42 +134,63 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
 
     // Function to render text with highlights
     const renderTextWithHighlights = () => {
-        let lastIndex = 0;
-        const parts = [];
+        const lines = transcription.split('\n'); // split transcription into lines
+        let accumulatedLength = 0;
 
-        // Sort the selectionRanges by start index
-        const sortedRanges = [...selectionRanges].sort((a, b) => a.start - b.start);
+        return lines.map((line, lineIndex) => { // wrap each line in a paragraph tag
+            let lineContent = [];
+            let lastIndex = 0;
 
-        sortedRanges.forEach((range, index) => {
-            // add normal (not highlighted)
-            if (range.start > lastIndex) {
-                parts.push(
-                    <span key={`normal-${index}`}>
-          {transcription.slice(lastIndex, range.start)}
+            const sortedRanges = [...selectionRanges]
+                .filter(range => range.start >= accumulatedLength && range.end <= accumulatedLength + line.length)
+                .sort((a, b) => a.start - b.start);
+
+            sortedRanges.forEach((range, index) => {
+                const rangeStart = range.start - accumulatedLength;
+                const rangeEnd = range.end - accumulatedLength;
+
+                // Add normal (not highlighted)
+                if (rangeStart > lastIndex) {
+                    lineContent.push(
+                        <span key={`normal-${lineIndex}-${index}`}>
+            {line.slice(lastIndex, rangeStart)}
+          </span>
+                    );
+                }
+
+                // Add highlighted
+                lineContent.push(
+                    <span
+                        key={`highlight-${lineIndex}-${index}`}
+                        style={{ backgroundColor: 'yellow' }}
+                    >
+          {line.slice(rangeStart, rangeEnd)}
         </span>
                 );
-            }
 
-            // add highlighted
-            parts.push(
-                <span
-                    key={`highlight-${index}`}
-                    style={{backgroundColor: 'yellow'}}
-                >
-        {range.text}
-      </span>
+                lastIndex = rangeEnd;
+            });
+
+            lineContent.push(<span key={`remaining-${lineIndex}`}>{line.slice(lastIndex)}</span>);
+
+            accumulatedLength += line.length + 1; // +1 for newline character
+
+            return (
+                <p key={`line-${lineIndex}`}>{lineContent}</p>
             );
-
-            lastIndex = range.end;
         });
+    };
 
-        parts.push(<span key="remaining">{transcription.slice(lastIndex)}</span>);
-
-        return parts;
+    const renderTransparentText = () => {
+        const lines = transcription.split('\n'); // Split transcription into lines
+        return lines.map((line, lineIndex) => (
+            <p key={`line-${lineIndex}`}>{line}</p>
+        ));
     };
 
     useEffect(() => {
         if (!isLoading && utterances) {
+            console.log("Received utterances: ", utterances);
             setLocalUtterances(utterances);
             const newSelectionRanges = utterances.map((utterance: Utterance) => {
                 const start = utterance.start;
@@ -178,7 +219,7 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
                             sx={{m: 1, userSelect: 'text', position: 'absolute', top: 0, left: 0}}
                             fontSize={18}
                         >
-                            {transcription}
+                            {renderTransparentText()}
                         </TransparentText>
                     </Box>
                 </Card>
