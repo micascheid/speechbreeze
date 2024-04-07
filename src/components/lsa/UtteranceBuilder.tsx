@@ -53,9 +53,15 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
 
             // Count characters in all paragraphs before this one
             let charsBefore = 0;
-            for (let i = 0; i < paragraphIndex; i++) {
-                // "+ 1" to count the previously stripped newline character
-                charsBefore += clickedElement.parentElement?.children.item(i)?.textContent?.length + 1 || 0;
+            const parentElement = clickedElement.parentElement;
+            if (parentElement) {
+                for (let i = 0; i < paragraphIndex; i++) {
+                    // "+ 1" to count the previously stripped newline character
+                    let childElement = parentElement.children.item(i);
+                    if(childElement){
+                        charsBefore += (childElement.textContent?.length || 0) + 1;
+                    }
+                }
             }
 
             // Set the selection range to account for characters in previous paragraphs
