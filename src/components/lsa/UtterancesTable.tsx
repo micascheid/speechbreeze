@@ -3,6 +3,7 @@ import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
 import {Utterance} from "@/data/Utterance";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useTheme} from "@mui/material/styles";
+import useLsa from "@/hooks/lsa/useLsa";
 
 interface UtteranceTablesProps {
     utterances: Utterance[];
@@ -11,9 +12,9 @@ interface UtteranceTablesProps {
 
 const UtterancesTable = ({utterances, onDelete}: UtteranceTablesProps) => {
     // Ensure the array is at least 10 items long by filling with empty objects if necessary
+    const {lsa, isLoading, isError, mutateLsa} = useLsa();
     const filledUtterances = [...utterances, ...Array(Math.max(0, 10 - utterances.length)).fill({utterance_text: ''})];
     const theme = useTheme();
-    console.log("utterances", utterances);
     return (
         <TableContainer component={Paper} sx={{maxHeight: 440}}>
             <Table stickyHeader sx={{minWidth: 300}} aria-label="simple table">

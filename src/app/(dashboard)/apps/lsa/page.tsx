@@ -15,8 +15,7 @@ import axios from "axios";
 import AudioUpload from "@/components/lsa/AudioUpload";
 import ContactUsBox from "@/components/ContactUsBox";
 import AudioUploadStatus from "@/components/lsa/Dialogs/AudioUploadStatus";
-import {IconButton, Collapse} from "@mui/material";
-import {ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon} from "@mui/icons-material";
+import Results from "@/components/lsa/results/Results";
 
 interface ContentProps {
     audioSelection: "record" | "upload" | "noaudio" | null;
@@ -101,7 +100,6 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
         console.log("audio type", audio_type);
         if (audio_type === 'record') {
             try {
-                setUploadStatus('uploading');
                 await uploadAudioBlobUrl(localAudioSource as string);
                 await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
                 setUploadStatus('success');
@@ -206,6 +204,11 @@ export default function LsaTool() {
                 <Grid item xs={12}>
                     <MainCard title={"Transcription"} collapsible={true}>
                         <Transcription />
+                    </MainCard>
+                </Grid>
+                <Grid item xs={12}>
+                    <MainCard title={"Results"} collapsible={true}>
+                        <Results />
                     </MainCard>
                 </Grid>
             </Grid>
