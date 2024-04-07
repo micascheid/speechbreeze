@@ -25,7 +25,7 @@ export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus}: 
                 <Typography>Our apologies: The following has occurred:</Typography>
                 <Typography color={"error"}></Typography>
                 <ContactUsBox/>
-                <Button variant={"outlined"} onClick={handleClose}>Close</Button>
+                <Button variant={"outlined"} onClick={() => setResultsStatus(null)}>Close</Button>
             </Stack>
         )
     }
