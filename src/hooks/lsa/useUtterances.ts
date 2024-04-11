@@ -12,7 +12,6 @@ export default function useUtterances() {
     const handleBatchUpdate = async (utterances: Utterance[]) => {
         try {
             await axios.put(`http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances/batch-update`, {utterances: utterances});
-
             openSnackbar({
                 open: true,
                 message: "Successfully saved utterances",

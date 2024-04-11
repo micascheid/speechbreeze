@@ -1,14 +1,54 @@
-import {Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle, Stack, Typography} from "@mui/material";
-import React, {useState} from "react";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogContent,
+    DialogTitle, Grid,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import ContactUsBox from "@/components/ContactUsBox";
+import axios from "@/utils/axios";
+import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
+import useLsa from "@/hooks/lsa/useLsa";
+import useLsas from "@/hooks/lsa/useLsas";
+import useUser from "@/hooks/useUser";
+import {openSnackbar} from "@/api/snackbar";
+import {SnackbarProps} from "@/types/snackbar";
 
 type BuildAnalysisStatusProps = {
-    resultsStatus: 'crunching' | 'success' | 'error' | null;
+    resultsStatus: 'crunching' | 'success' | 'error' | 'assistMlu' | 'assistWpsCps' | null;
     setResultsStatus: (status: 'crunching' | 'success' | 'error' | null) => void;
+    morphZeroData: UtteranceDataType | null;
 }
 
-export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus}: BuildAnalysisStatusProps) {
-    console.log("rendering buildanalysis");
+
+type UtteranceDataType = {
+    [utterance_id: string]: {
+        [word_id: string]: {
+            word: string;
+            morph_count: number;
+        };
+    };
+};
+
+type WordData = {
+    word: string;
+    morph_count: number;
+};
+
+export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus, morphZeroData}: BuildAnalysisStatusProps) {
+    const { selectedLsaId } = useSelectedLSA();
+    const [wordData, setWordData] = useState<UtteranceDataType | null>(morphZeroData);
+    const [saveMorphZero, setSaveMorphZero] = useState<boolean>(false);
+    const {lsa, isLoading, isError, mutateLsa } = useLsa();
+    const user = useUser();
+    const {mutateLsas} = useLsas();
     const crunchingUI = () => {
         return (
             <>
@@ -30,6 +70,97 @@ export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus}: 
         )
     }
 
+    const handleChange = (utteranceId: string, wordId: string, count: number) => {
+        setWordData(oldData => {
+            if (oldData === null) {
+                return oldData;
+            }
+
+            return {
+                ...oldData,
+                [utteranceId]: {
+                    ...oldData[utteranceId],
+                    [wordId]: {
+                        ...oldData[utteranceId][wordId],
+                        morph_count: count,
+                    },
+                },
+            };
+        });
+    };
+
+    const assistMluUI = () => {
+        return (
+            <>
+                {wordData && Object.entries(wordData).map(([utteranceId, words]) =>
+                    Object.entries(words as Record<string, WordData>).map(([wordId, { word, morph_count }]) => (
+                        <Grid container key={`${utteranceId}-${wordId}`} alignItems="center">
+                            <Grid item xs style={{ wordWrap: 'break-word', paddingRight: '5px' }}>
+                                <Typography>{word}</Typography>
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    id={`${utteranceId}-${wordId}`}
+                                    type="number"
+                                    value={morph_count}
+                                    inputProps={{ min: "0" }}
+                                    onChange={(e) => handleChange(utteranceId, wordId, Number(e.target.value))}
+                                    style={{ marginLeft: '2px', width: 60}}
+                                />
+                            </Grid>
+                        </Grid>
+                    ))
+                )}
+                <LoadingButton
+                    loading={saveMorphZero}
+                    loadingPosition="start"
+                    startIcon={<SaveIcon />}
+                    variant="outlined"
+                    onClick={handleSaveMorphZeroWords}
+                >
+                    Save
+                </LoadingButton>
+            </>
+        )
+    }
+
+    const assistWpsCpsUI = () => {
+
+    }
+
+    const handleSaveMorphZeroWords = async () => {
+        setSaveMorphZero(true);
+        try {
+            console.log(wordData);
+            await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/morph-zero-update`, {'utterances': wordData});
+
+            await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
+            await mutateLsas(`/lsas?uid=${user?.uid}`);
+            openSnackbar({
+                open: true,
+                message: "Analysis completed",
+                variant: "alert",
+                alert: {
+                    color: "success",
+                    variant: "filled"
+                }
+            } as SnackbarProps)
+        } catch (e) {
+
+            console.error(e);
+        } finally {
+            setResultsStatus(null);
+            setSaveMorphZero(false);
+        }
+    }
+
+    useEffect(() => {
+        if (morphZeroData !== null) {
+            setWordData(morphZeroData);
+        }
+    }, [morphZeroData]);
+
+
     const handleClose = (reason: any) => {
         if (reason.type === 'click') {
             return;
@@ -50,6 +181,8 @@ export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus}: 
                 <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
                     {resultsStatus === 'crunching' && crunchingUI()}
                     {resultsStatus === 'error' && errorUI()}
+                    {resultsStatus === 'assistMlu' && assistMluUI()}
+                    {/*{resultsStatus === 'assistWpsCps' && assistWpsCpsUI()}*/}
                 </Box>
             </DialogContent>
         </Dialog>

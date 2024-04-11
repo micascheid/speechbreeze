@@ -18,9 +18,19 @@ type UtterancesFinalizeProps = {
     utterances: Utterance[];
 }
 
+type UtteranceDataType = {
+    [utterance_id: string]: {
+        [word_id: string]: {
+            word: string;
+            morph_count: number;
+        };
+    };
+};
+
 export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps) {
-    const [resultsStatus, setResultsStatus] = useState<'crunching' | 'success' | 'error' | null>(null);
+    const [resultsStatus, setResultsStatus] = useState<'crunching' | 'success' | 'error' | 'assistMlu' | 'assistWpsCps' | null>(null);
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [morphZeroData, setMorphZeroData] = useState<UtteranceDataType | null>(null);
     const { handleBatchUpdate } = useUtterances();
     const { selectedLsaId } = useSelectedLSA();
 
@@ -54,18 +64,26 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
         setResultsStatus('crunching');
         try {
             // Sending a request to trigger the backend to generate the results
-            await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results`);
+            const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
             await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
-            openSnackbar({
-                open: true,
-                message: "Successfully received analysis",
-                variant: "alert",
-                alert: {
-                    color: "success",
-                    variant: "filled"
-                },
-            } as SnackbarProps);
-            setResultsStatus(null);
+            console.log(response);
+            if (Object.keys(response.data?.morph_zero).length === 0) {
+                openSnackbar({
+                    open: true,
+                    message: "Successfully received analysis",
+                    variant: "alert",
+                    alert: {
+                        color: "success",
+                        variant: "filled"
+                    },
+                } as SnackbarProps);
+                setResultsStatus(null);
+            } else {
+                setMorphZeroData(response.data.morph_zero);
+                setResultsStatus('assist');
+            }
+            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`)
+
         } catch (error) {
             console.error("Error while generating results :", error);
             setResultsStatus('error');
@@ -89,7 +107,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                 <Button variant={"outlined"} onClick={handleBuildResults}>Get Analysis!</Button>
             </Stack>
             {resultsStatus &&
-                <BuildAnalysisStatus resultsStatus={resultsStatus} setResultsStatus={setResultsStatus} />
+                <BuildAnalysisStatus resultsStatus={resultsStatus} setResultsStatus={setResultsStatus} morphZeroData={morphZeroData}/>
             }
 
         </>
