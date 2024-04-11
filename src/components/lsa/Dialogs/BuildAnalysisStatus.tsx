@@ -22,7 +22,7 @@ import {openSnackbar} from "@/api/snackbar";
 import {SnackbarProps} from "@/types/snackbar";
 
 type BuildAnalysisStatusProps = {
-    resultsStatus: 'crunching' | 'success' | 'error' | 'assist' | null;
+    resultsStatus: 'crunching' | 'success' | 'error' | 'assistMlu' | 'assistWpsCps' | null;
     setResultsStatus: (status: 'crunching' | 'success' | 'error' | null) => void;
     morphZeroData: UtteranceDataType | null;
 }
@@ -89,7 +89,7 @@ export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus, m
         });
     };
 
-    const assistUI = () => {
+    const assistMluUI = () => {
         return (
             <>
                 {wordData && Object.entries(wordData).map(([utteranceId, words]) =>
@@ -124,11 +124,16 @@ export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus, m
         )
     }
 
+    const assistWpsCpsUI = () => {
+
+    }
+
     const handleSaveMorphZeroWords = async () => {
         setSaveMorphZero(true);
         try {
             console.log(wordData);
             await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/morph-zero-update`, {'utterances': wordData});
+
             await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
             await mutateLsas(`/lsas?uid=${user?.uid}`);
             openSnackbar({
@@ -176,7 +181,8 @@ export default function BuildAnalysisStatus({resultsStatus,  setResultsStatus, m
                 <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
                     {resultsStatus === 'crunching' && crunchingUI()}
                     {resultsStatus === 'error' && errorUI()}
-                    {resultsStatus === 'assist' && assistUI()}
+                    {resultsStatus === 'assistMlu' && assistMluUI()}
+                    {/*{resultsStatus === 'assistWpsCps' && assistWpsCpsUI()}*/}
                 </Box>
             </DialogContent>
         </Dialog>

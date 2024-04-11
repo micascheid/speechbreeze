@@ -28,7 +28,7 @@ type UtteranceDataType = {
 };
 
 export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps) {
-    const [resultsStatus, setResultsStatus] = useState<'crunching' | 'success' | 'error' | 'assist' | null>(null);
+    const [resultsStatus, setResultsStatus] = useState<'crunching' | 'success' | 'error' | 'assistMlu' | 'assistWpsCps' | null>(null);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [morphZeroData, setMorphZeroData] = useState<UtteranceDataType | null>(null);
     const { handleBatchUpdate } = useUtterances();
@@ -64,7 +64,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
         setResultsStatus('crunching');
         try {
             // Sending a request to trigger the backend to generate the results
-            const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results`);
+            const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
             await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
             console.log(response);
             if (Object.keys(response.data?.morph_zero).length === 0) {
@@ -82,6 +82,8 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                 setMorphZeroData(response.data.morph_zero);
                 setResultsStatus('assist');
             }
+            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`)
+
         } catch (error) {
             console.error("Error while generating results :", error);
             setResultsStatus('error');
