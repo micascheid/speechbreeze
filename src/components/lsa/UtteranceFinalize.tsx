@@ -27,10 +27,15 @@ type UtteranceDataType = {
     };
 };
 
+type UtterancesObject = {
+    [key: string]: Utterance;
+}
+
 export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps) {
     const [resultsStatus, setResultsStatus] = useState<'crunching' | 'success' | 'error' | 'assistMlu' | 'assistWpsCps' | null>(null);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [morphZeroData, setMorphZeroData] = useState<UtteranceDataType | null>(null);
+    const [utterancesReviewData, setUtterancesReviewData] = useState<UtterancesObject | null>(null);
     const { handleBatchUpdate } = useUtterances();
     const { selectedLsaId } = useSelectedLSA();
 
@@ -80,10 +85,8 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                 setResultsStatus(null);
             } else {
                 setMorphZeroData(response.data.morph_zero);
-                setResultsStatus('assist');
+                setResultsStatus('assistMlu');
             }
-            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`)
-
         } catch (error) {
             console.error("Error while generating results :", error);
             setResultsStatus('error');
@@ -107,7 +110,13 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                 <Button variant={"outlined"} onClick={handleBuildResults}>Get Analysis!</Button>
             </Stack>
             {resultsStatus &&
-                <BuildAnalysisStatus resultsStatus={resultsStatus} setResultsStatus={setResultsStatus} morphZeroData={morphZeroData}/>
+                <BuildAnalysisStatus
+                    resultsStatus={resultsStatus}
+                    setResultsStatus={setResultsStatus}
+                    morphZeroData={morphZeroData}
+                    utterancesReviewData={utterancesReviewData}
+                    setUtterancesReviewData={setUtterancesReviewData}
+                />
             }
 
         </>
