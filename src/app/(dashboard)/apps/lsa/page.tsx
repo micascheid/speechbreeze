@@ -202,7 +202,7 @@ export default function LsaTool() {
                 </Grid>
                 <Content audioSelection={audioSelection} setAudioSelection={setAudioSelection}/>
                 <Grid item xs={12}>
-                    <MainCard title={"Transcription"} collapsible={true}>
+                    <MainCard title={"Utterance"} collapsible={true}>
                         <Transcription />
                     </MainCard>
                 </Grid>
