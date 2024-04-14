@@ -2,12 +2,14 @@ import InfoDialog, {InfoDialogProps} from "@/components/lsa/Dialogs/info/InfoDia
 import {Typography} from "@mui/material";
 
 
-type AudioInfoProps = Omit<InfoDialogProps, 'title' | 'children'>
+export type AudioInfoProps = Omit<InfoDialogProps, 'title' | 'children'>
 
 const AudioInfo = (props: AudioInfoProps) => {
     return (
         <InfoDialog title={"Audio Info Information"} {...props}>
             <Typography>Information about audio</Typography>
         </InfoDialog>
-    )
-}
+    );
+};
+
+export default AudioInfo;

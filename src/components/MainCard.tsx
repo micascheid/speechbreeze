@@ -1,7 +1,7 @@
 'use client';
 
-import {forwardRef, CSSProperties, ReactNode, Ref, useState} from 'react';
-
+import React, {forwardRef, CSSProperties, ReactNode, Ref, useState} from 'react';
+import InfoIcon from '@mui/icons-material/Info';
 // material-ui
 import {useTheme} from '@mui/material/styles';
 import {
@@ -15,13 +15,14 @@ import {
     CardContentProps
 } from '@mui/material';
 import {IconButton, Collapse} from "@mui/material";
-import {ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon} from "@mui/icons-material";
+import {ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon, InfoOutlined} from "@mui/icons-material";
 
 // types
 import {KeyedObject} from '@/types/root';
 import {ThemeMode} from '@/types/config';
 import Highlighter from './third-party/Highlighter';
 import {bool} from "yup";
+import InfoDialog, {InfoDialogProps} from "@/components/lsa/Dialogs/info/InfoDialog";
 
 // header style
 const headerSX = {
@@ -50,6 +51,7 @@ export interface MainCardProps extends KeyedObject {
     codeString?: string;
     modal?: boolean;
     collapsible?: boolean;
+    dialogComponent?: React.ReactElement | null;
 }
 
 const MainCard = forwardRef(
@@ -72,6 +74,7 @@ const MainCard = forwardRef(
             codeString,
             modal = false,
             collapsible = false,
+            dialogComponent,
             ...others
         }: MainCardProps,
         ref: Ref<HTMLDivElement>
@@ -79,6 +82,15 @@ const MainCard = forwardRef(
         const theme = useTheme();
         boxShadow = theme.palette.mode === ThemeMode.DARK ? boxShadow || true : boxShadow;
         const [isExpanded, setIsExpanded] = useState(true);
+
+        const [isInfoDialogOpen, setIsInfoDialogOpen] = useState<boolean>(false);
+        const handleOpenDialog = () => {
+            setIsInfoDialogOpen(true);
+        };
+
+        const handleCloseDialog = () => {
+            setIsInfoDialogOpen(false);
+        };
         const handleExpandClick = () => {
             setIsExpanded(!isExpanded);
         };
@@ -130,6 +142,7 @@ const MainCard = forwardRef(
                                     {isExpanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
                                 </IconButton>}
                                 {title}
+                                {dialogComponent}
                             </>
                         }
                         action={secondary}

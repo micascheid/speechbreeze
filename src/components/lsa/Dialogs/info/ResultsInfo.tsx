@@ -11,3 +11,5 @@ const ResultsInfo = (props: ResultsInfoProps) => {
         </InfoDialog>
     )
 }
+
+export default ResultsInfo;

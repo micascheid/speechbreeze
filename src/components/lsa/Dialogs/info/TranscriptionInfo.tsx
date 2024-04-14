@@ -9,5 +9,7 @@ const TranscriptionInfo = (props: TranscriptionInfoProps) => {
         <InfoDialog title={"Transcription Information"} {...props}>
             <Typography>Information about transcriptions</Typography>
         </InfoDialog>
-    )
-}
+    );
+};
+
+export default TranscriptionInfo;
