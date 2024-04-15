@@ -1,4 +1,13 @@
-import {Button, Dialog, TextField, DialogActions, DialogContent, DialogTitle, IconButton} from "@mui/material";
+import {
+    Button,
+    Dialog,
+    TextField,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Typography
+} from "@mui/material";
 import axios from "axios";
 import {Patient, PatientNew} from "@/data/Patients";
 import React, {useEffect, useState} from "react";
@@ -86,10 +95,11 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
             }}>
                 <DialogTitle>Add Patient</DialogTitle>
                 <DialogContent>
+                    <Typography variant="body2" color="text.secondary">Fields marked with * are required</Typography>
                     <TextField
                         autoFocus
                         margin="dense"
-                        label="Name"
+                        label="Name *"
                         type="text"
                         fullWidth
                         name="name"

@@ -14,11 +14,20 @@ export default function Results() {
     const { selectedLsaId } = useSelectedLSA();
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
 
+    if (!lsa?.mlu) {
+        return (
+            <Grid item>
+                <Box>
+                    <Skeleton variant={"rounded"} height={200} animation={false}/>
+                </Box>
+            </Grid>
+        )
+    }
     if (isLoading) {
         return (
             <Grid item>
                 <Box>
-                    <Skeleton variant="rectangular"  height={300} />
+                    <Skeleton variant="rectangular"  height={200} />
                 </Box>
             </Grid>
         )
@@ -32,7 +41,6 @@ export default function Results() {
                         Something went wrong!
                     </Typography>
                 </Box>
-
             </Grid>
         )
     }
@@ -42,7 +50,7 @@ export default function Results() {
     return (
         <Grid item>
             <Grid container>
-                <Grid item xs={3} bgcolor={"secondary.light"} borderRadius={3}>
+                <Grid item xs={3}>
                     <MLU />
                 </Grid>
                 <Grid item xs={3}>

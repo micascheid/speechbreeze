@@ -21,9 +21,11 @@ export default function MLU() {
     if (!lsa?.mlu) {
         return (
             <Grid item sx={{height: "100%"}}>
-                <Stack height={"100%"} justifyContent={"center"} textAlign={"center"}>
-                    <Typography variant={"h2"}>MLU</Typography>
-                    <Typography>Finalize utterances in a prior transcription to get results!</Typography>
+                <Stack display={"flex"} alignItems={"center"}>
+                    <Typography variant={"h1"}>MLU</Typography>
+                    <Typography variant="h1">
+                        {lsa?.mlu}
+                    </Typography>
                 </Stack>
             </Grid>
         )
@@ -51,5 +53,5 @@ export default function MLU() {
                 </Typography>
             </Stack>
         </Grid>
-    )
-}
+    );
+};

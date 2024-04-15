@@ -21,7 +21,7 @@ import {InfoDialogProps} from "@/components/lsa/Dialogs/info/InfoDialog";
 import dialogWrapper from "@/components/lsa/Dialogs/info/DialogWrapper";
 import ResultsInfo from "@/components/lsa/Dialogs/info/ResultsInfo";
 import AudioInfo, {AudioInfoProps} from "@/components/lsa/Dialogs/info/AudioInfo";
-import TranscriptionInfo from "@/components/lsa/Dialogs/info/TranscriptionInfo";
+import UtteranceIdentificationInfo from "@/components/lsa/Dialogs/info/UtteranceIdentificationInfo";
 
 type DialogComponentProps = Omit<AudioInfoProps, 'isOpen' | 'onClose'>;
 interface ContentProps {
@@ -29,7 +29,7 @@ interface ContentProps {
 }
 const ManagedPatientInfoDialog = dialogWrapper(PatientManagementInfoDialog);
 const AudioInfoDialog = dialogWrapper(AudioInfo);
-const TranscritptionInfoDialog = dialogWrapper(TranscriptionInfo);
+const UtteranceIdentificationInfoDialog = dialogWrapper(UtteranceIdentificationInfo);
 const ResultsInfoDialog = dialogWrapper(ResultsInfo);
 
 function Content() {
@@ -143,7 +143,7 @@ function Content() {
     return (
         <Grid item xs={12}>
             <MainCard
-                title={`Working LSA: ${!lsa?.name ? "Select or Start LSA Above" : lsa.name}`}
+                title={"Audio"}
                 collapsible={true}
                 dialogComponent={<AudioInfoDialog/>}
             >
@@ -217,7 +217,7 @@ export default function LsaTool() {
                 </Grid>
                 <Content />
                 <Grid item xs={12}>
-                    <MainCard title={"Utterance"} collapsible={true} dialogComponent={<TranscritptionInfoDialog />}>
+                    <MainCard title={"Utterance Identification"} collapsible={true} dialogComponent={<UtteranceIdentificationInfoDialog />}>
                         <Transcription />
                     </MainCard>
                 </Grid>

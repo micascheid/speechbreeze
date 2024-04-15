@@ -106,7 +106,7 @@ export default function BuildAnalysisStatus({
 
     const assistMluUI = () => {
         return (
-            <>
+            <Box>
                 {wordData && Object.entries(wordData).map(([utteranceId, words]) =>
                     Object.entries(words as Record<string, WordData>).map(([wordId, {word, morph_count}]) => (
                         <Grid container key={`${utteranceId}-${wordId}`} alignItems="center">
@@ -132,10 +132,11 @@ export default function BuildAnalysisStatus({
                     startIcon={<SaveIcon/>}
                     variant="outlined"
                     onClick={handleSaveMorphZeroWords}
+                    sx={{mt: 1}}
                 >
                     Save
                 </LoadingButton>
-            </>
+            </Box>
         )
     }
 

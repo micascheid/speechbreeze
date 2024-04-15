@@ -12,7 +12,7 @@ import {
     Typography,
     CardProps,
     CardHeaderProps,
-    CardContentProps
+    CardContentProps, Box
 } from '@mui/material';
 import {IconButton, Collapse} from "@mui/material";
 import {ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon, InfoOutlined} from "@mui/icons-material";
@@ -137,13 +137,15 @@ const MainCard = forwardRef(
                         sx={headerSX}
                         titleTypographyProps={{variant: 'h4'}}
                         title={
-                            <>
-                                {collapsible && <IconButton onClick={handleExpandClick}>
-                                    {isExpanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
-                                </IconButton>}
+                            <Box display="flex" alignItems="center">
+                                {collapsible &&
+                                    <IconButton onClick={handleExpandClick}>
+                                        {isExpanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
+                                    </IconButton>
+                                }
                                 {title}
                                 {dialogComponent}
-                            </>
+                            </Box>
                         }
                         action={secondary}
                         subheader={subheader}
