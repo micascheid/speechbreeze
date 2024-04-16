@@ -5,12 +5,14 @@ import axios from "axios";
 import SavingDialog from "@/components/lsa/Dialogs/SavingsDialog";
 import {openSnackbar} from "@/api/snackbar";
 import {SnackbarProps} from "@/types/snackbar";
+import TranscriptionFinalize from "@/components/lsa/Dialogs/TranscriptionFinalizeDialog";
 
 
 export default function TranscriptionEdit() {
     const {lsa, isLoading, isError, mutateLsa, handleUpdate} = useLsa();
     const [textfieldValue, setTextfieldValue] = useState(lsa?.transcription || '');
     const [isSaving, setIsSaving] = useState(false);
+    const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -39,6 +41,19 @@ export default function TranscriptionEdit() {
         }
     };
 
+    const handleOpenConfirm = () => {
+        setIsConfirmed(false);
+    }
+
+    const handleCloseConfirm = () => {
+        setIsConfirmed(false);
+    }
+
+    const handleFinalizationConfirm = async () => {
+        handleCloseConfirm();
+        handleFinalization();
+    };
+
     return (
         <Box>
             <TextField
@@ -49,8 +64,8 @@ export default function TranscriptionEdit() {
                 minRows={5}
             />
             <Stack direction={"row"} spacing={1}>
-                <Button onClick={handleSave} variant="outlined" style={{marginTop: '1em'}}>Save Transcription</Button>
-                <Button onClick={handleFinalization} variant="outlined" style={{marginTop: '1em'}}>Finalize Transcription</Button>
+                <Button onClick={handleSave} variant="outlined" disabled={!textfieldValue} style={{marginTop: '1em'}}>Save Transcription</Button>
+                <TranscriptionFinalize setFinalize={handleFinalizationConfirm} disabled={isSaving || !lsa?.transcription} />
             </Stack>
             <SavingDialog open={isSaving}/>
         </Box>

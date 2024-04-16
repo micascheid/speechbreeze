@@ -45,7 +45,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
         setIsSaving(true);
         try {
             let orderedUtterances;
-            const sortedUtterances = [...utterances].sort((a, b) => a.start - b.start || a.end - b.end);
+            const sortedUtterances = [...utterances].sort((a, b) => a.start_text - b.start_text || a.end_text - b.end_text);
             orderedUtterances = sortedUtterances.map((utterance, index) => {
                 return {...utterance, utterance_order: index};
             });
@@ -68,7 +68,6 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
     const handleBuildResults = async () => {
         setResultsStatus('crunching');
         try {
-            // Sending a request to trigger the backend to generate the results
             const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
             await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
             console.log(response);

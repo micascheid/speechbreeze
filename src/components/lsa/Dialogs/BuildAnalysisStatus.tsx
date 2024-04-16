@@ -174,17 +174,24 @@ export default function BuildAnalysisStatus({
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                {utterancesWpsCps[id]?.sentence ? (
+                                {/*{utterancesWpsCps[id]?.sentence === sentence_status.True ? (*/}
                                     <ButtonGroup variant="outlined" aria-label="outlined number button group">
-                                        {[1, 2, 3, 4, 5].map((number) => (
+                                        {[0, 1, 2, 3, 4, 5].map((number) => (
                                             <Button
                                                 key={number}
                                                 onClick={() => {
                                                     updateClauseCount(id, number);
-                                                    setUtterancesWpsCps(prev => ({
-                                                        ...prev,
-                                                        [utteranceId]: { ...prev[id], clause_count: number },
-                                                    }));
+                                                    setUtterancesWpsCps(prev => {
+                                                        const prevItem = prev[id] || {};
+                                                        return {
+                                                            ...prev,
+                                                            [utteranceId]: {
+                                                                ...prevItem, // maintain previous values
+                                                                clause_count: number,
+                                                                sentence_status: number === 0 ? false : prevItem.sentence
+                                                            },
+                                                        };
+                                                    });
                                                 }}
                                                 variant={utterancesWpsCps[id]?.clause_count === number ? 'contained' : 'outlined'}
                                             >
@@ -192,18 +199,18 @@ export default function BuildAnalysisStatus({
                                             </Button>
                                         ))}
                                     </ButtonGroup>
-                                ) : (
-                                    <ButtonGroup variant="outlined" aria-label="outlined primary button group">
-                                        <Button onClick={() => {
-                                            updateSentenceStatus(id, sentence_status.True);
-                                            setUtterancesWpsCps(prev => ({
-                                                ...prev,
-                                                [utteranceId]: { clause_count: 0, sentence: sentence_status.True },
-                                            }));
-                                        }}>Yes</Button>
-                                        <Button onClick={() => updateSentenceStatus(id, sentence_status.False)}>No</Button>
-                                    </ButtonGroup>
-                                )}
+                                {/*) : (*/}
+                                {/*    <ButtonGroup variant="outlined" aria-label="outlined primary button group">*/}
+                                {/*        <Button onClick={() => {*/}
+                                {/*            updateSentenceStatus(id, sentence_status.True);*/}
+                                {/*            setUtterancesWpsCps(prev => ({*/}
+                                {/*                ...prev,*/}
+                                {/*                [utteranceId]: { clause_count: 0, sentence: sentence_status.True },*/}
+                                {/*            }));*/}
+                                {/*        }}>Yes</Button>*/}
+                                {/*        <Button onClick={() => updateSentenceStatus(id, sentence_status.False)}>No</Button>*/}
+                                {/*    </ButtonGroup>*/}
+                                {/*)}*/}
                             </Grid>
                         </>
                         )

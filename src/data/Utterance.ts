@@ -8,10 +8,10 @@ export type Utterance = {
     lsa_id: number;
     utterance_text: string;
     utterance_order: number;
-    start: number;
-    end: number;
-    morph_sugar_count: number;
-    sentence: sentence_status;
-    clause_count: number;
+    start_text: number;
+    end_text: number;
+    morph_sugar_count?: number;
+    sentence?: sentence_status;
+    clause_count?: number;
 
 }

@@ -45,7 +45,7 @@ export default function TNW() {
     return (
         <Grid item>
             <Stack display={"flex"} alignItems={"center"}>
-                <Typography variant={"h1"}>WPS</Typography>
+                <Typography variant={"h1"}>TNW</Typography>
                 <Typography variant="h1">
                     {lsa?.tnw}
                 </Typography>

@@ -86,6 +86,20 @@ export const authOptions: NextAuthOptions = {
                 session.token = token;
             }
             return session;
+        },
+        signIn: async ({user, profile, account}) => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/slp/${user.id}/check`);
+                const userExists = response.data.exists;
+
+                if (!userExists) {
+                    await axios.post(`http://127.0.0.1:5000/slp/add`, { slp_id: user.id, name: (profile as any)?.given_name, email: user.email });
+                }
+                return true;
+            } catch (error) {
+                console.error("Unable to handle user in db:", error);
+                return false;
+            }
         }
     },
     session: {

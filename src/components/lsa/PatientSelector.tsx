@@ -28,13 +28,24 @@ import AnimateButton from "@/components/@extended/AnimateButton";
 import ButtonPulsing from "@/components/ButtonPulsing";
 import useLsa from "@/hooks/lsa/useLsa";
 
+import DeleteIcon from "@mui/icons-material/Delete";
+import {openSnackbar} from "@/api/snackbar";
+import {SnackbarProps} from "@/types/snackbar";
+
 export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [selectedLsa, setSelectedLsa] = useState<Lsa | null>(null);
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
     const { selectedLsaId, setSelectedLsaId, resetLsa } = useSelectedLSA();
-    const theme = useTheme();
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
+    const {mutateLsa} = useLsa();
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+    const [isDeletingLsa, setIsDeletingLsa] = useState<boolean>(false);
+    const [openDeletePatient, setOpenDeletePatient] = useState<boolean>(false);
+    const [isDeletingPatient, setIsDeletingPatient] = useState<boolean>(false);
+    const user = useUser();
+    const theme = useTheme();
+
 
     // Handle patient row click
     const handlePatientRowClick = (patient: Patient) => {
@@ -54,18 +65,105 @@ export default function PatientSelector() {
         }
     }
 
+    const handleCloseDeleteDialog = (e: React.SyntheticEvent) => {
+        e.stopPropagation();
+        setOpenDeleteDialog(false);
+    }
+
+    const handleCloseDeletePatient = (e: React.SyntheticEvent) => {
+        e.stopPropagation();
+        setOpenDeletePatient(false);
+    }
+
+
+    const handleDeleteLsa = async() => {
+        setIsDeletingLsa(true);
+        axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`).then(() => {
+            mutateLsas(`/lsas?uid=${user?.uid}`);
+            setOpenDeleteDialog(false);
+            setIsDeletingLsa(false);
+        }).catch((err) => {
+            console.error(err); //Handle your error accordingly
+            setIsDeletingLsa(false);
+        });
+    }
+
+    const handleDeletePatient = async () => {
+        setIsDeletingPatient(true);
+        try {
+            await axios.delete(`http://127.0.0.1:5000/patients/${selectedPatient?.patient_id}/delete`);
+            await mutatePatients(`/patients?uid=${user?.uid}`);
+            await mutateLsas(`/lsas?uid=${user?.uid}`);
+            await mutateLsa(`/lsa?lsaId=${selectedLsa?.lsa_id}`);
+            setOpenDeleteDialog(false);
+            setOpenDeletePatient(false);
+            setSelectedPatient(null);
+            openSnackbar({
+                open: true,
+                message: `Deleted Patient ${selectedPatient?.name}`,
+                variant: "alert",
+                alert: {
+                    color: "success",
+                    variant: "filled"
+                },
+            } as SnackbarProps);
+        }
+        catch (error) {
+            console.error(error);
+            openSnackbar({
+                open: true,
+                message: `Failed to delete patient ${selectedPatient?.name}`,
+                variant: "alert",
+                alert: {
+                    color: "error",
+                    variant: "filled"
+                },
+            } as SnackbarProps);
+        }
+        finally { // This block will run regardless of whether an error occurred
+            setIsDeletingPatient(false);
+            setOpenDeletePatient(false);
+        }
+    }
+
     const emptyRowsCountPatients = patients.length > 5 ? 0 : (5 - (isPatientsLoading ? 0 : patients.length));
 
     return (
         <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-                <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
-                    <Stack direction={"row"} >
+            <Grid item xs={12} sm={4}>
+                <Stack direction={"row"} display={"flext"} justifyContent={"space-between"}>
+                    <Box display={"flex"}>
                         <NewPatientForm onPatientAdd={(newPatient: Patient) => setSelectedPatient(newPatient)}/>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                             Patients
                         </Typography>
-                    </Stack>
+                    </Box>
+
+                    {selectedPatient &&
+                        <IconButton onClick={(e: React.MouseEvent) => { // Conditionally show button when LSA is selected
+                            e.stopPropagation();
+                            setOpenDeletePatient(true);
+                        }}>
+                            <Dialog
+                                open={openDeletePatient}
+                                onClose={handleCloseDeleteDialog}
+                            >
+                                <DialogTitle>Delete Patient</DialogTitle>
+                                <DialogContent>
+                                    <Typography variant="body1" textAlign={"center"}>
+                                        Are you sure you want to delete patient: <b>{selectedPatient.name}</b>?<br/>
+                                        This is a permanent action
+                                    </Typography>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button disabled={isDeletingPatient} onClick={handleCloseDeletePatient}>Cancel</Button>
+                                    <Button disabled={isDeletingPatient} onClick={handleDeletePatient} color="error">Delete</Button>
+                                </DialogActions>
+                            </Dialog>
+                            <DeleteIcon color={"error"}/>
+                        </IconButton>}
+                </Stack>
+                <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
                     <Table stickyHeader>
                         <TableHead>
                             <TableRow>
@@ -107,17 +205,43 @@ export default function PatientSelector() {
                 </TableContainer>
             </Grid>
 
-            <Grid item container xs={12} sm={6} spacing={2} style={{flexGrow: 1}}>
+            <Grid item container xs={12} sm={8} spacing={2} style={{flexGrow: 1}}>
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
-                        <Stack direction={"row"}>
+                    <Stack direction={"row"} display={"flex"} justifyContent={"space-between"}>
+                        <Box display={"flex"}>
                             <NewLsaForm selectedPatient={selectedPatient} onLsaAdd={(selectedLsa: Lsa) => {setSelectedLsa(selectedLsa)}}/>
                             <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                                 Patient LSA&apos;s
                             </Typography>
-                        </Stack>
+                        </Box>
+
+                        {selectedLsa &&
+                            <IconButton onClick={(e: React.MouseEvent) => { // Conditionally show button when LSA is selected
+                            e.stopPropagation();
+                            setOpenDeleteDialog(true);
+                        }}>
+                            <Dialog
+                                open={openDeleteDialog}
+                                onClose={handleCloseDeleteDialog}
+                            >
+                                <DialogTitle>Delete LSA</DialogTitle>
+                                <DialogContent>
+                                    <Typography variant="body1">
+                                        Are you sure you want to delete <b>{selectedLsa.name}</b>? It cannot be recovered
+                                    </Typography>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button disabled={isDeletingLsa} onClick={handleCloseDeleteDialog}>Cancel</Button>
+                                    <Button disabled={isDeletingLsa} onClick={handleDeleteLsa} color="error">Delete</Button>
+                                </DialogActions>
+                            </Dialog>
+                            <DeleteIcon color={"error"}/>
+                        </IconButton>}
+                    </Stack>
+                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
                         <Table stickyHeader>
                             <TableHead>
+
                                 <TableRow>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Date</TableCell>
@@ -165,11 +289,11 @@ export default function PatientSelector() {
                                         {/*Empty rows if < 5 lsas*/}
                                         {
                                             (() => {
-                                                const numLsas = lsas.filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id).length;
+                                                const numLsas = lsas?.filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id).length;
                                                 const emptyRowsToRender = Math.max(0, 5 - numLsas);
                                                 return Array.from({ length: emptyRowsToRender }, (_, index) => (
                                                     <TableRow key={`empty-${index}`} style={{ height: 36 }}>
-                                                        <TableCell colSpan={5} />
+                                                        <TableCell colSpan={6} />
                                                     </TableRow>
                                                 ));
                                             })()
@@ -179,7 +303,6 @@ export default function PatientSelector() {
                             </TableBody>
                         </Table>
                     </TableContainer>
-
                 </Grid>
             </Grid>
             <Grid item xs={12}>
