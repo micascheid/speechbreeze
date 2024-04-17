@@ -1,15 +1,15 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import React, {useState} from "react";
 import WarningModal from "@/components/WarningModal";
 
-type AudioFinalizeProps = {
+type TranscriptionFinalizeProps = {
     setFinalize: (finalize: boolean) => void;
     disabled: boolean,
 }
 
-export default function AudioFinalize({setFinalize, disabled}: AudioFinalizeProps) {
+export default function TranscriptionFinalize({setFinalize, disabled}: TranscriptionFinalizeProps) {
     const [open, setOpen] = useState<boolean>(false);
-    const message: string = "Once finalized you cannot change the audio.\nWould you still like to continue?"
+    const message: string = "Once finalized you cannot change the transcription.\nWould you still like to continue?"
     const handleContinue = () => {
         setFinalize(true);
         setOpen(false);
@@ -23,13 +23,13 @@ export default function AudioFinalize({setFinalize, disabled}: AudioFinalizeProp
     }
 
     return (
-        <>
-            <Button variant={"contained"} onClick={handleOpen} disabled={disabled}>Finalize Audio Choice</Button>
+        <Box>
+            <Button variant={"contained"} onClick={handleOpen} disabled={disabled} sx={{marginTop: '1em'}}>Finalize Transcription</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
             >
-                <DialogTitle color='warning.main' sx={{textAlign: 'center', fontSize: '1.3rem'}}>{"Finalizing Audio"}</DialogTitle>
+                <DialogTitle color='warning.main' sx={{textAlign: 'center', fontSize: '1.3rem'}}>{"Finalizing Transcription"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText sx={{textAlign: 'center', whiteSpace: 'pre-wrap'}}>
                         {message}
@@ -44,6 +44,6 @@ export default function AudioFinalize({setFinalize, disabled}: AudioFinalizeProp
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </Box>
     );
 };

@@ -27,10 +27,15 @@ type UtteranceDataType = {
     };
 };
 
+type UtterancesObject = {
+    [key: string]: Utterance;
+}
+
 export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps) {
     const [resultsStatus, setResultsStatus] = useState<'crunching' | 'success' | 'error' | 'assistMlu' | 'assistWpsCps' | null>(null);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [morphZeroData, setMorphZeroData] = useState<UtteranceDataType | null>(null);
+    const [utterancesReviewData, setUtterancesReviewData] = useState<UtterancesObject | null>(null);
     const { handleBatchUpdate } = useUtterances();
     const { selectedLsaId } = useSelectedLSA();
 
@@ -40,7 +45,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
         setIsSaving(true);
         try {
             let orderedUtterances;
-            const sortedUtterances = [...utterances].sort((a, b) => a.start - b.start || a.end - b.end);
+            const sortedUtterances = [...utterances].sort((a, b) => a.start_text - b.start_text || a.end_text - b.end_text);
             orderedUtterances = sortedUtterances.map((utterance, index) => {
                 return {...utterance, utterance_order: index};
             });
@@ -63,7 +68,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
     const handleBuildResults = async () => {
         setResultsStatus('crunching');
         try {
-            // Sending a request to trigger the backend to generate the results
+            await handleSubmitUtterances();
             const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
             await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
             console.log(response);
@@ -77,13 +82,14 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                         variant: "filled"
                     },
                 } as SnackbarProps);
-                setResultsStatus(null);
+                const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`);
+                console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
+                setResultsStatus('assistWpsCps');
+                setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);
             } else {
                 setMorphZeroData(response.data.morph_zero);
-                setResultsStatus('assist');
+                setResultsStatus('assistMlu');
             }
-            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`)
-
         } catch (error) {
             console.error("Error while generating results :", error);
             setResultsStatus('error');
@@ -104,10 +110,16 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                 >
                     Save
                 </LoadingButton>
-                <Button variant={"outlined"} onClick={handleBuildResults}>Get Analysis!</Button>
+                <Button variant={"outlined"} onClick={handleBuildResults} disabled={!utterances || utterances.length === 0}>Get Analysis!</Button>
             </Stack>
             {resultsStatus &&
-                <BuildAnalysisStatus resultsStatus={resultsStatus} setResultsStatus={setResultsStatus} morphZeroData={morphZeroData}/>
+                <BuildAnalysisStatus
+                    resultsStatus={resultsStatus}
+                    setResultsStatus={setResultsStatus}
+                    morphZeroData={morphZeroData}
+                    utterancesReviewData={utterancesReviewData}
+                    setUtterancesReviewData={setUtterancesReviewData}
+                />
             }
 
         </>

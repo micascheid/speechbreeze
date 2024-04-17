@@ -73,14 +73,11 @@ const Profile = () => {
     const provider = session?.provider;
 
     const handleLogout = () => {
-        console.log("Sign out at profile");
         switch (provider) {
             case 'cognito':
-                console.log("Sign out at profile");
                 signOut({callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/cognito`});
                 break;
             default:
-                console.log("Sign out at profile default");
                 signOut({redirect: false});
         }
 

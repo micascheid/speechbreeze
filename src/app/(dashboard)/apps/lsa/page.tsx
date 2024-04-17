@@ -16,13 +16,23 @@ import AudioUpload from "@/components/lsa/AudioUpload";
 import ContactUsBox from "@/components/ContactUsBox";
 import AudioUploadStatus from "@/components/lsa/Dialogs/AudioUploadStatus";
 import Results from "@/components/lsa/results/Results";
+import PatientManagementInfoDialog from "@/components/lsa/Dialogs/info/PatientManagementInfo";
+import {InfoDialogProps} from "@/components/lsa/Dialogs/info/InfoDialog";
+import dialogWrapper from "@/components/lsa/Dialogs/info/DialogWrapper";
+import ResultsInfo from "@/components/lsa/Dialogs/info/ResultsInfo";
+import AudioInfo, {AudioInfoProps} from "@/components/lsa/Dialogs/info/AudioInfo";
+import UtteranceIdentificationInfo from "@/components/lsa/Dialogs/info/UtteranceIdentificationInfo";
 
+type DialogComponentProps = Omit<AudioInfoProps, 'isOpen' | 'onClose'>;
 interface ContentProps {
-    audioSelection: "record" | "upload" | "noaudio" | null;
-    setAudioSelection: React.Dispatch<React.SetStateAction<"record" | "upload" | "noaudio" | null>>;
+    dialog: React.ComponentType<DialogComponentProps>;
 }
+const ManagedPatientInfoDialog = dialogWrapper(PatientManagementInfoDialog);
+const AudioInfoDialog = dialogWrapper(AudioInfo);
+const UtteranceIdentificationInfoDialog = dialogWrapper(UtteranceIdentificationInfo);
+const ResultsInfoDialog = dialogWrapper(ResultsInfo);
 
-function Content({audioSelection, setAudioSelection}: ContentProps) {
+function Content() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
     const isDisabled = !lsa;
     const audio_type = lsa?.audio_type;
@@ -100,6 +110,7 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
         console.log("audio type", audio_type);
         if (audio_type === 'record') {
             try {
+                setUploadStatus('uploading');
                 await uploadAudioBlobUrl(localAudioSource as string);
                 await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
                 setUploadStatus('success');
@@ -132,7 +143,11 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
 
     return (
         <Grid item xs={12}>
-            <MainCard title={`Working LSA: ${!lsa?.name ? "Select or Start LSA Above" : lsa.name}`} collapsible={true}>
+            <MainCard
+                title={"2) Audio"}
+                collapsible={true}
+                dialogComponent={<AudioInfoDialog/>}
+            >
                 <Grid container spacing={2}>
                     {!selectedLsaId ? (
                         <Grid item xs={12}>
@@ -186,28 +201,24 @@ function Content({audioSelection, setAudioSelection}: ContentProps) {
 }
 
 export default function LsaTool() {
-    const user = useUser();
-    const [audioSelection, setAudioSelection] = useState<"record" | "upload" | "noaudio" | null>(null);
-    const [isExpanded, setIsExpanded] = useState(false);
-    const handleExpandClick = () => {
-        setIsExpanded(!isExpanded);
-    };
+
+
     return (
         <SelectedLSAProvider>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <MainCard title={"Patient Management"} collapsible={true}>
+                    <MainCard title={"1) Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
                         <PatientSelector/>
                     </MainCard>
                 </Grid>
-                <Content audioSelection={audioSelection} setAudioSelection={setAudioSelection}/>
+                <Content />
                 <Grid item xs={12}>
-                    <MainCard title={"Transcription"} collapsible={true}>
+                    <MainCard title={"3) Utterance Identification"} collapsible={true} dialogComponent={<UtteranceIdentificationInfoDialog />}>
                         <Transcription />
                     </MainCard>
                 </Grid>
                 <Grid item xs={12}>
-                    <MainCard title={"Results"} collapsible={true}>
+                    <MainCard title={"Results"} collapsible={true} dialogComponent={<ResultsInfoDialog />}>
                         <Results />
                     </MainCard>
                 </Grid>

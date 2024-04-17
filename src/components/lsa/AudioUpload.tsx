@@ -17,7 +17,7 @@ import {useTheme} from "@mui/material/styles";
 import ContactUsBox from "@/components/ContactUsBox";
 import AudioPlayerLocal from "../audio/AudioPlayerLocal";
 
-interface AudioUploadPropse {
+interface AudioUploadProps {
     setAudioSelection: (value: "record" | "upload" | "noaudio" | null) => void;
 }
 

@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 // assets
 import {
-  BuildOutlined,
+  ToolOutlined,
   CalendarOutlined,
   CustomerServiceOutlined,
   FileTextOutlined,
@@ -14,15 +14,18 @@ import {
   UserOutlined,
   AppstoreAddOutlined,
   PlusOutlined,
-  LinkOutlined
+  LinkOutlined,
 } from '@ant-design/icons';
+
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 
 // type
 import { NavActionType, NavItemType } from '@/types/menu';
 
 // icons
 const icons = {
-  BuildOutlined,
+  ToolOutlined,
+  GroupsOutlinedIcon,
   CalendarOutlined,
   CustomerServiceOutlined,
   MessageOutlined,
@@ -47,7 +50,7 @@ const applications: NavItemType = {
       title: <FormattedMessage id="lsa" />,
       type: 'item',
       url: '/apps/lsa',
-      icon: icons.MessageOutlined,
+      icon: icons.ToolOutlined,
       breadcrumbs: false
     },
     {
@@ -55,7 +58,7 @@ const applications: NavItemType = {
       title: <FormattedMessage id="clients" />,
       type: 'item',
       url: '/apps/clients',
-      icon: icons.CalendarOutlined,
+      icon: icons.GroupsOutlinedIcon,
       breadcrumbs: false
     }
   ]

@@ -9,7 +9,7 @@ import UtteranceBuilder from "@/components/lsa/UtteranceBuilder";
 export default function Transcription() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
     const {selectedLsaId} = useSelectedLSA();
-
+    console.log("transcription selected lsaID", selectedLsaId);
     return (
         <Grid item>
             {!selectedLsaId ? (
@@ -30,7 +30,6 @@ export default function Transcription() {
                 </Grid>
             ) : lsa?.transcription_final ? (
                 <Grid xs={12}>
-                    <Typography>Lets build your utterances and get final results!</Typography>
                     <UtteranceBuilder transcription={lsa.transcription}/>
                 </Grid>
             ) : (

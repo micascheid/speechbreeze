@@ -66,22 +66,25 @@ export default function AudioPlayer() {
     }, [data]);
 
     return (
-        <Card>
-            <WaveSurfer
-                onMount={handleWSMount}
-                plugins={plugins}
-                cursorColor={"#000"}
-                container={"#waveform"}
-                cursorWidth={2}
-            >
-                <WaveForm id={"waveform"}>
-                    {!isWavesurferLoaded && (
-                        <CircularProgress sx={{m: 3}}/>
-                    )}
-                </WaveForm>
-                <div id="timeline"/>
-            </WaveSurfer>
-            <Button variant={"outlined"} onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</Button>
-        </Card>
+        <Box>
+            <Card>
+                <WaveSurfer
+                    onMount={handleWSMount}
+                    plugins={plugins}
+                    cursorColor={"#000"}
+                    container={"#waveform"}
+                    cursorWidth={2}
+                >
+                    <WaveForm id={"waveform"}>
+                        {!isWavesurferLoaded && (
+                            <CircularProgress sx={{m: 3}}/>
+                        )}
+                    </WaveForm>
+                    <div id="timeline"/>
+                </WaveSurfer>
+            </Card>
+            <Button sx={{mt: 1}} variant={"outlined"} onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</Button>
+        </Box>
+
     );
 };

@@ -10,8 +10,8 @@ import {Utterance} from "@/data/Utterance";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
 
 interface HighlightRange {
-    start: number;
-    end: number;
+    start_text: number;
+    end_text: number;
     text: string;
 }
 
@@ -65,10 +65,10 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
             }
 
             // Set the selection range to account for characters in previous paragraphs
-            const start = charsBefore + rangeStart;
-            const end = start + text.length;
+            const start_text = charsBefore + rangeStart;
+            const end_text = start_text + text.length;
 
-            setSelectionRange({start, end, text});
+            setSelectionRange({start_text, end_text, text});
 
             // Prepare and show the popper for confirmation
             const offsetY = 8;
@@ -105,8 +105,8 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
             // Prevent saving overlapping utterances
             // This checks if the start OR end of the new range falls within any existing range.
             const isOverlap = selectionRanges.some(
-                (range) => (selectionRange.start >= range.start && selectionRange.start <= range.end) ||
-                    (selectionRange.end >= range.start && selectionRange.end <= range.end)
+                (range) => (selectionRange.start_text >= range.start_text && selectionRange.start_text <= range.end_text) ||
+                    (selectionRange.end_text >= range.start_text && selectionRange.end_text <= range.end_text)
             );
 
             if (isOverlap) {
@@ -122,8 +122,8 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
                     lsa_id: selectedLsaId as number,
                     utterance_text: selectionRange.text,
                     utterance_order: prev.length,
-                    start: selectionRange.start,
-                    end: selectionRange.end
+                    start_text: selectionRange.start_text,
+                    end_text: selectionRange.end_text
                 }
             ]);
             handleClose();
@@ -132,7 +132,7 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
 
     let orderedUtterances: Utterance[] = [];
     if (localUtterances) {
-        const sortedUtterances = [...localUtterances].sort((a, b) => a.start - b.start || a.end - b.end);
+        const sortedUtterances = [...localUtterances].sort((a, b) => a.start_text - b.start_text || a.end_text - b.end_text);
         orderedUtterances = sortedUtterances.map((utterance, index) => {
             return {...utterance, utterance_order: index};
         });
@@ -148,12 +148,12 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
             let lastIndex = 0;
 
             const sortedRanges = [...selectionRanges]
-                .filter(range => range.start >= accumulatedLength && range.end <= accumulatedLength + line.length)
-                .sort((a, b) => a.start - b.start);
+                .filter(range => range.start_text >= accumulatedLength && range.end_text <= accumulatedLength + line.length)
+                .sort((a, b) => a.start_text - b.start_text);
 
             sortedRanges.forEach((range, index) => {
-                const rangeStart = range.start - accumulatedLength;
-                const rangeEnd = range.end - accumulatedLength;
+                const rangeStart = range.start_text - accumulatedLength;
+                const rangeEnd = range.end_text - accumulatedLength;
 
                 // Add normal (not highlighted)
                 if (rangeStart > lastIndex) {
@@ -199,9 +199,9 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
             console.log("Received utterances: ", utterances);
             setLocalUtterances(utterances);
             const newSelectionRanges = utterances.map((utterance: Utterance) => {
-                const start = utterance.start;
-                const end = utterance.end;
-                return {start, end, text: utterance.utterance_text};
+                const start_text = utterance.start_text;
+                const end_text = utterance.end_text;
+                return {start_text, end_text, text: utterance.utterance_text};
             });
 
             setSelectionRanges(newSelectionRanges);
