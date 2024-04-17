@@ -68,6 +68,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
     const handleBuildResults = async () => {
         setResultsStatus('crunching');
         try {
+            await handleSubmitUtterances();
             const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
             await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
             console.log(response);
@@ -81,7 +82,10 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                         variant: "filled"
                     },
                 } as SnackbarProps);
-                setResultsStatus(null);
+                const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`);
+                console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
+                setResultsStatus('assistWpsCps');
+                setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);
             } else {
                 setMorphZeroData(response.data.morph_zero);
                 setResultsStatus('assistMlu');
@@ -106,7 +110,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                 >
                     Save
                 </LoadingButton>
-                <Button variant={"outlined"} onClick={handleBuildResults}>Get Analysis!</Button>
+                <Button variant={"outlined"} onClick={handleBuildResults} disabled={!utterances || utterances.length === 0}>Get Analysis!</Button>
             </Stack>
             {resultsStatus &&
                 <BuildAnalysisStatus

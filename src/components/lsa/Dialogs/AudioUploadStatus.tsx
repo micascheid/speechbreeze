@@ -7,7 +7,10 @@ type AudioUploadStatusProps = {
     setUploadStatus: (status: 'uploading' | 'success' | 'error' | null) => void;
 }
 
-export default function AudioUploadStatus({uploadStatus: uploadStatus, setUploadStatus: setUploadStatus}: AudioUploadStatusProps) {
+export default function AudioUploadStatus({
+                                              uploadStatus: uploadStatus,
+                                              setUploadStatus: setUploadStatus
+                                          }: AudioUploadStatusProps) {
     const [open, setOpen] = useState(true);
     console.log("upload status:", uploadStatus);
     const loadingUI = () => {
@@ -39,15 +42,19 @@ export default function AudioUploadStatus({uploadStatus: uploadStatus, setUpload
         )
     }
 
-    const handleClose = () => {
-        setOpen(false);
-    }
 
+    const handleClose = (reason: any) => {
+        if (reason.type === 'click') {
+            return;
+        }
+        setUploadStatus(null);
+    }
     return (
-        <Dialog open={open} onClose={() => {
-            setOpen(false);
-            setUploadStatus(null);
-        }} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <Dialog
+            open={uploadStatus !== null}
+            onClose={handleClose}
+            disableEscapeKeyDown
+            aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
             <DialogTitle id="alert-dialog-title">File Upload</DialogTitle>
             <DialogContent>
                 <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">

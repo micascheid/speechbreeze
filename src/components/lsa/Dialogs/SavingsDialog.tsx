@@ -4,9 +4,9 @@ interface SavingDialogProps {
     open: boolean;
 }
 
-const SavingDialog: React.FC<SavingDialogProps> = (props) => {
+const SavingDialog = ({open}: SavingDialogProps) => {
     return (
-        <Dialog open={props.open}>
+        <Dialog open={open}>
             <DialogTitle>Saving...</DialogTitle>
         </Dialog>
     );

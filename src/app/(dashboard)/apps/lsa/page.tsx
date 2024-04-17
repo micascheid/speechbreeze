@@ -110,6 +110,7 @@ function Content() {
         console.log("audio type", audio_type);
         if (audio_type === 'record') {
             try {
+                setUploadStatus('uploading');
                 await uploadAudioBlobUrl(localAudioSource as string);
                 await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
                 setUploadStatus('success');
@@ -143,7 +144,7 @@ function Content() {
     return (
         <Grid item xs={12}>
             <MainCard
-                title={"Audio"}
+                title={"2) Audio"}
                 collapsible={true}
                 dialogComponent={<AudioInfoDialog/>}
             >
@@ -200,24 +201,19 @@ function Content() {
 }
 
 export default function LsaTool() {
-    const user = useUser();
-    const [audioSelection, setAudioSelection] = useState<"record" | "upload" | "noaudio" | null>(null);
-    const [isExpanded, setIsExpanded] = useState(false);
-    const handleExpandClick = () => {
-        setIsExpanded(!isExpanded);
-    };
+
 
     return (
         <SelectedLSAProvider>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <MainCard title={"Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
+                    <MainCard title={"1) Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
                         <PatientSelector/>
                     </MainCard>
                 </Grid>
                 <Content />
                 <Grid item xs={12}>
-                    <MainCard title={"Utterance Identification"} collapsible={true} dialogComponent={<UtteranceIdentificationInfoDialog />}>
+                    <MainCard title={"3) Utterance Identification"} collapsible={true} dialogComponent={<UtteranceIdentificationInfoDialog />}>
                         <Transcription />
                     </MainCard>
                 </Grid>

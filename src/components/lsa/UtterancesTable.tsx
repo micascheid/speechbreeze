@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton} from '@mui/material';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Box} from '@mui/material';
 import {Utterance} from "@/data/Utterance";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useTheme} from "@mui/material/styles";
@@ -22,7 +22,7 @@ const UtterancesTable = ({utterances, onDelete}: UtteranceTablesProps) => {
                     <TableRow>
                         <TableCell>#</TableCell>
                         <TableCell>Utterance</TableCell>
-                        <TableCell>Action</TableCell>
+                        <TableCell style={{width: '1%'}}>Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -40,9 +40,11 @@ const UtterancesTable = ({utterances, onDelete}: UtteranceTablesProps) => {
                             <TableCell>{utterance.utterance_text}</TableCell>
                             <TableCell align={"center"}>
                                 {utterance.utterance_text &&
-                                    <IconButton aria-label="delete" onClick={() => onDelete(index)}>
-                                        <DeleteIcon color={"error"}/>
-                                    </IconButton>
+                                    <Box display="flex" justifyContent="center">
+                                        <IconButton aria-label="delete" onClick={() => onDelete(index)}>
+                                            <DeleteIcon color={"error"}/>
+                                        </IconButton>
+                                    </Box>
                                 }
                             </TableCell>
                         </TableRow>

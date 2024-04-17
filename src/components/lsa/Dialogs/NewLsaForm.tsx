@@ -78,12 +78,13 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
     const saveNewLsa = async () => {
         setSavingLsa(true);
         try {
-            await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});
-            const updatesLsas = await mutateLsas(`/lsas?uid=${slp_id}`);
-            if (updatesLsas && updatesLsas.length > 0)
+            const response = await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});
+            const updatedLsas = await mutateLsas(`/lsas?uid=${slp_id}`);
+            if (updatedLsas && updatedLsas.length > 0)
             {
-                console.log(updatesLsas[updatesLsas.length - 1]);
-                onLsaAdd(updatesLsas[updatesLsas.length - 1]);
+                console.log(response.data.lsa_id);
+                const newLsa = updatedLsas.find((lsa: Lsa) => lsa.lsa_id === response.data.lsa_id);
+                onLsaAdd(newLsa);
                 handleClose();
             }
         } catch (error: any) {

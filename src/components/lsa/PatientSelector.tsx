@@ -36,9 +36,9 @@ export default function PatientSelector() {
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [selectedLsa, setSelectedLsa] = useState<Lsa | null>(null);
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
-    const { selectedLsaId, setSelectedLsaId, resetLsa } = useSelectedLSA();
+    const {selectedLsaId, setSelectedLsaId, resetLsa} = useSelectedLSA();
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
-    const {mutateLsa} = useLsa();
+    const {lsa, mutateLsa} = useLsa();
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
     const [isDeletingLsa, setIsDeletingLsa] = useState<boolean>(false);
     const [openDeletePatient, setOpenDeletePatient] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export default function PatientSelector() {
     };
 
     const handleChosenLsa = () => {
-        if (selectedLsa){
+        if (selectedLsa) {
             resetLsa();
             setSelectedLsaId(selectedLsa.lsa_id);
         }
@@ -76,16 +76,41 @@ export default function PatientSelector() {
     }
 
 
-    const handleDeleteLsa = async() => {
-        setIsDeletingLsa(true);
-        axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`).then(() => {
+    const handleDeleteLsa = async () => {
+        try {
+            setIsDeletingLsa(true);
+            await axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`);
+            mutateLsa(`/lsa?lsaId=${selectedLsa?.lsa_id}`, false);
             mutateLsas(`/lsas?uid=${user?.uid}`);
             setOpenDeleteDialog(false);
+            setSelectedLsaId(null);
+            setSelectedLsa(null);
+            openSnackbar({
+                open: true,
+                message: `Successfully deleted LSA`,
+                variant: "alert",
+                alert: {
+                    color: "success",
+                    variant: "filled"
+                },
+            } as SnackbarProps);
+        }
+        catch (err) {
+            console.error(err);
+            openSnackbar({
+                open: true,
+                message: `Failed to delete LSA: ${lsa?.name}`,
+                variant: "alert",
+                alert: {
+                    color: "error",
+                    variant: "filled"
+                },
+            } as SnackbarProps);
+        }
+        finally {
             setIsDeletingLsa(false);
-        }).catch((err) => {
-            console.error(err); //Handle your error accordingly
-            setIsDeletingLsa(false);
-        });
+            setOpenDeleteDialog(false);
+        }
     }
 
     const handleDeletePatient = async () => {
@@ -107,8 +132,7 @@ export default function PatientSelector() {
                     variant: "filled"
                 },
             } as SnackbarProps);
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
             openSnackbar({
                 open: true,
@@ -119,8 +143,7 @@ export default function PatientSelector() {
                     variant: "filled"
                 },
             } as SnackbarProps);
-        }
-        finally { // This block will run regardless of whether an error occurred
+        } finally { // This block will run regardless of whether an error occurred
             setIsDeletingPatient(false);
             setOpenDeletePatient(false);
         }
@@ -152,18 +175,21 @@ export default function PatientSelector() {
                                 <DialogContent>
                                     <Typography variant="body1" textAlign={"center"}>
                                         Are you sure you want to delete patient: <b>{selectedPatient.name}</b>?<br/>
-                                        This is a permanent action
+                                        <u><b>This is a permanent action that cannot be undone.</b></u>
                                     </Typography>
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button disabled={isDeletingPatient} onClick={handleCloseDeletePatient}>Cancel</Button>
-                                    <Button disabled={isDeletingPatient} onClick={handleDeletePatient} color="error">Delete</Button>
+                                    <Button disabled={isDeletingPatient}
+                                            onClick={handleCloseDeletePatient}>Cancel</Button>
+                                    <Button disabled={isDeletingPatient} onClick={handleDeletePatient}
+                                            color="error">Delete</Button>
                                 </DialogActions>
                             </Dialog>
                             <DeleteIcon color={"error"}/>
                         </IconButton>}
                 </Stack>
-                <TableContainer component={Paper} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px` , overflow: 'auto'}}>
+                <TableContainer component={Paper}
+                                style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
                     <Table stickyHeader>
                         <TableHead>
                             <TableRow>
@@ -176,18 +202,18 @@ export default function PatientSelector() {
                                 <TableRowsSkeleton rows={5} columns={2} animate={true}/>
                             ) : isPatientsError ? (
                                 <TableRow>
-                                    <TableCell colSpan={2} align="center">{"Error fetching patients"}</TableCell>
+                                    <TableCell colSpan={2} align="center">{"Trouble connecting. Please ensure internet connection"}</TableCell>
                                 </TableRow>
                             ) : (
                                 <>
                                     {patients.map((patient, i) => (
                                         <TableRow key={i} onClick={() => handlePatientRowClick(patient)}
                                                   sx={{
-                                            backgroundColor: selectedPatient && selectedPatient.patient_id === patient.patient_id ? theme.palette.primary.lighter : 'inherit', // Example with MUI sx prop
-                                            '&:hover': {
-                                                backgroundColor: theme.palette.primary.lighter,
-                                            },
-                                        }}
+                                                      backgroundColor: selectedPatient && selectedPatient.patient_id === patient.patient_id ? theme.palette.primary.lighter : 'inherit', // Example with MUI sx prop
+                                                      '&:hover': {
+                                                          backgroundColor: theme.palette.primary.lighter,
+                                                      },
+                                                  }}
                                         >
                                             <TableCell>{patient.name}</TableCell>
                                             <TableCell>{typeof patient.birthdate === 'object' ? patient.birthdate.toDateString() : patient.birthdate}</TableCell>
@@ -209,7 +235,10 @@ export default function PatientSelector() {
                 <Grid item xs={12} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <Stack direction={"row"} display={"flex"} justifyContent={"space-between"}>
                         <Box display={"flex"}>
-                            <NewLsaForm selectedPatient={selectedPatient} onLsaAdd={(selectedLsa: Lsa) => {setSelectedLsa(selectedLsa)}}/>
+                            <NewLsaForm selectedPatient={selectedPatient} onLsaAdd={(newLsa: Lsa) => {
+                                setSelectedLsa(newLsa);
+                                handleLsaRowClick(newLsa);
+                            }}/>
                             <Typography variant="h3" sx={{mb: 1, ml: 1}}>
                                 Patient LSA&apos;s
                             </Typography>
@@ -217,28 +246,40 @@ export default function PatientSelector() {
 
                         {selectedLsa &&
                             <IconButton onClick={(e: React.MouseEvent) => { // Conditionally show button when LSA is selected
-                            e.stopPropagation();
-                            setOpenDeleteDialog(true);
-                        }}>
-                            <Dialog
-                                open={openDeleteDialog}
-                                onClose={handleCloseDeleteDialog}
-                            >
-                                <DialogTitle>Delete LSA</DialogTitle>
-                                <DialogContent>
-                                    <Typography variant="body1">
-                                        Are you sure you want to delete <b>{selectedLsa.name}</b>? It cannot be recovered
-                                    </Typography>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button disabled={isDeletingLsa} onClick={handleCloseDeleteDialog}>Cancel</Button>
-                                    <Button disabled={isDeletingLsa} onClick={handleDeleteLsa} color="error">Delete</Button>
-                                </DialogActions>
-                            </Dialog>
-                            <DeleteIcon color={"error"}/>
-                        </IconButton>}
+                                e.stopPropagation();
+                                setOpenDeleteDialog(true);
+                            }}>
+                                <Dialog
+                                    open={openDeleteDialog}
+                                    onClose={handleCloseDeleteDialog}
+                                >
+                                    <Stack alignItems={"center"}>
+
+                                        <DialogTitle>Delete LSA</DialogTitle>
+                                        <DialogContent>
+                                            <Typography variant="body1">
+                                                Are you sure you want to delete <b>{selectedLsa.name}</b>?
+                                            </Typography>
+                                            <Typography textAlign={"center"}>
+                                                <u><b>It cannot be
+                                                    recovered</b></u>
+                                            </Typography>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button disabled={isDeletingLsa}
+                                                    onClick={handleCloseDeleteDialog}>Cancel</Button>
+                                            <Button disabled={isDeletingLsa} onClick={handleDeleteLsa}
+                                                    color="error">Delete</Button>
+                                        </DialogActions>
+                                    </Stack>
+
+                                </Dialog>
+
+                                <DeleteIcon color={"error"}/>
+                            </IconButton>}
                     </Stack>
-                    <TableContainer component={Paper} sx={{mb: 2}} style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
+                    <TableContainer component={Paper} sx={{mb: 2}}
+                                    style={{maxHeight: `${36 * 7}px`, minHeight: `${36 * 7}px`, overflow: 'auto'}}>
                         <Table stickyHeader>
                             <TableHead>
 
@@ -270,14 +311,15 @@ export default function PatientSelector() {
                                                 return (
                                                     <TableRow key={i} onClick={() => handleLsaRowClick(lsa)}
                                                               sx={{
-                                                                      backgroundColor: selectedLsa && selectedLsa.lsa_id === lsa.lsa_id ? theme.palette.primary.lighter : 'inherit', // Example with MUI sx prop
-                                                                      '&:hover': {
-                                                                          backgroundColor: theme.palette.primary.lighter,
-                                                                      },
-                                                                  }}
-                                                                  >
+                                                                  backgroundColor: selectedLsa && selectedLsa.lsa_id === lsa.lsa_id ? theme.palette.primary.lighter : 'inherit', // Example with MUI sx prop
+                                                                  '&:hover': {
+                                                                      backgroundColor: theme.palette.primary.lighter,
+                                                                  },
+                                                              }}
+                                                    >
                                                         <TableCell>{lsa.name}</TableCell>
-                                                        <TableCell sx={{width: '30%'}}>{`${formattedDate} ${formattedTime}`}</TableCell>
+                                                        <TableCell
+                                                            sx={{width: '30%'}}>{`${formattedDate} ${formattedTime}`}</TableCell>
                                                         <TableCell>{lsa.mlu}</TableCell>
                                                         <TableCell>{lsa.tnw}</TableCell>
                                                         <TableCell>{lsa.wps}</TableCell>
@@ -291,9 +333,9 @@ export default function PatientSelector() {
                                             (() => {
                                                 const numLsas = lsas?.filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id).length;
                                                 const emptyRowsToRender = Math.max(0, 5 - numLsas);
-                                                return Array.from({ length: emptyRowsToRender }, (_, index) => (
-                                                    <TableRow key={`empty-${index}`} style={{ height: 36 }}>
-                                                        <TableCell colSpan={6} />
+                                                return Array.from({length: emptyRowsToRender}, (_, index) => (
+                                                    <TableRow key={`empty-${index}`} style={{height: 36}}>
+                                                        <TableCell colSpan={6}/>
                                                     </TableRow>
                                                 ));
                                             })()
@@ -310,7 +352,7 @@ export default function PatientSelector() {
                     disabled={!selectedLsa || (selectedLsa.lsa_id === selectedLsaId)} // Disable button after click or if no LSA is selected
                     shouldPulse={!!selectedLsa && (selectedLsa.lsa_id !== selectedLsaId)} // Pulse only if an LSA is selected and button hasn't been clicked
                     onClick={handleChosenLsa}
-                    variant={"outlined"}
+                    variant={"contained"}
                 >
                     Proceed With: {selectedLsa?.name}
                 </ButtonPulsing>

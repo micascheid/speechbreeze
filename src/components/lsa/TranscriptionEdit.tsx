@@ -51,12 +51,13 @@ export default function TranscriptionEdit() {
 
     const handleFinalizationConfirm = async () => {
         handleCloseConfirm();
-        handleFinalization();
+        await handleFinalization();
     };
 
     return (
         <Box>
             <TextField
+                // disabled={!lsa?.audiofile_url || lsa?.audio_type === 'noaudio' || !lsa?.transcription_automated}
                 value={textfieldValue}
                 onChange={e => setTextfieldValue(e.target.value)}
                 fullWidth

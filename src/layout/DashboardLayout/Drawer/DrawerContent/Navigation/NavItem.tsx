@@ -46,7 +46,7 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
   const itemIcon = item.icon ? (
     <Icon
       style={{
-        fontSize: drawerOpen ? '1rem' : '1.25rem',
+        fontSize: drawerOpen ? '1.5rem' : '1.25rem',
         ...(menuOrientation === MenuOrientation.HORIZONTAL && isParents && { fontSize: 20, stroke: '1.5' })
       }}
     />
@@ -118,8 +118,8 @@ const NavItem = ({ item, level, isParents = false }: Props) => {
                   color: isSelected ? iconSelectedColor : textColor,
                   ...(!drawerOpen && {
                     borderRadius: 1.5,
-                    width: 36,
-                    height: 36,
+                    width: 42,
+                    height: 42,
                     alignItems: 'center',
                     justifyContent: 'center',
                     '&:hover': {

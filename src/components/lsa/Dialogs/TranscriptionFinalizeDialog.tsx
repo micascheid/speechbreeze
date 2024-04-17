@@ -24,7 +24,7 @@ export default function TranscriptionFinalize({setFinalize, disabled}: Transcrip
 
     return (
         <Box>
-            <Button variant={"outlined"} onClick={handleOpen} disabled={disabled} sx={{marginTop: '1em'}}>Finalize Transcription</Button>
+            <Button variant={"contained"} onClick={handleOpen} disabled={disabled} sx={{marginTop: '1em'}}>Finalize Transcription</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}

@@ -61,6 +61,7 @@ export default function BuildAnalysisStatus({
     const [wordData, setWordData] = useState<UtteranceDataType | null>(morphZeroData);
     const [saveMorphZero, setSaveMorphZero] = useState<boolean>(false);
     const [utterancesWpsCps, setUtterancesWpsCps] = useState<Record<number, {clause_count: number, sentence: sentence_status}>>({})
+    const [isSavingWpsCps, setIsSavingWpsCps] = useState<boolean>(false);
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
     const user = useUser();
     const {mutateLsas} = useLsas();
@@ -156,69 +157,52 @@ export default function BuildAnalysisStatus({
 
     const assistWpsCpsUI = () => {
         return (
-            <Grid
-                container
-                // key={utteranceId}
-                alignItems="center"
-                justifyContent="space-between"
-                spacing={2}
-                style={{width: '100%'}}  // Ensure container takes full width
-            >
+            <Box>
                 {utterancesReviewData && Object.entries(utterancesReviewData).map(([utteranceId, utterance]) => {
                     const id = Number(utteranceId)
-                        return (
-                        <>
-                            <Grid item xs={8}>
-                                <Typography style={{flexGrow: 1}}>
-                                    {utterance.utterance_text}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={4}>
-                                {/*{utterancesWpsCps[id]?.sentence === sentence_status.True ? (*/}
-                                    <ButtonGroup variant="outlined" aria-label="outlined number button group">
-                                        {[0, 1, 2, 3, 4, 5].map((number) => (
-                                            <Button
-                                                key={number}
-                                                onClick={() => {
-                                                    updateClauseCount(id, number);
-                                                    setUtterancesWpsCps(prev => {
-                                                        const prevItem = prev[id] || {};
-                                                        return {
-                                                            ...prev,
-                                                            [utteranceId]: {
-                                                                ...prevItem, // maintain previous values
-                                                                clause_count: number,
-                                                                sentence_status: number === 0 ? false : prevItem.sentence
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                                variant={utterancesWpsCps[id]?.clause_count === number ? 'contained' : 'outlined'}
-                                            >
-                                                {number}
-                                            </Button>
-                                        ))}
-                                    </ButtonGroup>
-                                {/*) : (*/}
-                                {/*    <ButtonGroup variant="outlined" aria-label="outlined primary button group">*/}
-                                {/*        <Button onClick={() => {*/}
-                                {/*            updateSentenceStatus(id, sentence_status.True);*/}
-                                {/*            setUtterancesWpsCps(prev => ({*/}
-                                {/*                ...prev,*/}
-                                {/*                [utteranceId]: { clause_count: 0, sentence: sentence_status.True },*/}
-                                {/*            }));*/}
-                                {/*        }}>Yes</Button>*/}
-                                {/*        <Button onClick={() => updateSentenceStatus(id, sentence_status.False)}>No</Button>*/}
-                                {/*    </ButtonGroup>*/}
-                                {/*)}*/}
-                            </Grid>
-                        </>
-                        )
+                    return (
+                        <Box display="flex" alignItems={"center"} justifyContent="space-between" marginBottom="10px" key={utteranceId} sx={{flexWrap: "nowrap"}}>
+                            <Typography style={{flexGrow: 1, flexBasis: 0, overflow: "hidden"}} mr={2} sx={{textAlign: "left"}}>
+                                {utterance.utterance_text}
+                            </Typography>
 
-
+                            <ButtonGroup variant="outlined" aria-label="outlined number button group">
+                                {[0, 1, 2, 3, 4, 5].map((number) => (
+                                    <Button
+                                        key={number}
+                                        onClick={() => {
+                                            updateClauseCount(id, number);
+                                            setUtterancesWpsCps(prev => {
+                                                const prevItem = prev[id] || {};
+                                                return {
+                                                    ...prev,
+                                                    [utteranceId]: {
+                                                        ...prevItem,
+                                                        clause_count: number,
+                                                        sentence: number === 0 ? sentence_status.False : sentence_status.True
+                                                    },
+                                                };
+                                            });
+                                        }}
+                                        variant={utterancesWpsCps[id]?.clause_count === number ? 'contained' : 'outlined'}
+                                    >
+                                        {number}
+                                    </Button>
+                                ))}
+                            </ButtonGroup>
+                        </Box>
+                    )
                 })}
-                <Button variant={"outlined"} onClick={handleSaveWpsCps}>Save</Button>
-            </Grid>
+                <Box alignSelf={"flex-start"}>
+                    <Button variant={"outlined"} onClick={handleSaveWpsCps}
+                            disabled={(utterancesReviewData ? Object.entries(utterancesReviewData).some(([utteranceId]) =>
+                                typeof utterancesWpsCps[Number(utteranceId)]?.clause_count === "undefined"
+                            ): true) || isSavingWpsCps}
+                    >
+                        {isSavingWpsCps ? "Saving..." : "Save"}
+                    </Button>
+                </Box>
+            </Box>
         );
     }
 
@@ -239,7 +223,7 @@ export default function BuildAnalysisStatus({
                     variant: "filled"
                 }
             } as SnackbarProps)
-            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`)
+            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`);
             console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
             setResultsStatus('assistWpsCps');
             setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);
@@ -255,6 +239,7 @@ export default function BuildAnalysisStatus({
 
     const handleSaveWpsCps = async () => {
         setSaveMorphZero(true);
+        setIsSavingWpsCps(true);
         try {
             console.log(wordData);
             await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances-wps-cps-save`, {'utterances': utterancesWpsCps});
@@ -278,6 +263,7 @@ export default function BuildAnalysisStatus({
         } finally {
             // setResultsStatus(null);
             // setSaveMorphZero(false);
+            setIsSavingWpsCps(false);
         }
     }
 
