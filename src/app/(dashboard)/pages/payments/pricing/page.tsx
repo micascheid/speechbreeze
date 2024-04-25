@@ -12,12 +12,6 @@ import {styled} from "@mui/material/styles";
 // ==============================|| PAGE ||============================== //
 
 
-
-const ThinVerticalDivider = styled(Divider)`
-    width: 1px; // Ensure the divider is very thin
-    background-color: gray; // Adjust the color as needed
-    height: 100%; // Take full height of parent
-`;
 export default function PricingPage() {
     const {user} = useUser();
     const plan_type = user?.sub_type!;

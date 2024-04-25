@@ -2,7 +2,7 @@
 import {useSession} from 'next-auth/react';
 import {fetcher} from "@/utils/axios";
 import useSWR, {mutate} from "swr";
-import {checkboxClasses} from "@mui/material";
+
 
 interface UserProps {
     uid: string;
@@ -17,6 +17,8 @@ interface UserProps {
     sub_end: number;
     org_id: number;
     block_user: boolean;
+    account_creation_date: number;
+    free_trial_left: number;
 }
 
 const useUser = () => {
@@ -35,6 +37,17 @@ const useUser = () => {
         }
 
         return blockUser;
+    }
+
+    const freeTrialCalc = () => {
+        if (session && data) {
+            const slpData = data as SLP;
+            const currentDate = Math.floor(Date.now() / 1000);
+            if (slpData.free_trial_exp > currentDate) {
+                return slpData.free_trial_exp - currentDate;
+            }
+        }
+        return 0;
     }
 
     if (session && data) {
@@ -67,6 +80,8 @@ const useUser = () => {
             sub_end: user.sub_end,
             org_id: user.org_id,
             block_user: blockUser,
+            account_creation_date: user.account_creation_date,
+            free_trial_left: freeTrialCalc()
         };
 
         return {user: newUser, mutateUser};

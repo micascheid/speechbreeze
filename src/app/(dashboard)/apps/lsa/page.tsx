@@ -48,12 +48,10 @@ const ResultsInfoDialog = dialogWrapper(ResultsInfo);
 
 function Content() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
-    const isDisabled = !lsa;
     const audio_type = lsa?.audio_type;
     const audio_url = lsa?.audiofile_url;
     const [finalize, setFinalize] = useState<boolean>(false);
     const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error' | null>(null);
-
 
     const {selectedLsaId, localAudioSource} = useSelectedLSA();
 
@@ -215,9 +213,12 @@ function Content() {
 }
 
 
+
+
 export default function LsaTool() {
     const {user} = useUser();
     const block = user?.block_user;
+
     return (
         <SelectedLSAProvider>
             <Dialog
@@ -246,6 +247,10 @@ export default function LsaTool() {
 
                 </Stack>
             </Dialog>
+            {/*{user?.sub_type === 0 &&*/}
+            {/*    <Typography>Remaining Trial Period: {trialDaysLeft} days</Typography>*/}
+            {/*}*/}
+
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <MainCard title={"1) Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>

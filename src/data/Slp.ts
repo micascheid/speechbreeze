@@ -1,6 +1,7 @@
 interface SLP {
     slp_id: string;
     account_creation_epoch: number;
+    free_trial_exp: number;
     name: string | null;
     email: string;
     sub_type: number | null;
