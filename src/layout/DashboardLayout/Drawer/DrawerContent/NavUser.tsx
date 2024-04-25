@@ -57,7 +57,7 @@ const NavUser = () => {
     const {menuMaster} = useGetMenuMaster();
     const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
-    const user = useUser();
+    const {user} = useUser();
     const router = useRouter();
     const {data: session} = useSession();
     const provider = session?.provider;

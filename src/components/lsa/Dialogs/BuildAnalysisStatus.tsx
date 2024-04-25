@@ -63,7 +63,7 @@ export default function BuildAnalysisStatus({
     const [utterancesWpsCps, setUtterancesWpsCps] = useState<Record<number, {clause_count: number, sentence: sentence_status}>>({})
     const [isSavingWpsCps, setIsSavingWpsCps] = useState<boolean>(false);
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
-    const user = useUser();
+    const {user} = useUser();
     const {mutateLsas} = useLsas();
     const crunchingUI = () => {
         return (

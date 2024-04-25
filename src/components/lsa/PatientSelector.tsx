@@ -43,7 +43,7 @@ export default function PatientSelector() {
     const [isDeletingLsa, setIsDeletingLsa] = useState<boolean>(false);
     const [openDeletePatient, setOpenDeletePatient] = useState<boolean>(false);
     const [isDeletingPatient, setIsDeletingPatient] = useState<boolean>(false);
-    const user = useUser();
+    const {user} = useUser();
     const theme = useTheme();
 
 

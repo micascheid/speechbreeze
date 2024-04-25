@@ -36,7 +36,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
     const [lsaSaveError, setLsaSaveError] = useState<string | null>(null);
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
     const [isTranscriptionAutomated, setIsTranscriptionAutomated] = useState<boolean | null>(null);
-    const {uid: slp_id} = useUser() || {};
+    const {uid: slp_id} = useUser()?.user || {};
 
     const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
     const [audioSelection, setAudioSelection] = useState<"record" | "upload" | "noaudio" | null>(null);

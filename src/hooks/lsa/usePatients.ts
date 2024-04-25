@@ -4,7 +4,7 @@ import {fetcher} from "@/utils/axios";
 import {Patient} from "@/data/Patients";
 
 export default function usePatients() {
-    const user = useUser();
+    const {user} = useUser();
     const {data, isLoading, error } = useSWR(`/patients?uid=${user?.uid}`, fetcher)
     let patientsWithFormattedDates: Patient[] = [];
 

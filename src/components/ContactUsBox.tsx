@@ -15,7 +15,7 @@ const ContactUsBox = () => {
         <Stack>
             <Typography variant={"subtitle1"}>Info:</Typography>
             <Typography variant="body1">
-                Email: micalinscheid@speechbreeze.com
+                Email: support@speechbreeze.com
             </Typography>
             <Typography variant="body1">
                 Phone: +1 907 942 2446

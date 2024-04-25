@@ -3,7 +3,7 @@ import {fetcher, fetcherPost} from "@/utils/axios";
 import useUser from "@/hooks/useUser";
 
 export default function useMLU() {
-    const user = useUser();
+    const {user} = useUser();
     const { data, error, isLoading } = useSWR('/mlu', fetcher)
 
 

@@ -24,7 +24,7 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
     const [saving, setSaving] = useState(false);
     const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', birthdate: new Date()});
     const [saveError, setSaveError] = useState<string | null>(null);
-    const {uid: slp_id} = useUser() || {};
+    const {uid: slp_id} = useUser()?.user || {};
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
 
     useEffect(() => {
@@ -64,8 +64,7 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
         if (!checkName()) return;
         setSaving(true);
         try {
-            console.log("in try", slp_id);
-            const response = await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
+            await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
             const updatedPatients = await mutatePatients(`/patients?uid=${slp_id}`);
             if (updatedPatients && updatedPatients.length > 0)
             {
