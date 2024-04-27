@@ -212,7 +212,7 @@ export default function BuildAnalysisStatus({
             console.log(wordData);
             await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/morph-zero-update`, {'utterances': wordData});
 
-            await mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
+            await mutateLsa(`/lsa/${selectedLsaId}`);
             await mutateLsas(`/lsas/${user?.uid}`);
             openSnackbar({
                 open: true,
@@ -243,7 +243,7 @@ export default function BuildAnalysisStatus({
         try {
             console.log(wordData);
             await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances-wps-cps-save`, {'utterances': utterancesWpsCps});
-            await mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
+            await mutateLsa(`/lsa/${selectedLsaId}`);
             await mutateLsas(`/lsas/${user?.uid}`);
             openSnackbar({
                 open: true,

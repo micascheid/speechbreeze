@@ -80,7 +80,7 @@ export default function PatientSelector() {
         try {
             setIsDeletingLsa(true);
             await axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`);
-            mutateLsa(`/lsa?lsaId=${selectedLsa?.lsa_id}`, false);
+            mutateLsa(`/lsa/${selectedLsa?.lsa_id}`, false);
             mutateLsas(`/lsas/${user?.uid}`);
             setOpenDeleteDialog(false);
             setSelectedLsaId(null);
@@ -117,9 +117,9 @@ export default function PatientSelector() {
         setIsDeletingPatient(true);
         try {
             await axios.delete(`http://127.0.0.1:5000/patients/${selectedPatient?.patient_id}/delete`);
-            await mutatePatients(`/patients?uid=${user?.uid}`);
+            await mutatePatients(`/patients/${user?.uid}`);
             await mutateLsas(`/lsas/${user?.uid}`);
-            await mutateLsa(`/lsa?lsaId=${selectedLsa?.lsa_id}`);
+            await mutateLsa(`/lsa/${selectedLsa?.lsa_id}`);
             setOpenDeleteDialog(false);
             setOpenDeletePatient(false);
             setSelectedPatient(null);

@@ -124,7 +124,7 @@ function Content() {
             try {
                 setUploadStatus('uploading');
                 await uploadAudioBlobUrl(localAudioSource as string);
-                await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
+                await mutateLsa(`/lsa/${lsa.lsa_id}`);
                 setUploadStatus('success');
             } catch (error) {
                 console.log("error uploading recording", error);
@@ -134,7 +134,7 @@ function Content() {
             try {
                 setUploadStatus('uploading');
                 await uploadAudio(localAudioSource as File);
-                await mutateLsa(`/lsa?lsaId=${lsa.lsa_id}`);
+                await mutateLsa(`/lsa/${lsa.lsa_id}`);
                 setUploadStatus('success');
             } catch (error) {
                 console.log("error uploading file", error);

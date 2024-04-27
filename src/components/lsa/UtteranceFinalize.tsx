@@ -70,7 +70,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
         try {
             await handleSubmitUtterances();
             const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
-            await  mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
+            await  mutateLsa(`/lsa/${selectedLsaId}`);
             console.log(response);
             if (Object.keys(response.data?.morph_zero).length === 0) {
                 openSnackbar({

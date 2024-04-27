@@ -5,7 +5,7 @@ import {Patient} from "@/data/Patients";
 
 export default function usePatients() {
     const {user} = useUser();
-    const {data, isLoading, error } = useSWR(`/patients?uid=${user?.uid}`, fetcher)
+    const {data, isLoading, error } = useSWR(`/patients/${user?.uid}`, fetcher)
     let patientsWithFormattedDates: Patient[] = [];
 
     if (data) {
