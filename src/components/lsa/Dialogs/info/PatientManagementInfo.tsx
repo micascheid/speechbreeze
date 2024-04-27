@@ -19,7 +19,7 @@ export default function PatientManagementInfoDialog(props: PatientManagementInfo
 
                 <ListItem dense>
                     <Typography variant="body1">
-                        <i>Patients Table:</i> Click the plus icon to add a new patient. The birthdate field is not required.
+                        <i>Patients Table:</i> Click the plus icon to add a new patient. The age field is not required.
                     </Typography>
                 </ListItem>
 
@@ -89,7 +89,7 @@ Title: Patient Management
 About: In this section you can add new patients and then create new lsa's for those patients.
 
 How To:
-    Patients Table: Click the plus icon to add a new patient. The birthdate feild is not required
+    Patients Table: Click the plus icon to add a new patient. The age feild is not required
     Patients LSA Table: A patient must be selected for continuing to add a new LSA for that patient
         Creating an LSA
         Name: Give the LSA a name

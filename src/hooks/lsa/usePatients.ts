@@ -11,7 +11,7 @@ export default function usePatients() {
     if (data) {
         patientsWithFormattedDates = data.map((patient: Patient) => ({
             ...patient,
-            birthdate: new Date(patient.birthdate)
+            age: patient.age
         }));
     }
 

@@ -22,7 +22,7 @@ type NewPatientFormProps = {
 export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', birthdate: new Date()});
+    const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', age: 0});
     const [saveError, setSaveError] = useState<string | null>(null);
     const {uid: slp_id} = useUser()?.user || {};
     const {patients, isLoading: isPatientsLoading, isError: isPatientsError, mutatePatients} = usePatients();
@@ -43,12 +43,12 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
     const handleClose = () => {
         setOpen(false);
         setSaving(false);
-        setNewPatientData({slp_uid: '', name: '', birthdate: new Date()});
+        setNewPatientData({slp_uid: '', name: '', age: 0});
         setSaveError(null);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewPatientData({...newPatientData, [e.target.name]: e.target.value});
+        setNewPatientData({...newPatientData, [e.target.name]: e.target.value, [e.target.name]: e.target.value});
     };
 
     const checkName = (): boolean => {
@@ -109,11 +109,11 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
                     />
                     <TextField
                         margin="dense"
-                        label="Birthdate"
-                        type="date"
+                        label="Age"
+                        type="number"
                         fullWidth
-                        name="birthdate"
-                        value={newPatientData.birthdate}
+                        name="age"
+                        value={newPatientData.age}
                         onChange={handleChange}
                         InputLabelProps={{shrink: true}}
                     />

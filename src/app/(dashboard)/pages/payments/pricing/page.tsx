@@ -31,34 +31,39 @@ export default function PricingPage() {
         <Grid container spacing={1}>
             <Grid item xs={12}>
                 <MainCard title="Plans">
-                    <Stack>
-                        <Box width="100%" display="flex" justifyContent="space-between">
-                            <Box width="32%" display="flex" justifyContent="center">
-                                <BuyButtonMonthly planType={plan_type} />
+                    <Stack direction="row" spacing={2} justifyContent="space-between">
+                        {/* Individual Plans */}
+                        <Box width="66%">
+                            <Typography variant="h4" align="center">Individual</Typography>  {/* Header for Individual Plans */}
+                            <Box display="flex" justifyContent="space-between" alignItems="center">
+                                <Box width="45%" display="flex" justifyContent="center">
+                                    <BuyButtonMonthly planType={plan_type} />
+                                </Box>
+                                <Divider orientation="vertical" flexItem />  {/* Vertical Divider */}
+                                <Box width="45%" display="flex" justifyContent="center">
+                                    <BuyButtonYearly planType={plan_type} />
+                                </Box>
                             </Box>
-                            <Box width="2%" display="flex" justifyContent="center">
-                                <Divider orientation={"vertical"}/>
-                            </Box>
-
-                            <Box width="32%" display="flex" justifyContent="center">
-                                <BuyButtonYearly planType={plan_type} />
-                            </Box>
-                            <Box width="2%" display="flex" justifyContent="center">
-                                <Divider orientation={"vertical"}/>
-                            </Box>
-                            <Box width="32%" display="flex" justifyContent="center">
+                        </Box>
+                        <Divider orientation="vertical" flexItem />
+                        {/* Organizational Plan */}
+                        <Box width="34%">
+                            <Typography variant="h4" align="center">Organizations</Typography>  {/* Header for Organizational Plan */}
+                            <Box display="flex" justifyContent="center">
                                 <BuyOrganizational />
                             </Box>
                         </Box>
-                        <Box>
-                            <Divider />
-                        </Box>
-                        <Box>
-                            <Typography>To change, cancel, or manage your plan, please contact: <b>support@speechbreeze.com</b></Typography>
-                        </Box>
                     </Stack>
 
+                    {/* Divider for Horizontal Layout */}
+                    <Divider sx={{ mt: 2, mb: 2 }} />
 
+                    {/* Footer with Support Information */}
+                    <Box>
+                        <Typography>
+                            To change, cancel, or manage your plan, please contact: <b>support@speechbreeze.com</b>
+                        </Typography>
+                    </Box>
                 </MainCard>
             </Grid>
 

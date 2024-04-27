@@ -9,7 +9,7 @@ export default function FreeTrialLeft() {
     const trialToDays = () => {
         const secondsPerDay = 24 * 60 * 60;
 
-        return Math.floor(user!.free_trial_left/secondsPerDay);
+        return Math.floor(user?.free_trial_left!/secondsPerDay).toString();
 
     }
     const trialDaysLeft = trialToDays();

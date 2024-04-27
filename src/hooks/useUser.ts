@@ -23,10 +23,10 @@ interface UserProps {
 
 const useUser = () => {
     const {data: session} = useSession();
-    const {data, error, mutate: mutateUser} = useSWR(session ? `/slp/${session.id}` : null, fetcher);
+    const {data, error, isLoading,  mutate: mutateUser} = useSWR(session ? `/slp/${session.id}` : null, fetcher);
 
     const blockTool = (data: SLP) => {
-        // first check if the user has a subscription.
+
         let blockUser: boolean;
         if (data.sub_type === 0) {
             const thirtyDaysAgoEpochSeconds = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
@@ -62,10 +62,10 @@ const useUser = () => {
             user!.name = email ? email[0] : 'Jane Doe';
         }
 
-        if (!user?.image) {
-            user!.image = '/assets/images/users/avatar-1.png';
-            thumb = '/assets/images/users/avatar-thumb-1.png';
-        }
+        // if (!user?.image) {
+        //     user!.image = '/assets/images/users/avatar-test.png';
+        //     thumb = '/assets/images/users/avatar-thumb-1.png';
+        // }
 
         const newUser: UserProps = {
             uid: session!.id!,
@@ -84,9 +84,9 @@ const useUser = () => {
             free_trial_left: freeTrialCalc()
         };
 
-        return {user: newUser, mutateUser};
+        return {user: newUser, isLoading, error, mutateUser};
     }
-    return {user: null, mutateUser};
+    return {user: null, isLoading, error, mutateUser};
 };
 
 export default useUser;

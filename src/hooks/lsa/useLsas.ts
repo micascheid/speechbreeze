@@ -5,7 +5,7 @@ import { Patient} from "@/data/Patients";
 
 export default function useLsas() {
     const {user} = useUser();
-    const { data, isLoading, error } = useSWR(`/lsas?uid=${user?.uid}`, fetcher);
+    const { data, isLoading, error } = useSWR(`/lsas/${user?.uid}`, fetcher);
 
 
     return {

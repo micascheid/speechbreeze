@@ -18,7 +18,6 @@ import Locales from '@/components/Locales';
 // import Locales from '@/components/Locales';
 
 // ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
-
 export default function ProviderWrapper({children}: { children: ReactNode }) {
     return (
         <ConfigProvider>

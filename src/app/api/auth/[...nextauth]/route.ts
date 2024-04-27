@@ -3,6 +3,7 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import CognitoProvider from "next-auth/providers/cognito";
 import axios from '@/utils/axios';
+import useUser from "@/hooks/useUser";
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET_KEY,

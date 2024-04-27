@@ -19,12 +19,34 @@ import {handlerDrawerOpen, useGetMenuMaster} from '@/api/menu';
 
 // types
 import {MenuOrientation} from '@/types/config';
+import {useSession} from "next-auth/react";
+import useUser from "@/hooks/useUser";
+import Error500 from "@/views/maintenance/500";
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
 interface Props {
     children: ReactNode;
 }
+
+const SessionWrapper = ({children}: { children: ReactNode }) => {
+    const {status} = useSession();
+    const {user, isLoading, error} = useUser();
+
+    if (status === 'loading' || isLoading) {
+        return <Loader />;
+    }
+
+    return (
+        <div>
+            {error ? (
+                <Error500 />
+            ) : (
+                children
+            )}
+        </div>
+    );
+};
 
 const DashboardLayout = ({children}: Props) => {
     const theme = useTheme();
@@ -45,27 +67,30 @@ const DashboardLayout = ({children}: Props) => {
     if (menuMasterLoading) return <Loader/>;
 
     return (
-        <Box sx={{display: 'flex', width: '100%'}}>
-            <Header/>
-            {!isHorizontal ? <Drawer/> : <HorizontalBar/>}
-            <Box component="main" sx={{width: 'calc(100% - 260px)', flexGrow: 1, p: {xs: 2, sm: 3}}}>
-                <Toolbar sx={{mt: isHorizontal ? 8 : 'inherit'}}/>
-                <Container
-                    maxWidth={container ? 'xl' : false}
-                    sx={{
-                        ...(container && {px: {xs: 0, sm: 2}}),
-                        position: 'relative',
-                        minHeight: 'calc(100vh - 110px)',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <Breadcrumbs/>
-                    {children}
-                    <Footer/>
-                </Container>
+        <SessionWrapper>
+            <Box sx={{display: 'flex', width: '100%'}}>
+                <Header/>
+                {!isHorizontal ? <Drawer/> : <HorizontalBar/>}
+                <Box component="main" sx={{width: 'calc(100% - 260px)', flexGrow: 1, p: {xs: 2, sm: 3}}}>
+                    <Toolbar sx={{mt: isHorizontal ? 8 : 'inherit'}}/>
+                    <Container
+                        maxWidth={container ? 'xl' : false}
+                        sx={{
+                            ...(container && {px: {xs: 0, sm: 2}}),
+                            position: 'relative',
+                            minHeight: 'calc(100vh - 110px)',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}
+                    >
+                        <Breadcrumbs/>
+                        {children}
+                        <Footer/>
+                    </Container>
+                </Box>
             </Box>
-        </Box>
+        </SessionWrapper>
+
     );
 };
 
