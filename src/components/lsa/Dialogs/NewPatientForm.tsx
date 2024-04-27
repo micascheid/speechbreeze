@@ -64,8 +64,8 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
         if (!checkName()) return;
         setSaving(true);
         try {
-            await axios.post('http://127.0.0.1:5000/add-patient', {...newPatientData, slp_id: slp_id});
-            const updatedPatients = await mutatePatients(`/patients?uid=${slp_id}`);
+            await axios.post('http://127.0.0.1:5000/patients/add-patient', {...newPatientData, slp_id: slp_id});
+            const updatedPatients = await mutatePatients(`/patients/${slp_id}`);
             if (updatedPatients && updatedPatients.length > 0)
             {
                 onPatientAdd(updatedPatients[updatedPatients.length - 1]);

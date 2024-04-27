@@ -8,16 +8,16 @@ import {openSnackbar} from "@/api/snackbar";
 
 export default function useLsa() {
     const { selectedLsaId } = useSelectedLSA();
-    const { data, isLoading, error } = useSWR(!!selectedLsaId ? `/lsa?lsaId=${selectedLsaId}` : null, fetcher);
+    const { data, isLoading, error, mutate: mutateLsa } = useSWR(!!selectedLsaId ? `/lsa/${selectedLsaId}` : null, fetcher);
 
     useEffect(() => {
-        mutate(`/lsa?lsaId=${selectedLsaId}`)
+        mutateLsa(`/lsa/${selectedLsaId}`)
     }, [selectedLsaId]);
 
     const handleUpdate = async (lsaData: Partial<Lsa>) => {
         try {
             await axios.patch(`http://127.0.0.1:5000/update-transcription/${selectedLsaId}`, lsaData);
-            await mutate(`/lsa?lsaId=${selectedLsaId}`);
+            await mutate(`/lsa/${selectedLsaId}`);
             // You can use mutateLsa here instead of mutate directly if this is the api endpoint you want to reload, but make sure it is properly exposed in your useLsa hook and its return structure.
         } catch (error) {
             openSnackbar({
@@ -38,7 +38,7 @@ export default function useLsa() {
         lsa: data,
         isLoading,
         isError: error,
-        mutateLsa: mutate,
+        mutateLsa,
         handleUpdate,
     }
 }
