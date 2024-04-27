@@ -8,6 +8,8 @@ import NavCard from './NavCard';
 import Navigation from './Navigation';
 import SimpleBar from '@/components/third-party/SimpleBar';
 import { useGetMenuMaster } from '@/api/menu';
+import FreeTrialLeft from "@/layout/DashboardLayout/Drawer/DrawerContent/FreeTrialLeft";
+import useUser from "@/hooks/useUser";
 
 // ==============================|| DRAWER CONTENT ||============================== //
 
@@ -31,6 +33,7 @@ const DrawerContent = () => {
         <Navigation />
       </SimpleBar>
         <Box>
+            {drawerOpen && !matchDownMD && <FreeTrialLeft />}
             {drawerOpen && !matchDownMD && <NavCard />}
             <NavUser />
         </Box>

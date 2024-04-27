@@ -1,7 +1,7 @@
 export interface PatientNew {
     slp_uid: string;
     name: string;
-    birthdate: Date;
+    age: number;
 }
 
 export type Patient = PatientNew & {

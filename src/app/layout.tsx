@@ -2,8 +2,7 @@ import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
 import ProviderWrapper from "@/app/ProviderWrapper";
-import DashboardLayout from "@/layout/DashboardLayout";
-import AuthGuard from "@/utils/route-guard/AuthGuard";
+
 
 const inter = Inter({subsets: ["latin"]});
 

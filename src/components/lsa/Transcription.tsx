@@ -9,7 +9,6 @@ import UtteranceBuilder from "@/components/lsa/UtteranceBuilder";
 export default function Transcription() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
     const {selectedLsaId} = useSelectedLSA();
-    console.log("transcription selected lsaID", selectedLsaId);
     return (
         <Grid item>
             {!selectedLsaId ? (

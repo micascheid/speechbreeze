@@ -67,7 +67,7 @@ function a11yProps(index: number) {
 
 const Profile = () => {
     const theme = useTheme();
-    const user = useUser();
+    const {user} = useUser();
     const router = useRouter();
     const {data: session} = useSession();
     const provider = session?.provider;

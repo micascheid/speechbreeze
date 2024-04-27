@@ -3,6 +3,7 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import CognitoProvider from "next-auth/providers/cognito";
 import axios from '@/utils/axios';
+import useUser from "@/hooks/useUser";
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET_KEY,
@@ -93,7 +94,11 @@ export const authOptions: NextAuthOptions = {
                 const userExists = response.data.exists;
 
                 if (!userExists) {
-                    await axios.post(`http://127.0.0.1:5000/slp/add`, { slp_id: user.id, name: (profile as any)?.given_name, email: user.email });
+                    await axios.post(`http://127.0.0.1:5000/slp/add`, {
+                        slp_id: user.id,
+                        name: (profile as any)?.given_name,
+                        email: user.email}
+                    );
                 }
                 return true;
             } catch (error) {

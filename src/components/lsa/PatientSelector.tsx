@@ -43,7 +43,7 @@ export default function PatientSelector() {
     const [isDeletingLsa, setIsDeletingLsa] = useState<boolean>(false);
     const [openDeletePatient, setOpenDeletePatient] = useState<boolean>(false);
     const [isDeletingPatient, setIsDeletingPatient] = useState<boolean>(false);
-    const user = useUser();
+    const {user} = useUser();
     const theme = useTheme();
 
 
@@ -81,7 +81,7 @@ export default function PatientSelector() {
             setIsDeletingLsa(true);
             await axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`);
             mutateLsa(`/lsa?lsaId=${selectedLsa?.lsa_id}`, false);
-            mutateLsas(`/lsas?uid=${user?.uid}`);
+            mutateLsas(`/lsas/${user?.uid}`);
             setOpenDeleteDialog(false);
             setSelectedLsaId(null);
             setSelectedLsa(null);
@@ -118,7 +118,7 @@ export default function PatientSelector() {
         try {
             await axios.delete(`http://127.0.0.1:5000/patients/${selectedPatient?.patient_id}/delete`);
             await mutatePatients(`/patients?uid=${user?.uid}`);
-            await mutateLsas(`/lsas?uid=${user?.uid}`);
+            await mutateLsas(`/lsas/${user?.uid}`);
             await mutateLsa(`/lsa?lsaId=${selectedLsa?.lsa_id}`);
             setOpenDeleteDialog(false);
             setOpenDeletePatient(false);
@@ -194,7 +194,7 @@ export default function PatientSelector() {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell>Birthdate</TableCell>
+                                <TableCell>Age</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -216,7 +216,7 @@ export default function PatientSelector() {
                                                   }}
                                         >
                                             <TableCell>{patient.name}</TableCell>
-                                            <TableCell>{typeof patient.birthdate === 'object' ? patient.birthdate.toDateString() : patient.birthdate}</TableCell>
+                                            <TableCell>{patient.age !== 0 ? patient.age.toString() : "Not Provided"}</TableCell>
                                         </TableRow>
                                     ))}
                                     {Array.from(new Array(emptyRowsCountPatients), (x, i) => i).map((index) => (

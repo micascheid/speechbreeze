@@ -11,18 +11,11 @@ const avatar = '/assets/images/users/avatar-group.png';
 
 const NavCard = () => (
     <MainCard sx={{ bgcolor: 'grey.50', m: 3 }}>
-      <Stack alignItems="center" spacing={2.5}>
+      <Stack alignItems="center" spacing={1}>
         <Stack alignItems="center">
           <Typography variant="h5">Help?</Typography>
-          <Typography variant="h6" color="secondary">
-            Resolve your issue
-          </Typography>
         </Stack>
-        <AnimateButton>
-          <Button variant="shadow" size="small" component={Link} href="https://codedthemes.support-hub.io/" target="_blank">
-            Support
-          </Button>
-        </AnimateButton>
+        <Typography>support@speechbreeze.com</Typography>
       </Stack>
     </MainCard>
 );

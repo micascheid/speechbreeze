@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, ReactNode } from 'react';
+import {useEffect, ReactNode, useRef} from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
+import {useTheme} from '@mui/material/styles';
 import {Box, Container, Toolbar, Typography, useMediaQuery} from '@mui/material';
 
 // project import
@@ -15,60 +15,83 @@ import Loader from '@/components/Loader';
 import Breadcrumbs from '@/components/@extended/Breadcrumbs';
 
 import useConfig from '@/hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from '@/api/menu';
+import {handlerDrawerOpen, useGetMenuMaster} from '@/api/menu';
 
 // types
-import { MenuOrientation } from '@/types/config';
+import {MenuOrientation} from '@/types/config';
+import {useSession} from "next-auth/react";
+import useUser from "@/hooks/useUser";
+import Error500 from "@/views/maintenance/500";
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
 interface Props {
-  children: ReactNode;
+    children: ReactNode;
 }
 
-const DashboardLayout = ({ children }: Props) => {
-  const theme = useTheme();
-  const { menuMasterLoading } = useGetMenuMaster();
-  const matchDownXL = useMediaQuery(theme.breakpoints.down('xl'));
-  const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+const SessionWrapper = ({children}: { children: ReactNode }) => {
+    const {status} = useSession();
+    const {user, isLoading, error} = useUser();
 
-  const { container, miniDrawer, menuOrientation } = useConfig();
-
-  const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
-
-  // set media wise responsive drawer
-  useEffect(() => {
-    if (!miniDrawer) {
-      handlerDrawerOpen(!matchDownXL);
+    if (status === 'loading' || isLoading) {
+        return <Loader />;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchDownXL]);
 
-  if (menuMasterLoading) return <Loader />;
+    return (
+        <div>
+            {error ? (
+                <Error500 />
+            ) : (
+                children
+            )}
+        </div>
+    );
+};
 
-  return (
-    <Box sx={{ display: 'flex', width: '100%' }}>
-      <Header />
-      {!isHorizontal ? <Drawer /> : <HorizontalBar />}
-      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
-        <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
-        <Container
-          maxWidth={container ? 'xl' : false}
-          sx={{
-            ...(container && { px: { xs: 0, sm: 2 } }),
-            position: 'relative',
-            minHeight: 'calc(100vh - 110px)',
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <Breadcrumbs />
-          {children}
-          <Footer />
-        </Container>
-      </Box>
-    </Box>
-  );
+const DashboardLayout = ({children}: Props) => {
+    const theme = useTheme();
+    const {menuMasterLoading} = useGetMenuMaster();
+    const matchDownXL = useMediaQuery(theme.breakpoints.down('xl'));
+    const downLG = useMediaQuery(theme.breakpoints.down('lg'));
+    const {container, miniDrawer, menuOrientation} = useConfig();
+    const isHorizontal = menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
+
+    // set media wise responsive drawer
+    useEffect(() => {
+        if (!miniDrawer) {
+            handlerDrawerOpen(!matchDownXL);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [matchDownXL]);
+
+    if (menuMasterLoading) return <Loader/>;
+
+    return (
+        <SessionWrapper>
+            <Box sx={{display: 'flex', width: '100%'}}>
+                <Header/>
+                {!isHorizontal ? <Drawer/> : <HorizontalBar/>}
+                <Box component="main" sx={{width: 'calc(100% - 260px)', flexGrow: 1, p: {xs: 2, sm: 3}}}>
+                    <Toolbar sx={{mt: isHorizontal ? 8 : 'inherit'}}/>
+                    <Container
+                        maxWidth={container ? 'xl' : false}
+                        sx={{
+                            ...(container && {px: {xs: 0, sm: 2}}),
+                            position: 'relative',
+                            minHeight: 'calc(100vh - 110px)',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}
+                    >
+                        <Breadcrumbs/>
+                        {children}
+                        <Footer/>
+                    </Container>
+                </Box>
+            </Box>
+        </SessionWrapper>
+
+    );
 };
 
 export default DashboardLayout;

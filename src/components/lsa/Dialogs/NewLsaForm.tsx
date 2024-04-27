@@ -36,7 +36,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
     const [lsaSaveError, setLsaSaveError] = useState<string | null>(null);
     const {lsas, isLoading: isLsasLoading, isError: isLsasError, mutateLsas} = useLsas();
     const [isTranscriptionAutomated, setIsTranscriptionAutomated] = useState<boolean | null>(null);
-    const {uid: slp_id} = useUser() || {};
+    const {uid: slp_id} = useUser()?.user || {};
 
     const { selectedLsaId, setSelectedLsaId } = useSelectedLSA();
     const [audioSelection, setAudioSelection] = useState<"record" | "upload" | "noaudio" | null>(null);
@@ -79,7 +79,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
         setSavingLsa(true);
         try {
             const response = await axios.post('http://127.0.0.1:5000/create-lsa', {...newLsaData, patient_id: selectedPatient?.patient_id, slp_id: slp_id});
-            const updatedLsas = await mutateLsas(`/lsas?uid=${slp_id}`);
+            const updatedLsas = await mutateLsas(`/lsas/${slp_id}`);
             if (updatedLsas && updatedLsas.length > 0)
             {
                 console.log(response.data.lsa_id);

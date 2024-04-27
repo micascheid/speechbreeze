@@ -1,6 +1,19 @@
 'use client'
-import React, {useEffect, useState} from 'react';
-import {Box, Button, Card, CircularProgress, Grid, Skeleton, Stack, Tab, Tabs, Typography} from '@mui/material';
+import React, {CSSProperties, useEffect, useRef, useState} from 'react';
+import {
+    Box,
+    Button,
+    Card,
+    CircularProgress,
+    Dialog,
+    Grid,
+    Modal,
+    Skeleton,
+    Stack,
+    Tab,
+    Tabs,
+    Typography
+} from '@mui/material';
 import MainCard from '@/components/MainCard';
 import Transcription from "@/components/lsa/Transcription";
 import useUser from "@/hooks/useUser";
@@ -22,6 +35,7 @@ import dialogWrapper from "@/components/lsa/Dialogs/info/DialogWrapper";
 import ResultsInfo from "@/components/lsa/Dialogs/info/ResultsInfo";
 import AudioInfo, {AudioInfoProps} from "@/components/lsa/Dialogs/info/AudioInfo";
 import UtteranceIdentificationInfo from "@/components/lsa/Dialogs/info/UtteranceIdentificationInfo";
+import Link from "next/link";
 
 type DialogComponentProps = Omit<AudioInfoProps, 'isOpen' | 'onClose'>;
 interface ContentProps {
@@ -34,12 +48,10 @@ const ResultsInfoDialog = dialogWrapper(ResultsInfo);
 
 function Content() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
-    const isDisabled = !lsa;
     const audio_type = lsa?.audio_type;
     const audio_url = lsa?.audiofile_url;
     const [finalize, setFinalize] = useState<boolean>(false);
     const [uploadStatus, setUploadStatus] = useState<'uploading' | 'success' | 'error' | null>(null);
-
 
     const {selectedLsaId, localAudioSource} = useSelectedLSA();
 
@@ -200,11 +212,45 @@ function Content() {
     )
 }
 
-export default function LsaTool() {
 
+
+
+export default function LsaTool() {
+    const {user} = useUser();
+    const block = user?.block_user;
 
     return (
         <SelectedLSAProvider>
+            <Dialog
+                open={user?.block_user || false}
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 99
+                }}
+            >
+                <Stack
+                    sx={{
+                        backgroundColor: 'white',
+                        padding: 2,
+                        borderRadius: 1,
+                    }}
+                    alignItems={"center"}
+                    spacing={1}
+                >
+                    <Typography variant={"subtitle1"}>Your trial has expired..</Typography>
+                    <Typography>Lets see how we can keep you rolling!</Typography>
+                    <Link href={'/pages/payments/pricing'}>
+                        <Button variant={"outlined"}>See Plans</Button>
+                    </Link>
+
+                </Stack>
+            </Dialog>
+            {/*{user?.sub_type === 0 &&*/}
+            {/*    <Typography>Remaining Trial Period: {trialDaysLeft} days</Typography>*/}
+            {/*}*/}
+
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <MainCard title={"1) Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
@@ -223,6 +269,7 @@ export default function LsaTool() {
                     </MainCard>
                 </Grid>
             </Grid>
+
         </SelectedLSAProvider>
     );
 }

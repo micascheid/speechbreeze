@@ -63,7 +63,7 @@ export default function BuildAnalysisStatus({
     const [utterancesWpsCps, setUtterancesWpsCps] = useState<Record<number, {clause_count: number, sentence: sentence_status}>>({})
     const [isSavingWpsCps, setIsSavingWpsCps] = useState<boolean>(false);
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
-    const user = useUser();
+    const {user} = useUser();
     const {mutateLsas} = useLsas();
     const crunchingUI = () => {
         return (
@@ -213,7 +213,7 @@ export default function BuildAnalysisStatus({
             await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/morph-zero-update`, {'utterances': wordData});
 
             await mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
-            await mutateLsas(`/lsas?uid=${user?.uid}`);
+            await mutateLsas(`/lsas/${user?.uid}`);
             openSnackbar({
                 open: true,
                 message: "MlU calculation completed",
@@ -244,7 +244,7 @@ export default function BuildAnalysisStatus({
             console.log(wordData);
             await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances-wps-cps-save`, {'utterances': utterancesWpsCps});
             await mutateLsa(`/lsa?lsaId=${selectedLsaId}`);
-            await mutateLsas(`/lsas?uid=${user?.uid}`);
+            await mutateLsas(`/lsas/${user?.uid}`);
             openSnackbar({
                 open: true,
                 message: "WPS and CPS completed",
