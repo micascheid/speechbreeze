@@ -62,10 +62,10 @@ const useUser = () => {
             user!.name = email ? email[0] : 'Jane Doe';
         }
 
-        // if (!user?.image) {
-        //     user!.image = '/assets/images/users/avatar-test.png';
-        //     thumb = '/assets/images/users/avatar-thumb-1.png';
-        // }
+        if (!user?.image) {
+            user!.image = '/assets/images/users/avatar-generic.png';
+            thumb = '/assets/images/users/avatar-thumb-1.png';
+        }
 
         const newUser: UserProps = {
             uid: session!.id!,

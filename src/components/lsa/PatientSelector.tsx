@@ -80,8 +80,8 @@ export default function PatientSelector() {
         try {
             setIsDeletingLsa(true);
             await axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`);
-            mutateLsa(`/lsa/${selectedLsa?.lsa_id}`, false);
-            mutateLsas(`/lsas/${user?.uid}`);
+            await mutateLsa(`/lsa/${selectedLsa?.lsa_id}`, false);
+            await mutateLsas(`/lsas/${user?.uid}`);
             setOpenDeleteDialog(false);
             setSelectedLsaId(null);
             setSelectedLsa(null);
@@ -171,11 +171,11 @@ export default function PatientSelector() {
                                 open={openDeletePatient}
                                 onClose={handleCloseDeleteDialog}
                             >
-                                <DialogTitle>Delete Patient</DialogTitle>
+                                <DialogTitle sx={{textAlign: 'center'}}>Delete Patient</DialogTitle>
                                 <DialogContent>
                                     <Typography variant="body1" textAlign={"center"}>
                                         Are you sure you want to delete patient: <b>{selectedPatient.name}</b>?<br/>
-                                        <u><b>This is a permanent action that cannot be undone.</b></u>
+                                        <u><b>All associated LSA's will be deleted too.</b></u>
                                     </Typography>
                                 </DialogContent>
                                 <DialogActions>

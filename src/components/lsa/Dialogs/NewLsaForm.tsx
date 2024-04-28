@@ -163,7 +163,6 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
                                 value={isTranscriptionAutomated === null ? '' : isTranscriptionAutomated ? 'auto' : 'manual'}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     const isAutomated = event.target.value === "auto";
-                                    console.log("auto", isAutomated);
                                     setIsTranscriptionAutomated(isAutomated);
                                     setNewLsaData(prevState => {
                                         return { ...prevState, transcription_automated: isAutomated };
