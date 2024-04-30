@@ -88,7 +88,7 @@ const AuthRegister = ({providers, csrfToken}: any) => {
                     console.log(values);
                     signIn('cognito', {
                         redirect: false,
-                        given_name: "mica Linscheid",
+                        name: "mica Linscheid",
                         username: "micascheid",
                         email: "micascheid@gmail.com",
                         password: "passworD123@",
@@ -249,28 +249,6 @@ const AuthRegister = ({providers, csrfToken}: any) => {
                         }
                         return (
                             <Box key={provider.name} sx={{width: '100%'}}>
-                                {provider.id === 'google' && (
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        fullWidth={!matchDownSM}
-                                        startIcon={<Image src={Google} alt="Twitter" width={16} height={16}/>}
-                                        onClick={() => signIn(provider.id, {callbackUrl: APP_DEFAULT_PATH})}
-                                    >
-                                        {!matchDownSM && 'Google'}
-                                    </Button>
-                                )}
-                                {provider.id === 'auth0' && (
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        fullWidth={!matchDownSM}
-                                        startIcon={<Image src={Auth0} alt="Twitter" width={16} height={16}/>}
-                                        onClick={() => signIn(provider.id, {callbackUrl: APP_DEFAULT_PATH})}
-                                    >
-                                        {!matchDownSM && 'Auth0'}
-                                    </Button>
-                                )}
                                 {provider.id === 'cognito' && (
                                     <Button
                                         variant="outlined"

@@ -18,13 +18,13 @@ export default function PatientManagementInfoDialog(props: PatientManagementInfo
                 <Typography variant="subtitle1">How to:</Typography>
 
                 <ListItem dense>
-                    <Typography variant="body1">
+                    <Typography variant="body1" component="div">
                         <i>Patients Table:</i> Click the plus icon to add a new patient. The age field is not required.
                     </Typography>
                 </ListItem>
 
                 <ListItem dense>
-                    <Typography variant="body1">
+                    <Typography variant="body1" component="div">
                         <i>Patients LSA Table:</i> A patient must be selected before continuing to add a new LSA for that patient.
                     </Typography>
                 </ListItem>
@@ -33,26 +33,26 @@ export default function PatientManagementInfoDialog(props: PatientManagementInfo
                     <Typography variant="subtitle1">Creating an LSA:</Typography>
                     <List>
                         <ListItem dense>
-                            <Typography variant="body1">
+                            <Typography variant="body1" component="div">
                                 <i>Name:</i>      Give the LSA a name.
                             </Typography>
                         </ListItem>
                         <ListItem dense>
-                            <Typography variant="body1">
+                            <Typography variant="body1" component="div">
                                 <i>Audio:</i>
                                 <List>
                                     <ListItem dense>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" component="div">
                                             a.) Record a sample on the spot.
                                         </Typography>
                                     </ListItem>
                                     <ListItem dense>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" component="div">
                                             b.) Upload a previously recorded sample.
                                         </Typography>
                                     </ListItem>
                                     <ListItem dense>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" component="div">
                                             c.) No Audio - where you&apos;ll provide your own transcription manually.
                                         </Typography>
                                     </ListItem>
@@ -60,16 +60,16 @@ export default function PatientManagementInfoDialog(props: PatientManagementInfo
                             </Typography>
                         </ListItem>
                         <ListItem dense>
-                            <Typography variant="body1">
+                            <Typography variant="body1" component="div">
                                 <i>Transcription:</i>
                                 <List>
                                     <ListItem dense>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" component="div">
                                             a.) Automated: By providing an audio source, SpeechBreeze will provide a transcription. Don&apos;t worry, you can still edit the transcription.
                                         </Typography>
                                     </ListItem>
                                     <ListItem dense>
-                                        <Typography variant="body1">
+                                        <Typography variant="body1" component="div">
                                             b.) Manual: You can choose the manual option for any audio type, but you will then provide your own transcription in the utterance identification section.
                                         </Typography>
                                     </ListItem>
@@ -82,23 +82,3 @@ export default function PatientManagementInfoDialog(props: PatientManagementInfo
         </InfoDialog>
     );
 };
-
-
-/*
-Title: Patient Management
-About: In this section you can add new patients and then create new lsa's for those patients.
-
-How To:
-    Patients Table: Click the plus icon to add a new patient. The age feild is not required
-    Patients LSA Table: A patient must be selected for continuing to add a new LSA for that patient
-        Creating an LSA
-        Name: Give the LSA a name
-        Audio:
-            a.) Record a sample on the spot
-            b.) Upload a previously recorded sample
-            c.) No Audio where you'll provide your own transcription manually
-        Transcription:
-            a.) Automated: By providing an audio source SpeechBreeze will provide a transcription. Don't worry you can edit the transcription still
-            b.) Manual: You can choose manual for any audio type, but you'll then provide your own transcription in the utterance identification section
-
- */

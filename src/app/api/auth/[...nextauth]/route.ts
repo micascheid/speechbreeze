@@ -96,7 +96,7 @@ export const authOptions: NextAuthOptions = {
                 if (!userExists) {
                     await axios.post(`http://127.0.0.1:5000/slp/add`, {
                         slp_id: user.id,
-                        name: (profile as any)?.given_name,
+                        name: (profile as any)?.name,
                         email: user.email}
                     );
                 }
@@ -115,8 +115,8 @@ export const authOptions: NextAuthOptions = {
         secret: process.env.NEXT_APP_JWT_SECRET
     },
     pages: {
-        signIn: '/login',
-        newUser: '/register'
+        signIn: '/',
+        newUser: '/'
     }
 };
 
