@@ -23,6 +23,8 @@ import LogoIcon from "@/components/logo/LogoIcon";
 import {useRouter} from "next/navigation";
 import {signIn} from "next-auth/react";
 import {APP_DEFAULT_PATH} from "@/config";
+import Link from "next/link";
+import NextLink from "next/link";
 
 interface ColorProps {
     id: PresetColor;
@@ -34,13 +36,6 @@ interface ColorProps {
 const Landing = () => {
     const router = useRouter();
 
-    const handleLogin = () => {
-        signIn('cognito', { callbackUrl: APP_DEFAULT_PATH });
-    }
-
-    const handleRegister = () => {
-        signIn('cognito', { callbackUrl: APP_DEFAULT_PATH });
-    }
 
     return (
         <Container maxWidth="sm" style={{
@@ -57,14 +52,18 @@ const Landing = () => {
             </Typography>
             <Box sx={{'& > *': {m: 1}}}>
                 <Stack direction={"row"} spacing={2}>
-                    <Button sx={{width: 100}} variant="contained" color="primary" size="large"
-                        onClick={handleLogin}>
-                        Login
-                    </Button>
-                    <Button sx={{width: 100}} variant="contained" color="primary" size="large"
-                        onClick={handleRegister}>
-                        Register
-                    </Button>
+                    <NextLink href={"/login"}>
+                        <Button sx={{width: 100}} variant="contained" color="primary" size="large">
+                            Login
+                        </Button>
+                    </NextLink>
+
+                    <NextLink href={'/register'}>
+                        <Button sx={{width: 100}} variant="contained" color="primary" size="large">
+                            Register
+                        </Button>
+                    </NextLink>
+
                 </Stack>
             </Box>
         </Container>

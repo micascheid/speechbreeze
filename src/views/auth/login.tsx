@@ -27,7 +27,7 @@ export default async function SignIn() {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <AuthLogin providers={providers} csrfToken={csrfToken} />
+          <AuthLogin/>
         </Grid>
       </Grid>
     </AuthWrapper>

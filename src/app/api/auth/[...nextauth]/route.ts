@@ -3,71 +3,102 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import CognitoProvider from "next-auth/providers/cognito";
 import axios from '@/utils/axios';
-import useUser from "@/hooks/useUser";
+import AWS from 'aws-sdk';
+import {
+    AuthFlowType,
+    CognitoIdentityProviderClient,
+    InitiateAuthCommand
+} from "@aws-sdk/client-cognito-identity-provider";
+import {createHmac} from "crypto";
 
+const COGNITO_CLIENT_ID = process.env.COGNITO_CLIENT_ID || '';
+const COGNITO_CLIENT_SECRET = process.env.COGNITO_CLIENT_SECRET || '';
+const REGION = process.env.COGNITO_REGION || 'us-east-2';
+
+const cognitoClient = new CognitoIdentityProviderClient({
+    region: REGION
+});
+
+const calculateSecretHash = (username: string, clientId: string, clientSecret: string) => {
+    const message = username + clientId;
+    const hmac = createHmac('sha256', clientSecret);
+    hmac.update(message);
+    return hmac.digest('base64');
+};
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET_KEY,
     providers: [
-        CognitoProvider({
-            name: 'Cognito',
-            clientId: process.env.COGNITO_CLIENT_ID as string,
-            clientSecret: process.env.COGNITO_CLIENT_SECRET as string,
-            issuer: `https://cognito-idp.${process.env.COGNITO_REGION}.amazonaws.com/${process.env.COGNITO_POOL_ID}`,
-        }),
+        // CognitoProvider({
+        //     name: 'cognito',
+        //     clientId: process.env.COGNITO_CLIENT_ID as string,
+        //     clientSecret: process.env.COGNITO_CLIENT_SECRET as string,
+        //     issuer: `https://cognito-idp.${process.env.COGNITO_REGION}.amazonaws.com/${process.env.COGNITO_POOL_ID}`,
+        // }),
         CredentialsProvider({
-            id: 'login',
-            name: 'login',
+            name: 'credentials',
             credentials: {
                 email: { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
                 password: { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter Password' }
             },
             async authorize(credentials) {
+                // const {email, password} = req.body as SignInData;
+                const secretHash = calculateSecretHash('micascheid@gmail.com', COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET);
+                const params = {
+                    AuthFlow: "USER_PASSWORD_AUTH" as AuthFlowType,
+                    ClientId: COGNITO_CLIENT_ID,
+                    AuthParameters: {
+                        USERNAME: credentials.email,
+                        PASSWORD: credentials.password,
+                        SECRET_HASH: secretHash
+                    },
+                };
                 try {
-                    const user = await axios.post('/api/account/login', {
-                        password: credentials?.password,
-                        email: credentials?.email
-                    });
-
-                    if (user) {
-                        user.data.user['accessToken'] = user.data.serviceToken;
-                        return user.data.user;
-                    }
-                } catch (e: any) {
-                    const errorMessage = e?.response.data.message;
-                    throw new Error(errorMessage);
+                    const command = new InitiateAuthCommand(params);
+                    const response = await cognitoClient.send(command);
+                    console.log(response.ChallengeParameters?.USER_ID_FOR_SRP);
+                    console.log("response:", response);
+                    const user = {
+                        id: response.ChallengeParameters?.USER_ID_FOR_SRP as string, // User ID for Secure Remote Password
+                        name: 'micascheid',
+                    };
+                    return user;
+                } catch (error) {
+                    console.error(error);
+                    return null;
                 }
+
             }
         }),
-        CredentialsProvider({
-            id: 'register',
-            name: 'Register',
-            credentials: {
-                firstname: { name: 'firstname', label: 'Firstname', type: 'text', placeholder: 'Enter Firstname' },
-                lastname: { name: 'lastname', label: 'Lastname', type: 'text', placeholder: 'Enter Lastname' },
-                email: { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
-                company: { name: 'company', label: 'Company', type: 'text', placeholder: 'Enter Company' },
-                password: { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter Password' }
-            },
-            async authorize(credentials) {
-                try {
-                    const user = await axios.post('/api/account/register', {
-                        firstName: credentials?.firstname,
-                        lastName: credentials?.lastname,
-                        company: credentials?.company,
-                        password: credentials?.password,
-                        email: credentials?.email
-                    });
-
-                    if (user) {
-                        // users.push(user.data);
-                        return user.data;
-                    }
-                } catch (e: any) {
-                    const errorMessage = e?.response.data.message;
-                    throw new Error(errorMessage);
-                }
-            }
-        }),
+        // CredentialsProvider({
+        //     id: 'register',
+        //     name: 'Register',
+        //     credentials: {
+        //         firstname: { name: 'firstname', label: 'Firstname', type: 'text', placeholder: 'Enter Firstname' },
+        //         lastname: { name: 'lastname', label: 'Lastname', type: 'text', placeholder: 'Enter Lastname' },
+        //         email: { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
+        //         company: { name: 'company', label: 'Company', type: 'text', placeholder: 'Enter Company' },
+        //         password: { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter Password' }
+        //     },
+        //     async authorize(credentials) {
+        //         try {
+        //             const user = await axios.post('/api/account/register', {
+        //                 firstName: credentials?.firstname,
+        //                 lastName: credentials?.lastname,
+        //                 company: credentials?.company,
+        //                 password: credentials?.password,
+        //                 email: credentials?.email
+        //             });
+        //
+        //             if (user) {
+        //                 // users.push(user.data);
+        //                 return user.data;
+        //             }
+        //         } catch (e: any) {
+        //             const errorMessage = e?.response.data.message;
+        //             throw new Error(errorMessage);
+        //         }
+        //     }
+        // }),
 
     ],
     callbacks: {
@@ -92,7 +123,7 @@ export const authOptions: NextAuthOptions = {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/slp/${user.id}/check`);
                 const userExists = response.data.exists;
-
+                console.log("response:", user);
                 if (!userExists) {
                     await axios.post(`http://127.0.0.1:5000/slp/add`, {
                         slp_id: user.id,
@@ -103,7 +134,7 @@ export const authOptions: NextAuthOptions = {
                 return true;
             } catch (error) {
                 console.error("Unable to handle user in db:", error);
-                return false;
+                return true;
             }
         }
     },
@@ -115,8 +146,8 @@ export const authOptions: NextAuthOptions = {
         secret: process.env.NEXT_APP_JWT_SECRET
     },
     pages: {
-        signIn: '/',
-        newUser: '/'
+        signIn: '/login',
+        newUser: '/register'
     }
 };
 

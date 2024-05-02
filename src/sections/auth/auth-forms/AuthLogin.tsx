@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, FocusEvent, SyntheticEvent } from 'react';
+import React, {useState, FocusEvent, SyntheticEvent, ReactElement} from 'react';
 
 // next
 import Image from 'next/legacy/image';
 import NextLink from 'next/link';
-import { signIn } from 'next-auth/react';
 
 // material-ui
 import { Theme } from '@mui/material/styles';
@@ -37,9 +36,12 @@ import AnimateButton from '@/components/@extended/AnimateButton';
 
 import { APP_DEFAULT_PATH } from '@/config';
 import { fetcher } from '@/utils/axios';
-
+import {signIn} from 'next-auth/react';
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 const Auth0 = '/assets/images/icons/auth0.svg';
 const Cognito = '/assets/images/icons/aws-cognito.svg';
@@ -47,10 +49,11 @@ const Google = '/assets/images/icons/google.svg';
 
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
-const AuthLogin = ({ providers, csrfToken }: any) => {
+const AuthLogin = () => {
   const matchDownSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [checked, setChecked] = useState(false);
   const [capsWarning, setCapsWarning] = useState(false);
+  const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -73,40 +76,34 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
       <>
         <Formik
             initialValues={{
-              email: 'amazingSLP@gmail.com',
-              password: 'pass123',
+              email: '',
+              password: '',
               submit: null
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
               password: Yup.string().max(255).required('Password is required')
             })}
-            onSubmit={(values, { setErrors, setSubmitting }) => {
-              signIn('login', {
-                redirect: true,
-                email: values.email,
-                password: values.password,
-                callbackUrl: APP_DEFAULT_PATH
-              }).then(
-                  (res: any) => {
-                    if (res?.error) {
-                      setErrors({ submit: res.error });
-                      setSubmitting(false);
-                    } else {
-                      // preload('api/menu/dashboard', fetcher); // load menu on login success
-                      setSubmitting(false);
-                    }
-                  },
-                  (res) => {
-                    setErrors({ submit: res.error });
-                    setSubmitting(false);
-                  }
-              );
+            onSubmit={async (values, {setErrors, setSubmitting}) => {
+                const {email, password} = values;
+                const result = await signIn('credentials', {
+                    redirect: false,
+                    email: email,
+                    password: password
+                });
+
+                if (result?.error) {
+                    // Handle errors, perhaps update state to show in the UI
+                    console.error('Login failed:', result.error);
+                } else {
+                    router.push('/apps/lsa');
+                }
+
+                setSubmitting(false);
             }}
         >
           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
               <form noValidate onSubmit={handleSubmit}>
-                <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Stack spacing={1}>
@@ -155,6 +152,7 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
                                   edge="end"
                                   color="secondary"
                               >
+
                                 {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
                               </IconButton>
                             </InputAdornment>
@@ -211,39 +209,6 @@ const AuthLogin = ({ providers, csrfToken }: any) => {
               </form>
           )}
         </Formik>
-        <Divider sx={{ mt: 2 }}>
-          <Typography variant="caption"> Login with</Typography>
-        </Divider>
-        {providers && (
-            <Stack
-                direction="row"
-                spacing={matchDownSM ? 1 : 2}
-                justifyContent={matchDownSM ? 'space-around' : 'space-between'}
-                sx={{ mt: 3, '& .MuiButton-startIcon': { mr: matchDownSM ? 0 : 1, ml: matchDownSM ? 0 : -0.5 } }}
-            >
-              {Object.values(providers).map((provider: any) => {
-                if (provider.id === 'login' || provider.id === 'register') {
-                  return;
-                }
-                return (
-                    <Box key={provider.name} sx={{ width: '100%' }}>
-
-                      {provider.id === 'cognito' && (
-                          <Button
-                              variant="outlined"
-                              color="secondary"
-                              fullWidth={!matchDownSM}
-                              startIcon={<Image src={Cognito} alt="Twitter" width={16} height={16} />}
-                              onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                          >
-                            {!matchDownSM && 'Cognito'}
-                          </Button>
-                      )}
-                    </Box>
-                );
-              })}
-            </Stack>
-        )}
       </>
   );
 };
