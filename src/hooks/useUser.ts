@@ -57,10 +57,6 @@ const useUser = () => {
         const blockUser = blockTool(slpData);
 
         let thumb = user?.image!;
-        if (provider === 'cognito') {
-            const email = user?.email?.split('@');
-            user!.name = email ? email[0] : 'Jane Doe';
-        }
 
         if (!user?.image) {
             user!.image = '/assets/images/users/avatar-generic.png';

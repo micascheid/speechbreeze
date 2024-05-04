@@ -19,6 +19,7 @@ import {PresetColor, ThemeDirection, ThemeMode} from '@/types/config';
 import LogoIcon from "@/components/logo/LogoIcon";
 import {useRouter} from "next/navigation";
 import {signIn} from "next-auth/react";
+import Loader from "@/components/Loader";
 
 
 interface ColorProps {
@@ -31,8 +32,8 @@ interface ColorProps {
 const Landing = () => {
     const router = useRouter();
 
-    const handleLogin = () => {
-        signIn( 'auth0', {callbackUrl: '/apps/lsa'});
+    const handleLogin = async () => {
+        router.push('/login');
     }
 
     const handleRegister = () => {

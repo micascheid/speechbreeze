@@ -65,7 +65,7 @@ const NavUser = () => {
     const handleLogout = () => {
         console.log("handle logout nav user");
         switch (provider) {
-            case 'cognito':
+            case 'auth0':
                 signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/cognito` });
                 break;
             default:

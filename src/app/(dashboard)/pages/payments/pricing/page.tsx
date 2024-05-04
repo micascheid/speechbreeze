@@ -68,7 +68,7 @@ export default function PricingPage() {
             </Grid>
 
             <Grid item xs={12}>
-                <MainCard title={"Organization/School Employee"}>
+                <MainCard title={"Have an Access Code?"}>
                     <OrganizationInput />
                 </MainCard>
             </Grid>

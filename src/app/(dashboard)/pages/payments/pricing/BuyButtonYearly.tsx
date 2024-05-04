@@ -39,12 +39,16 @@ function BuyButtonYearly({planType}: BuyButtonYearlyProps) {
                     pointerEvents: isDisabled ? 'none' : 'auto', // Disable interaction
                 }}
             >
-                <stripe-buy-button
-                    buy-button-id="buy_btn_1P8vCLEnGNPnb7LNYtWtu7wm"
-                    publishable-key="pk_test_51MsrllEnGNPnb7LN960TqSCAhliTPFORSwLNlAdKVeHsH2kYxU8uNnstGNc8tCk68wyNYjafhK74QEuNssReWnvf00MNKkitrz"
-                    client-reference-id={user?.uid}
-                    customer-email={user?.email}
-                />
+                {user && (
+                    <stripe-buy-button
+                        buy-button-id="buy_btn_1PCmeDEnGNPnb7LN02B2LHcX"
+                        publishable-key="pk_test_51MsrllEnGNPnb7LN960TqSCAhliTPFORSwLNlAdKVeHsH2kYxU8uNnstGNc8tCk68wyNYjafhK74QEuNssReWnvf00MNKkitrz"
+                        client-reference-id={user.uid}
+                        customer-email={user.email}
+                    />
+                )
+                }
+
             </Box>
 
         </Stack>
