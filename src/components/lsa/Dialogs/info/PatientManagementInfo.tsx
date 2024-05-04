@@ -6,7 +6,7 @@ type PatientManagementInfoProps = Omit<InfoDialogProps, 'title' | 'children'>
 
 export default function PatientManagementInfoDialog(props: PatientManagementInfoProps) {
     return (
-        <InfoDialog title="Patient And LSA Creation" {...props}>
+        <InfoDialog title="Patient and LSA Creation" {...props}>
             <Box mb={2}>
                 <Typography variant="subtitle1">About:</Typography>
                 <Typography variant="body1">

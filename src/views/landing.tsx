@@ -16,13 +16,10 @@ import {presetDarkPalettes, presetPalettes, PalettesProps} from '@ant-design/col
 import {PresetColor, ThemeDirection, ThemeMode} from '@/types/config';
 
 // assets
-import {CheckOutlined} from '@ant-design/icons';
-import useConfig from "@/hooks/useConfig";
-import Logo from "@/components/logo";
 import LogoIcon from "@/components/logo/LogoIcon";
 import {useRouter} from "next/navigation";
 import {signIn} from "next-auth/react";
-import {APP_DEFAULT_PATH} from "@/config";
+
 
 interface ColorProps {
     id: PresetColor;
@@ -35,11 +32,11 @@ const Landing = () => {
     const router = useRouter();
 
     const handleLogin = () => {
-        signIn('cognito', { callbackUrl: APP_DEFAULT_PATH });
+        signIn( 'auth0', {callbackUrl: '/apps/lsa'});
     }
 
     const handleRegister = () => {
-        signIn('cognito', { callbackUrl: APP_DEFAULT_PATH });
+
     }
 
     return (
