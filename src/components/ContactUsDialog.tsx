@@ -1,4 +1,4 @@
-import {Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, Stack, Typography} from "@mui/material";
+import {Box, Dialog, DialogContent, DialogTitle, IconButton, List, ListItem, Stack, Typography} from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -15,10 +15,28 @@ export default function ContactUsDialog({openDialog, setOpenDialog}: ContactUsDi
 
     return (
         <Dialog open={openDialog} onClose={handleClose}>
-            <IconButton>
-                <CloseIcon fontSize={"medium"} onClick={handleClose}/>
-            </IconButton>
-            <DialogTitle sx={{textAlign: "center", fontSize: '1.2rem'}}>Organization Subscription</DialogTitle>
+            <Box
+                sx={{
+                    position: 'relative',  // Establishes a new stacking context
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingBottom: 1,
+                }}
+            >
+                <DialogTitle sx={{fontSize: '1.2rem'}}>Organization Subscription</DialogTitle>
+
+                <IconButton
+                    onClick={handleClose}
+                    sx={{
+                        position: 'absolute',  // Positining in relation to closest ancestor with position other than 'static'
+                        right: 8,  // You can adjust this.
+                        top: 8,  // You can adjust this.
+                    }}
+                >
+                    <CloseIcon fontSize="medium" />
+                </IconButton>
+            </Box>
             <DialogContent>
                 <Typography variant="subtitle1" fontSize={'1.1rem'}>How it Works:</Typography>
                 <Typography variant="body1" gutterBottom fontSize={'1.1rem'}>
@@ -61,15 +79,3 @@ export default function ContactUsDialog({openDialog, setOpenDialog}: ContactUsDi
         </Dialog>
     )
 }
-
-/*
-How it works:
-Payment:
-SpeechBreeze will work with your organizations billing cycle to make payments as simple as possible.
-Regardless of payment structure, it will equate to $99 a year per seat
-
-Onboarding:
-1.) Provide SpeechBreeze a list of emails of the SLPs that will be signing up to SpeechBreeze
-2.) SpeechBreeze will provide your oranization an organization code
-3.) SLPs will input that code into the application and off they go!
- */

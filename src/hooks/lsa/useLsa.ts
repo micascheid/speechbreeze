@@ -8,10 +8,13 @@ import {openSnackbar} from "@/api/snackbar";
 
 export default function useLsa() {
     const { selectedLsaId } = useSelectedLSA();
-    const { data, isLoading, error, mutate: mutateLsa } = useSWR(!!selectedLsaId ? `/lsa/${selectedLsaId}` : null, fetcher);
+    const { data, isLoading, error } = useSWR(!!selectedLsaId ? `/lsa/${selectedLsaId}` : null, fetcher);
 
     useEffect(() => {
-        mutateLsa(`/lsa/${selectedLsaId}`)
+        async function fetchLsa() {
+            await mutate(`/lsa/${selectedLsaId}`);
+        }
+        fetchLsa();
     }, [selectedLsaId]);
 
     const handleUpdate = async (lsaData: Partial<Lsa>) => {
@@ -38,7 +41,7 @@ export default function useLsa() {
         lsa: data,
         isLoading,
         isError: error,
-        mutateLsa,
+        mutateLsa: mutate,
         handleUpdate,
     }
 }

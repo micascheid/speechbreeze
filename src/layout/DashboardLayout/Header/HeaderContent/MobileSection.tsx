@@ -5,7 +5,6 @@ import { useTheme } from '@mui/material/styles';
 import { AppBar, Box, ClickAwayListener, Paper, Popper, Toolbar } from '@mui/material';
 
 // project import
-import Search from './Search';
 import Profile from './Profile';
 import Localization from './Localization';
 import IconButton from '@/components/@extended/IconButton';
@@ -90,7 +89,6 @@ const MobileSection = () => {
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
                   <Toolbar>
-                    <Search />
                     <Localization />
                     <Profile />
                   </Toolbar>

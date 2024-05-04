@@ -12,7 +12,6 @@ export default function AudioUploadStatus({
                                               setUploadStatus: setUploadStatus
                                           }: AudioUploadStatusProps) {
     const [open, setOpen] = useState(true);
-    console.log("upload status:", uploadStatus);
     const loadingUI = () => {
         return (
             <>

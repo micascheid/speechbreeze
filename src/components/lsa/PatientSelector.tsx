@@ -17,14 +17,13 @@ import usePatients from "@/hooks/lsa/usePatients";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
 import {Lsa} from "@/data/Lsa";
-import {PatientNew, Patient} from "@/data/Patients";
+import {Patient} from "@/data/Patients";
 import useLsas from "@/hooks/lsa/useLsas";
 import TableRowsSkeleton from "@/components/skeletons/TableRowsSkeleton";
 import {useTheme} from "@mui/material/styles";
 import {NewPatientForm} from "@/components/lsa/Dialogs/NewPatientForm";
 import NewLsaForm from "@/components/lsa/Dialogs/NewLsaForm";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext";
-import AnimateButton from "@/components/@extended/AnimateButton";
 import ButtonPulsing from "@/components/ButtonPulsing";
 import useLsa from "@/hooks/lsa/useLsa";
 
@@ -80,8 +79,8 @@ export default function PatientSelector() {
         try {
             setIsDeletingLsa(true);
             await axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`);
-            mutateLsa(`/lsa/${selectedLsa?.lsa_id}`, false);
-            mutateLsas(`/lsas/${user?.uid}`);
+            await mutateLsa(`/lsa/${selectedLsa?.lsa_id}`, false);
+            await mutateLsas(`/lsas/${user?.uid}`);
             setOpenDeleteDialog(false);
             setSelectedLsaId(null);
             setSelectedLsa(null);
@@ -94,8 +93,7 @@ export default function PatientSelector() {
                     variant: "filled"
                 },
             } as SnackbarProps);
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
             openSnackbar({
                 open: true,
@@ -106,8 +104,7 @@ export default function PatientSelector() {
                     variant: "filled"
                 },
             } as SnackbarProps);
-        }
-        finally {
+        } finally {
             setIsDeletingLsa(false);
             setOpenDeleteDialog(false);
         }
@@ -171,11 +168,11 @@ export default function PatientSelector() {
                                 open={openDeletePatient}
                                 onClose={handleCloseDeleteDialog}
                             >
-                                <DialogTitle>Delete Patient</DialogTitle>
+                                <DialogTitle sx={{textAlign: 'center'}}>Delete Patient</DialogTitle>
                                 <DialogContent>
                                     <Typography variant="body1" textAlign={"center"}>
                                         Are you sure you want to delete patient: <b>{selectedPatient.name}</b>?<br/>
-                                        <u><b>This is a permanent action that cannot be undone.</b></u>
+                                        <u><b>All associated LSA&apos;s will be deleted too.</b></u>
                                     </Typography>
                                 </DialogContent>
                                 <DialogActions>
@@ -202,7 +199,17 @@ export default function PatientSelector() {
                                 <TableRowsSkeleton rows={5} columns={2} animate={true}/>
                             ) : isPatientsError ? (
                                 <TableRow>
-                                    <TableCell colSpan={2} align="center">{"Trouble connecting. Please ensure internet connection"}</TableCell>
+                                    <TableCell colSpan={2}
+                                               align="center">{"Trouble connecting. Please ensure internet connection"}
+                                    </TableCell>
+                                </TableRow>
+                            ) : patients.length === 0 ? (
+                                <TableRow style={{pointerEvents: 'none'}}>
+                                    <TableCell colSpan={2} style={{ height: `calc(${36 * 7}px - 52px)` }}>
+                                        <Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"}>
+                                            <Typography variant={"h3"} fontStyle={'oblique'} textAlign={"center"}>Add a patient to get started</Typography>
+                                        </Box>
+                                    </TableCell>
                                 </TableRow>
                             ) : (
                                 <>
@@ -224,6 +231,7 @@ export default function PatientSelector() {
                                             <TableCell colSpan={2}/>
                                         </TableRow>
                                     ))}
+
                                 </>
                             )}
                         </TableBody>

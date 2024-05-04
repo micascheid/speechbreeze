@@ -119,7 +119,6 @@ function Content() {
         }
     }
     const finalizeAudio = async () => {
-        console.log("audio type", audio_type);
         if (audio_type === 'record') {
             try {
                 setUploadStatus('uploading');
