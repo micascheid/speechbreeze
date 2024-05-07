@@ -24,7 +24,7 @@ const UtteranceIdentificationInfo = (props: UtteranceIdentificationInfoProps) =>
                     </ListItem>
                     <ListItem dense>
                         <Typography variant="body1">
-                            <i>2.) After Finalization:</i> Highlight utterances by highlighting text with the cursor. A box with a check mark and an X appears. If you like your selection, use the check mark. If you don't like your highlighted portion, use the X.
+                            <i>2.) After Finalization:</i> Highlight utterances by highlighting text with the cursor. A box with a check mark and an X appears. If you like your selection, use the check mark. If you don&apos;t like your highlighted portion, use the X.
                         </Typography>
                     </ListItem>
                     <ListItem dense>
@@ -40,12 +40,12 @@ const UtteranceIdentificationInfo = (props: UtteranceIdentificationInfoProps) =>
                     <Box ml={2}>
                         <ListItem dense>
                             <Typography variant="body1">
-                                <i>Undetermined Morphemes:</i> SpeechBreeze provides automated morpheme counting. If SpeechBreeze can't determine the morpheme count for a word, it will provide the words it needs help on.
+                                <i>Undetermined Morphemes:</i> SpeechBreeze provides automated morpheme counting. If SpeechBreeze can&apos;t determine the morpheme count for a word, it will provide the words it needs help on.
                             </Typography>
                         </ListItem>
                         <ListItem dense>
                             <Typography variant="body1">
-                                <i>Clause Count:</i> First, SpeechBreeze will ask you to clarify any utterances that may not be sentences if it's unable to determine so. However, if the sentence contains more than 1 clause, it will ask you to input how many clauses that sentence contains.
+                                <i>Clause Count:</i> First, SpeechBreeze will ask you to clarify any utterances that may not be sentences if it&apos;s unable to determine so. However, if the sentence contains more than 1 clause, it will ask you to input how many clauses that sentence contains.
                             </Typography>
                         </ListItem>
                     </Box>

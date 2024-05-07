@@ -190,4 +190,6 @@ const MainCard = forwardRef(
     }
 );
 
+MainCard.displayName = 'MainCard';
+
 export default MainCard;
