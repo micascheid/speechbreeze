@@ -93,7 +93,7 @@ function AudioRecord() {
                 setLocalAudioSource(url);
             });
         }
-    }, []);
+    }, [setLocalAudioSource]);
 
     const startRecording = () => {
         if (recordedBlobUrl !== null) {
