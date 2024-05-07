@@ -14,7 +14,7 @@ interface DeviceInfo {
     label: string;
 }
 
-const AudioRecorder = () => {
+const AudioRecord = () => {
     const [selectedDevice, setSelectedDevice] = useState<string>('');
     const [recordedBlobUrl, setRecordedBlobUrl] = useState<string | null>(null);
     const [devices, setDevices] = useState<DeviceInfo[]>([]);
@@ -214,5 +214,5 @@ const AudioRecorder = () => {
     );
 };
 
-AudioRecorder.displayName = 'AudioRecorder';
-export default AudioRecorder;
+// AudioRecorder.displayName = 'AudioRecorder';
+export default AudioRecord;
