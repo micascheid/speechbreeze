@@ -214,5 +214,5 @@ const AudioRecord = () => {
     );
 };
 
-// AudioRecorder.displayName = 'AudioRecorder';
+AudioRecord.displayName = 'AudioRecord';
 export default AudioRecord;
