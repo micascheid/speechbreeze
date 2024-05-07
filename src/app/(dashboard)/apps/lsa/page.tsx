@@ -149,7 +149,7 @@ function Content() {
             console.log("you getting called?");
             finalizeAudio();
         }
-    }, [finalize]);
+    }, [finalizeAudio, finalize]);
 
 
     return (
