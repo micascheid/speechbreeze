@@ -53,14 +53,6 @@ const applications: NavItemType = {
       icon: icons.ToolOutlined,
       breadcrumbs: false
     },
-    {
-      id: 'clients',
-      title: <FormattedMessage id="clients" />,
-      type: 'item',
-      url: '/apps/clients',
-      icon: icons.GroupsOutlinedIcon,
-      breadcrumbs: false
-    }
   ]
 };
 

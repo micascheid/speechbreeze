@@ -19,7 +19,7 @@ export default function useLsa() {
 
     const handleUpdate = async (lsaData: Partial<Lsa>) => {
         try {
-            await axios.patch(`http://127.0.0.1:5000/update-transcription/${selectedLsaId}`, lsaData);
+            await axios.patch(`${process.env.NEXT_API_BASE_URL}/update-transcription/${selectedLsaId}`, lsaData);
             await mutate(`/lsa/${selectedLsaId}`);
             // You can use mutateLsa here instead of mutate directly if this is the api endpoint you want to reload, but make sure it is properly exposed in your useLsa hook and its return structure.
         } catch (error) {

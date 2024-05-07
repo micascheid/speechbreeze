@@ -210,7 +210,7 @@ export default function BuildAnalysisStatus({
         setSaveMorphZero(true);
         try {
             console.log(wordData);
-            await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/morph-zero-update`, {'utterances': wordData});
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/morph-zero-update`, {'utterances': wordData});
 
             await mutateLsa(`/lsa/${selectedLsaId}`);
             await mutateLsas(`/lsas/${user?.uid}`);
@@ -223,7 +223,7 @@ export default function BuildAnalysisStatus({
                     variant: "filled"
                 }
             } as SnackbarProps)
-            const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`);
+            const wpsCpsResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/crunch-results-wps-cps`);
             console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
             setResultsStatus('assistWpsCps');
             setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);
@@ -242,7 +242,7 @@ export default function BuildAnalysisStatus({
         setIsSavingWpsCps(true);
         try {
             console.log(wordData);
-            await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances-wps-cps-save`, {'utterances': utterancesWpsCps});
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/utterances-wps-cps-save`, {'utterances': utterancesWpsCps});
             await mutateLsa(`/lsa/${selectedLsaId}`);
             await mutateLsas(`/lsas/${user?.uid}`);
             openSnackbar({

@@ -70,7 +70,7 @@ function Content() {
         }
 
         try {
-            await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/upload-audio`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -97,7 +97,7 @@ function Content() {
             formData.append('transcription_automated', lsa.transcription_automated);
         }
         try {
-            await axios.post('http://127.0.0.1:5000/upload-audio', formData, {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/upload-audio`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // This header tells the server about the type of the content
                 },

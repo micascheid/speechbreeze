@@ -78,7 +78,7 @@ export default function PatientSelector() {
     const handleDeleteLsa = async () => {
         try {
             setIsDeletingLsa(true);
-            await axios.delete(`http://127.0.0.1:5000/lsa/${selectedLsa?.lsa_id}/delete`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsa/${selectedLsa?.lsa_id}/delete`);
             await mutateLsa(`/lsa/${selectedLsa?.lsa_id}`, false);
             await mutateLsas(`/lsas/${user?.uid}`);
             setOpenDeleteDialog(false);
@@ -113,7 +113,9 @@ export default function PatientSelector() {
     const handleDeletePatient = async () => {
         setIsDeletingPatient(true);
         try {
-            await axios.delete(`http://127.0.0.1:5000/patients/${selectedPatient?.patient_id}/delete`);
+            console.log("selectedpatientID:", selectedPatient?.patient_id);
+            console.log("VAR:", `${process.env.NEXT_PUBLIC_API_BASE_URL}/${selectedPatient?.patient_id}/delete`);
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/patients/${selectedPatient?.patient_id}/delete`);
             await mutatePatients(`/patients/${user?.uid}`);
             await mutateLsas(`/lsas/${user?.uid}`);
             await mutateLsa(`/lsa/${selectedLsa?.lsa_id}`);
@@ -223,7 +225,7 @@ export default function PatientSelector() {
                                                   }}
                                         >
                                             <TableCell>{patient.name}</TableCell>
-                                            <TableCell>{patient.age !== 0 ? patient.age.toString() : "Not Provided"}</TableCell>
+                                            <TableCell>{patient.age}</TableCell>
                                         </TableRow>
                                     ))}
                                     {Array.from(new Array(emptyRowsCountPatients), (x, i) => i).map((index) => (
