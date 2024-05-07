@@ -105,7 +105,7 @@ const Transitions = forwardRef(
     );
   }
 );
-
+Transitions.displayName='Transitions';
 export default Transitions;
 
 export const PopupTransition = forwardRef(function Transition(props: ZoomProps, ref: Ref<unknown>) {
