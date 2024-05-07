@@ -69,7 +69,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
         setResultsStatus('crunching');
         try {
             await handleSubmitUtterances();
-            const response = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/crunch-results-mlu-tnw`);
             await  mutateLsa(`/lsa/${selectedLsaId}`);
             console.log(response);
             if (Object.keys(response.data?.morph_zero).length === 0) {
@@ -82,7 +82,7 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                         variant: "filled"
                     },
                 } as SnackbarProps);
-                const wpsCpsResponse = await axios.post(`http://127.0.0.1:5000/lsas/${selectedLsaId}/crunch-results-wps-cps`);
+                const wpsCpsResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/crunch-results-wps-cps`);
                 console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
                 setResultsStatus('assistWpsCps');
                 setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);

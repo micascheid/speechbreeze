@@ -7,11 +7,11 @@ import {SnackbarProps} from "@/types/snackbar";
 
 export default function useUtterances() {
     const { selectedLsaId } = useSelectedLSA();
-    const { data, isLoading, error } = useSWR(!!selectedLsaId ? `http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances/get`: null, fetcher);
+    const { data, isLoading, error } = useSWR(!!selectedLsaId ? `${process.env.NEXT_API_BASE_URL}/lsas/${selectedLsaId}/utterances/get`: null, fetcher);
 
     const handleBatchUpdate = async (utterances: Utterance[]) => {
         try {
-            await axios.put(`http://127.0.0.1:5000/lsas/${selectedLsaId}/utterances/batch-update`, {utterances: utterances});
+            await axios.put(`${process.env.NEXT_API_BASE_URL}/lsas/${selectedLsaId}/utterances/batch-update`, {utterances: utterances});
             openSnackbar({
                 open: true,
                 message: "Successfully saved utterances",

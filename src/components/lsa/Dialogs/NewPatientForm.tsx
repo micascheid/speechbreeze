@@ -21,6 +21,7 @@ type NewPatientFormProps = {
 
 export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
     const [open, setOpen] = useState(false);
+
     const [saving, setSaving] = useState(false);
     const [newPatientData, setNewPatientData] = useState<PatientNew>({slp_uid: '', name: '', age: 0});
     const [saveError, setSaveError] = useState<string | null>(null);
@@ -64,7 +65,7 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
         if (!checkName()) return;
         setSaving(true);
         try {
-            await axios.post('http://127.0.0.1:5000/patients/add-patient', {...newPatientData, slp_id: slp_id});
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/patients/add-patient`, {...newPatientData, slp_id: slp_id});
             const updatedPatients = await mutatePatients(`/patients/${slp_id}`);
             if (updatedPatients && updatedPatients.length > 0)
             {
@@ -122,7 +123,7 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
                     <Button onClick={handleClose} color="primary" disabled={saving}>
                         Cancel
                     </Button>
-                    <Button onClick={saveNewPatient} color="primary" disabled={saving}>
+                    <Button onClick={saveNewPatient} color="primary" disabled={saving || newPatientData.name === ''}>
                         {saving ? 'Saving...' : 'Save'}
                     </Button>
                 </DialogActions>

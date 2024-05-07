@@ -17,6 +17,8 @@ const DrawerContent = () => {
   const theme = useTheme();
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const {user} = useUser();
+  const subType = user?.sub_type;
 
   const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -33,7 +35,7 @@ const DrawerContent = () => {
         <Navigation />
       </SimpleBar>
         <Box>
-            {drawerOpen && !matchDownMD && <FreeTrialLeft />}
+            {subType === 0 && drawerOpen && !matchDownMD && <FreeTrialLeft />}
             {drawerOpen && !matchDownMD && <NavCard />}
             <NavUser />
         </Box>

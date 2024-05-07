@@ -257,7 +257,7 @@ const AuthRegister = ({providers, csrfToken}: any) => {
                                         startIcon={<Image src={Cognito} alt="Twitter" width={16} height={16}/>}
                                         onClick={() => signIn(provider.id, {callbackUrl: APP_DEFAULT_PATH})}
                                     >
-                                        {!matchDownSM && 'Cognito'}
+                                        {!matchDownSM && 'A'}
                                     </Button>
                                 )}
                             </Box>

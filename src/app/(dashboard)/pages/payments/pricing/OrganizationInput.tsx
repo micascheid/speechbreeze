@@ -32,7 +32,7 @@ export default function OrganizationInput() {
     const handleOrgCodeSubmit = async () => {
         setIsSubmit(true);
         try {
-            await axios.post(`http://127.0.0.1:5000/org-customers/${user?.email}/add-to-org`, { "org_code": localOrgCode });
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/${user?.email}/add-to-org`, { "org_code": localOrgCode });
             await mutateUser(`/slp/${user?.uid}`)
             openSnackbar({
                 open: true,

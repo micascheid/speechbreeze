@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import Auth0Provider from "next-auth/providers/auth0";
 import axios from '@/utils/axios';
 import useUser from "@/hooks/useUser";
+import {signIn} from "next-auth/react";
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET_KEY,
@@ -53,11 +54,6 @@ export const authOptions: NextAuthOptions = {
                 console.error("Unable to handle user in db:", error);
                 return false;
             }
-        }
-    },
-    events: {
-        async createUser(user) {
-            console.log("USER:", user);
         }
     },
     session: {
