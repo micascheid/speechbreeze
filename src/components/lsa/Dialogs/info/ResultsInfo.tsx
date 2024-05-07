@@ -39,7 +39,7 @@ const ResultsInfo = (props: ResultsInfoProps) => {
             <Box mb={2}>
                 <Typography variant="subtitle1">How to:</Typography>
                 <Typography variant="body1">
-                    You'll need to click on the, "Get Analysis" button in the Utterance Identification section above in order to get the results.
+                    You&apos;ll need to click on the, &lsquo;Get Analysis&rsquo; button in the Utterance Identification section above in order to get the results.
                 </Typography>
             </Box>
         </InfoDialog>
