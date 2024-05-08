@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-module.exports = {
+const nextConfig = {
     modularizeImports: {
         '@mui/material': {
             transform: '@mui/material/{{member}}'
@@ -24,3 +24,5 @@ module.exports = {
         NEXT_APP_JWT_TIMEOUT: process.env.REACT_APP_JWT_TIMEOUT,
     }
 };
+
+module.exports = nextConfig;
