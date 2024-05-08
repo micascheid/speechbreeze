@@ -1,10 +1,6 @@
-import NextAuth from 'next-auth';
-import type {NextAuthOptions} from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import Auth0Provider from "next-auth/providers/auth0";
+import type { NextAuthOptions } from 'next-auth';
+import Auth0Provider from 'next-auth/providers/auth0';
 import axios from '@/utils/axios';
-import useUser from "@/hooks/useUser";
-import {signIn} from "next-auth/react";
 
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET_KEY,
@@ -64,6 +60,3 @@ export const authOptions: NextAuthOptions = {
         secret: process.env.NEXT_APP_JWT_SECRET
     },
 };
-
-const handler = NextAuth(authOptions);
-export {handler as GET, handler as POST};
