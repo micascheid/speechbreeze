@@ -34,11 +34,11 @@ export const authOptions: NextAuthOptions = {
         signIn: async ({user, profile, account}) => {
             try {
                 console.log("signin, user:", user);
-                const response = await axios.get(`http://127.0.0.1:5000/slp/${user.id}/check`);
+                const response = await axios.get(`${process.env.NEXT_API_BASE_URL}/slp/${user.id}/check`);
                 const userExists = response.data.exists;
 
                 if (!userExists) {
-                    await axios.post(`http://127.0.0.1:5000/slp/add`, {
+                    await axios.post(`${process.env.NEXT_API_BASE_URL}/slp/add`, {
                             slp_id: user.id,
                             name: user?.name,
                             email: user.email
