@@ -46,9 +46,8 @@ export default function PricingPage() {
                             </Box>
                         </Box>
                         <Divider orientation="vertical" flexItem />
-                        {/* Organizational Plan */}
                         <Box width="34%">
-                            <Typography variant="h4" align="center">Organizations</Typography>  {/* Header for Organizational Plan */}
+                            <Typography variant="h4" align="center">Group Plans</Typography>
                             <Box display="flex" justifyContent="center">
                                 <BuyOrganizational />
                             </Box>

@@ -41,8 +41,8 @@ function BuyButtonYearly({planType}: BuyButtonYearlyProps) {
             >
                 {user && (
                     <stripe-buy-button
-                        buy-button-id="buy_btn_1PCmeDEnGNPnb7LN02B2LHcX"
-                        publishable-key="pk_test_51MsrllEnGNPnb7LN960TqSCAhliTPFORSwLNlAdKVeHsH2kYxU8uNnstGNc8tCk68wyNYjafhK74QEuNssReWnvf00MNKkitrz"
+                        buy-button-id={`${process.env.NEXT_PUBLIC_MONTHLY_SUB_BUTTON_ID}`}
+                        publishable-key={`${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`}
                         client-reference-id={user.uid}
                         customer-email={user.email}
                     />

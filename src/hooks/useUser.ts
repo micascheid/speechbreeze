@@ -29,13 +29,12 @@ const useUser = () => {
 
         let blockUser: boolean;
         if (data.sub_type === 0) {
-            const thirtyDaysAgoEpochSeconds = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
-            blockUser = data.account_creation_epoch < thirtyDaysAgoEpochSeconds;
+            const currentDate = Math.floor(Date.now() / 1000);
+            blockUser = currentDate > data.free_trial_exp;
         } else {
             const currentDate = Math.floor(Date.now() / 1000);
             blockUser = data.sub_end === null || currentDate > data.sub_end;
         }
-
         return blockUser;
     }
 
