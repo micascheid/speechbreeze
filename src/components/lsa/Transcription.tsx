@@ -28,7 +28,7 @@ export default function Transcription() {
                     <ContactUsBox/>
                 </Grid>
             ) : lsa?.transcription_final ? (
-                <Grid xs={12}>
+                <Grid item xs={12}>
                     <UtteranceBuilder transcription={lsa.transcription}/>
                 </Grid>
             ) : (

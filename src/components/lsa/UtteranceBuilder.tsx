@@ -19,7 +19,7 @@ interface UtteranceBuilderProps {
     transcription: string;
 }
 
-const TransparentText = styled(Typography)(() => ({
+const TransparentText = styled(Box)(() => ({
     color: 'transparent',
     position: 'absolute',
     top: 0,
@@ -183,6 +183,10 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
 
             return (
                 <p key={`line-${lineIndex}`}>{lineContent}</p>
+            // <React.Fragment key={`line-${lineIndex}`}>
+            //     {lineContent}
+            //     {lineIndex !== lines.length - 1 && <br />}
+            // </React.Fragment>
             );
         });
     };
@@ -191,7 +195,13 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
         const lines = transcription.split('\n'); // Split transcription into lines
         return lines.map((line, lineIndex) => (
             <p key={`line-${lineIndex}`}>{line}</p>
+            // <React.Fragment key={`line-${lineIndex}`}>
+            //     {line}
+            //     {/* Add line break if it's not the last line */}
+            //     {lineIndex !== lines.length - 1 && <br />}
+            // </React.Fragment>
         ));
+
     };
 
     useEffect(() => {
@@ -214,12 +224,12 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
             <Grid item xs={12} sm={9}>
                 <Card>
                     <Box sx={{position: 'relative'}}>
-                        <Typography
+                        <Box
                             sx={{m: 1, userSelect: 'none'}}
                             fontSize={18}
                         >
                             {renderTextWithHighlights()}
-                        </Typography>
+                        </Box>
                         <TransparentText
                             onMouseUp={handleTextMouseUp}
                             sx={{m: 1, userSelect: 'text', position: 'absolute', top: 0, left: 0}}

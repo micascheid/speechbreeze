@@ -59,4 +59,7 @@ export const authOptions: NextAuthOptions = {
     jwt: {
         secret: process.env.NEXT_APP_JWT_SECRET
     },
+    pages: {
+        signIn: '/login'
+    }
 };
