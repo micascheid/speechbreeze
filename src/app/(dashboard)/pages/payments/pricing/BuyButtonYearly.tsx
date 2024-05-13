@@ -41,7 +41,7 @@ function BuyButtonYearly({planType}: BuyButtonYearlyProps) {
             >
                 {user && (
                     <stripe-buy-button
-                        buy-button-id={`${process.env.NEXT_PUBLIC_MONTHLY_SUB_BUTTON_ID}`}
+                        buy-button-id={`${process.env.NEXT_PUBLIC_YEARLY_SUB_BUTTON}`}
                         publishable-key={`${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`}
                         client-reference-id={user.uid}
                         customer-email={user.email}
