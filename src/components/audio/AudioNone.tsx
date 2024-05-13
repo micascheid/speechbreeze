@@ -5,6 +5,6 @@ export default function AudioNone() {
 
 
     return (
-        <Typography variant={"subtitle1"}>Choosing No Audio </Typography>
+        <Typography variant={"subtitle1"}>This LSA isn't associated with any audio </Typography>
     )
 }

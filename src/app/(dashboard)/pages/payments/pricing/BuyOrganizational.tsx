@@ -30,7 +30,7 @@ function BuyOrganizational() {
             <Box>
                 <TypographyBulleted variant="body1">&bull; Per seat pricing at 99/yr</TypographyBulleted>
                 <TypographyBulleted variant="body1">&bull; Flexible billing cycle</TypographyBulleted>
-                <TypographyBulleted variant="body1">&bull; Effortless employee onboarding through provided code</TypographyBulleted>
+                <TypographyBulleted variant="body1">&bull; Effortless group member account setup</TypographyBulleted>
             </Box>
 
             {/* Content at the bottom */}
