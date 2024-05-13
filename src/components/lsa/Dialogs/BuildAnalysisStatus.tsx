@@ -6,11 +6,11 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Grid,
+    Grid, List, ListItemText,
     Stack,
     TextField,
     Typography
-} from "@mui/material";
+} from '@mui/material';
 import React, {useEffect, useState} from "react";
 import ContactUsBox from "@/components/ContactUsBox";
 import axios from "@/utils/axios";
@@ -105,6 +105,15 @@ export default function BuildAnalysisStatus({
         });
     };
 
+    const assisMluInstructionsUI = () => {
+        return (
+            <Box>
+                <ListItemText primaryTypographyProps={{variant: "subtitle1"}}>Below is a list of words SpeechBreeze needs help to determine the MLU count:</ListItemText>
+                <ListItemText sx={{ml: 2}}></ListItemText>
+            </Box>
+        )
+    }
+
     const assistMluUI = () => {
         return (
             <Box>
@@ -155,9 +164,23 @@ export default function BuildAnalysisStatus({
         }));
     }
 
+    const wpsCpsInstructions = () => {
+        return (
+            <Box>
+                <List dense>
+                    <ListItemText primaryTypographyProps={{variant: "subtitle1"}}>Below is a list of utterances to mark as follows:</ListItemText>
+                    <ListItemText sx={{ml: 2}} primaryTypographyProps={{variant: "body1"}}>Mark <b>0</b> - if the utterance is NOT a sentence</ListItemText>
+                    <ListItemText sx={{ml: 2}} primaryTypographyProps={{variant: "body1"}}>Mark <b>1-5</b> - based on clause count in sentence</ListItemText>
+                    <ListItemText primaryTypographyProps={{variant: "body1", fontStyle: "italic"}}>This input helps calculate WPS and CPS</ListItemText>
+                </List>
+            </Box>
+        )
+    }
+
     const assistWpsCpsUI = () => {
         return (
             <Box>
+                {wpsCpsInstructions()}
                 {utterancesReviewData && Object.entries(utterancesReviewData).map(([utteranceId, utterance]) => {
                     const id = Number(utteranceId)
                     return (
@@ -289,8 +312,8 @@ export default function BuildAnalysisStatus({
             aria-describedby="alert-dialog-description"
             disableEscapeKeyDown
         >
-            <DialogTitle id="alert-dialog-title">Grabbing Results</DialogTitle>
-            <DialogContent>
+            <DialogTitle id="alert-dialog-title" textAlign={"center"}>Results Input</DialogTitle>
+            <DialogContent dividers sx={{pt: 0}}>
                 <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
                     {resultsStatus === 'crunching' && crunchingUI()}
                     {resultsStatus === 'error' && errorUI()}

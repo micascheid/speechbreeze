@@ -11,7 +11,7 @@ function BuyButtonMonthly({planType}: BuyButtonMonthlyProps) {
     const [isStripeLoaded, setStripeLoaded] = useState(false);
     const {user} = useUser();
     const isDisabled = planType > 0;
-    console.log("User:", user);
+
     useEffect(() => {
         const script = document.createElement('script');
         script.src = "https://js.stripe.com/v3/buy-button.js";
@@ -41,9 +41,9 @@ function BuyButtonMonthly({planType}: BuyButtonMonthlyProps) {
             >
                 {user && (
                     <stripe-buy-button
-                        buy-button-id="buy_btn_1PCmcaEnGNPnb7LNmGWmVW2j"
-                        publishable-key="pk_test_51MsrllEnGNPnb7LN960TqSCAhliTPFORSwLNlAdKVeHsH2kYxU8uNnstGNc8tCk68wyNYjafhK74QEuNssReWnvf00MNKkitrz"
-                        client-reference-id={"auth0|6634decaf674c9d300c4d7d5"}
+                        buy-button-id={`${process.env.NEXT_PUBLIC_MONTHLY_SUB_BUTTON_ID}`}
+                        publishable-key={`${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`}
+                        client-reference-id={user.uid}
                         customer-email={user.email}
                     />
                 )
