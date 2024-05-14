@@ -114,7 +114,6 @@ export default function BuildAnalysisStatus({
         )
     }
 
-
     const assistMluUI = () => {
         return (
             <Box>
@@ -249,16 +248,20 @@ export default function BuildAnalysisStatus({
                 }
             } as SnackbarProps)
             const wpsCpsResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/crunch-results-wps-cps`);
-            console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
             setResultsStatus('assistWpsCps');
             setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);
         } catch (e) {
             console.error(e);
-            console.log("ERROR");
+            openSnackbar({
+                open: true,
+                message: "MlU calculation failed",
+                variant: "alert",
+                alert: {
+                    color: "error",
+                    variant: "filled"
+                }
+            } as SnackbarProps)
             setResultsStatus('error');
-        } finally {
-            // setResultsStatus(null);
-            // setSaveMorphZero(false);
         }
     }
 
@@ -282,12 +285,18 @@ export default function BuildAnalysisStatus({
             setResultsStatus(null);
         } catch (e) {
             console.error(e);
-            console.log("ERROR");
+            openSnackbar({
+                open: true,
+                message: "Error calculating WPS and CPS",
+                variant: "alert",
+                alert: {
+                    color: "error",
+                    variant: "filled"
+                }
+            } as SnackbarProps);
             setResultsStatus('error');
             setSaveMorphZero(false)
         } finally {
-            // setResultsStatus(null);
-            // setSaveMorphZero(false);
             setIsSavingWpsCps(false);
         }
     }

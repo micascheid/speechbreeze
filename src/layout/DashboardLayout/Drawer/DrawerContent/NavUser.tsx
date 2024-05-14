@@ -63,7 +63,6 @@ const NavUser = () => {
     const provider = session?.provider;
 
     const handleLogout = () => {
-        console.log("handle logout nav user");
         switch (provider) {
             case 'auth0':
                 signOut({ callbackUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logout/auth0` });
