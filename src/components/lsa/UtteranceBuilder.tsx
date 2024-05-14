@@ -206,7 +206,6 @@ const UtteranceBuilder = ({transcription}: UtteranceBuilderProps) => {
 
     useEffect(() => {
         if (!isLoading && utterances) {
-            console.log("Received utterances: ", utterances);
             setLocalUtterances(utterances);
             const newSelectionRanges = utterances.map((utterance: Utterance) => {
                 const start_text = utterance.start_text;

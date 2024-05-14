@@ -36,7 +36,6 @@ export default function AudioUpload() {
     };
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("handle file change");
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
             // Check if the file type is allowed
@@ -45,7 +44,6 @@ export default function AudioUpload() {
                 setLocalAudioSource(file);
             } else {
                 // Handle unsupported file type
-                console.log("Unsupported file type:", file.type);
                 setSnackbarMessage("Unsupported file type. Please select an MP3, OGG, or WAV file.");
                 setOpenSnackbar(true);
             }

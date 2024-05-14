@@ -83,7 +83,6 @@ export default function UtteranceFinalize({utterances}: UtterancesFinalizeProps)
                     },
                 } as SnackbarProps);
                 const wpsCpsResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/lsas/${selectedLsaId}/crunch-results-wps-cps`);
-                console.log("REVIEW:", wpsCpsResponse.data.utterances_for_review);
                 setResultsStatus('assistWpsCps');
                 setUtterancesReviewData(wpsCpsResponse.data.utterances_for_review);
             } else {

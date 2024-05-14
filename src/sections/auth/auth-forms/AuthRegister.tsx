@@ -85,7 +85,6 @@ const AuthRegister = ({providers, csrfToken}: any) => {
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={(values, {setErrors, setSubmitting}) => {
-                    console.log(values);
                     signIn('cognito', {
                         redirect: false,
                         name: "mica Linscheid",
@@ -95,7 +94,6 @@ const AuthRegister = ({providers, csrfToken}: any) => {
                         phone_number: "+19079422446",
                         callbackUrl: `https://localhost:3000/${APP_DEFAULT_PATH}`
                     }).then((res: any) => {
-                        console.log("response:", res);
                         if (res && res.error) {
                             setErrors({submit: res.error});
                             setSubmitting(false);
