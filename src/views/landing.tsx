@@ -37,9 +37,21 @@ const Landing = () => {
         router.push('/login');
     }
 
-    const handleRegister = () => {
+    useEffect(() => {
+        const existingScript = document.querySelector('#termly-resource-blocker');
 
-    }
+        if (!existingScript) {
+            const script = document.createElement('script');
+            script.id = 'termly-resource-blocker';
+            script.type = 'text/javascript';
+            script.src = 'https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on';
+            document.head.appendChild(script);
+        }
+
+        return () => {
+            if (existingScript) document.head.removeChild(existingScript);
+        };
+    }, []);
 
     return (
         <Container maxWidth="sm" style={{
@@ -68,10 +80,6 @@ const Landing = () => {
                                 onClick={handleLogin}>
                             Login/Sign Up
                         </Button>
-                        {/*<Button sx={{width: 100}} variant="contained" color="primary" size="large"*/}
-                        {/*        onClick={handleRegister}>*/}
-                        {/*    Register*/}
-                        {/*</Button>*/}
                     </Stack>
                 </Box>
             </Box>
