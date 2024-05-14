@@ -112,8 +112,6 @@ export default function PatientSelector() {
     const handleDeletePatient = async () => {
         setIsDeletingPatient(true);
         try {
-            console.log("selectedpatientID:", selectedPatient?.patient_id);
-            console.log("VAR:", `${process.env.NEXT_PUBLIC_API_BASE_URL}/${selectedPatient?.patient_id}/delete`);
             await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/patients/${selectedPatient?.patient_id}/delete`);
             await mutatePatients(`/patients/${user?.uid}`);
             await mutateLsas(`/lsas/${user?.uid}`);

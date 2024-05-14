@@ -1,15 +1,9 @@
 'use client'
 
 // next
-import NextLink from 'next/link';
 import {getProviders, getCsrfToken, useSession, signIn} from 'next-auth/react';
 
-// material-ui
-import {CircularProgress, Grid, Link, Stack, Typography} from '@mui/material';
 
-// project import
-import AuthWrapper from '@/sections/auth/AuthWrapper';
-import AuthLogin from '@/sections/auth/auth-forms/AuthLogin';
 import {useRouter} from "next/navigation";
 import {useEffect} from "react";
 import {APP_DEFAULT_PATH} from "@/config";

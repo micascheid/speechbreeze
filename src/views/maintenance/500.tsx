@@ -52,6 +52,9 @@ function Error500() {
             We are having trouble with your profile at this time. Please refresh.
             If this error persist. Please contact support@speechbreeze.com or 907-942-2446
           </Typography>
+          <Typography color="textSecondary" align="center" sx={{ width: { xs: '73%', sm: '61%' } }}>
+            Please ensure your internet connection
+          </Typography>
           <NextLink href={"/"} passHref legacyBehavior>
             <Button variant="contained">Back To Login</Button>
           </NextLink>

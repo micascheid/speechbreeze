@@ -36,6 +36,9 @@ import ResultsInfo from "@/components/lsa/Dialogs/info/ResultsInfo";
 import AudioInfo, {AudioInfoProps} from "@/components/lsa/Dialogs/info/AudioInfo";
 import UtteranceIdentificationInfo from "@/components/lsa/Dialogs/info/UtteranceIdentificationInfo";
 import Link from "next/link";
+import { health_check } from '@/utils/utilityFunctions';
+import { openSnackbar } from '@/api/snackbar';
+import { SnackbarProps } from '@/types/snackbar';
 
 type DialogComponentProps = Omit<AudioInfoProps, 'isOpen' | 'onClose'>;
 interface ContentProps {
@@ -45,6 +48,8 @@ const ManagedPatientInfoDialog = dialogWrapper(PatientManagementInfoDialog);
 const AudioInfoDialog = dialogWrapper(AudioInfo);
 const UtteranceIdentificationInfoDialog = dialogWrapper(UtteranceIdentificationInfo);
 const ResultsInfoDialog = dialogWrapper(ResultsInfo);
+
+
 
 function Content() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
@@ -77,15 +82,15 @@ function Content() {
             });
 
         } catch (error: any) {
-            console.error("Error uploading audio:", error);
-
-            if (error.response) {
-                console.log("Error data", error.response.data);
-                console.log("Error status", error.response.status);
-                console.log("Error headers", error.response.headers);
-            } else if (error.request) {
-                console.log("No response received", error.request);
-            }
+            openSnackbar({
+                open: true,
+                message: `Unable to upload file`,
+                variant: "alert",
+                alert: {
+                    color: "error",
+                    variant: "filled"
+                },
+            } as SnackbarProps);
         }
     }
 
@@ -104,18 +109,15 @@ function Content() {
             });
 
         } catch (error: any) {
-            console.log("Error message", error.message);
-            if (error.response) {
-                //The request was made and the server responded with a status code that falls out of the range of 2xx
-                console.log("Error data", error.response.data);
-                console.log("Error status", error.response.status);
-                console.log("Error headers", error.response.headers);
-            } else if (error.request) {
-                //The request was made but no response was received
-                console.log("No response received", error.request);
-            }
-
-            console.error("Error uploading audio:", error);
+            openSnackbar({
+                open: true,
+                message: `Unable to upload file`,
+                variant: "alert",
+                alert: {
+                    color: "error",
+                    variant: "filled"
+                },
+            } as SnackbarProps);
         }
     }
     const finalizeAudio = async () => {
@@ -126,7 +128,15 @@ function Content() {
                 await mutateLsa(`/lsa/${lsa.lsa_id}`);
                 setUploadStatus('success');
             } catch (error) {
-                console.log("error uploading recording", error);
+                openSnackbar({
+                    open: true,
+                    message: "Error uploading recorded audio",
+                    variant: "alert",
+                    alert: {
+                        color: "success",
+                        variant: "filled"
+                    }
+                } as SnackbarProps)
                 setUploadStatus('error');
             }
         } else if (audio_type === 'upload') {
@@ -136,7 +146,15 @@ function Content() {
                 await mutateLsa(`/lsa/${lsa.lsa_id}`);
                 setUploadStatus('success');
             } catch (error) {
-                console.log("error uploading file", error);
+                openSnackbar({
+                    open: true,
+                    message: "Error uploading chosen audio",
+                    variant: "alert",
+                    alert: {
+                        color: "error",
+                        variant: "filled"
+                    }
+                } as SnackbarProps)
                 setUploadStatus('error');
             }
         }
@@ -146,7 +164,6 @@ function Content() {
 
     useEffect(() => {
         if (finalize) {
-            console.log("you getting called?");
             finalizeAudio();
         }
     }, [finalize]);
@@ -216,7 +233,6 @@ function Content() {
 
 export default function LsaTool() {
     const {user} = useUser();
-    const block = user?.block_user;
 
     return (
         <SelectedLSAProvider>
@@ -246,10 +262,6 @@ export default function LsaTool() {
 
                 </Stack>
             </Dialog>
-            {/*{user?.sub_type === 0 &&*/}
-            {/*    <Typography>Remaining Trial Period: {trialDaysLeft} days</Typography>*/}
-            {/*}*/}
-
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <MainCard title={"1) Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
