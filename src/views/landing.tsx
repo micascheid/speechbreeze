@@ -37,21 +37,21 @@ const Landing = () => {
         router.push('/login');
     }
 
-    useEffect(() => {
-        const existingScript = document.querySelector('#termly-resource-blocker');
-
-        if (!existingScript) {
-            const script = document.createElement('script');
-            script.id = 'termly-resource-blocker';
-            script.type = 'text/javascript';
-            script.src = 'https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on';
-            document.head.appendChild(script);
-        }
-
-        return () => {
-            if (existingScript) document.head.removeChild(existingScript);
-        };
-    }, []);
+    // useEffect(() => {
+    //     const existingScript = document.querySelector('#termly-resource-blocker');
+    //
+    //     if (!existingScript) {
+    //         const script = document.createElement('script');
+    //         script.id = 'termly-resource-blocker';
+    //         script.type = 'text/javascript';
+    //         script.src = 'https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on';
+    //         document.head.appendChild(script);
+    //     }
+    //
+    //     return () => {
+    //         if (existingScript) document.head.removeChild(existingScript);
+    //     };
+    // }, []);
 
     return (
         <Container maxWidth="sm" style={{
@@ -70,11 +70,11 @@ const Landing = () => {
                 width: '100%',
                 paddingTop: '5vh',
             }}>
-                <LogoIcon width={200} height={200}/>
-                <Typography variant="h1" component="h1"  textAlign={"center"} gutterBottom>
-                    Welcome to the Speech Breeze Application
+                <LogoIcon width={200} height={200} />
+                <Typography variant="h1" component="h1" textAlign={"center"} gutterBottom>
+                    Welcome to the SpeechBreeze Application
                 </Typography>
-                <Box sx={{'& > *': {m: 1}}}>
+                <Box sx={{ '& > *': { m: 1 } }}>
                     <Stack direction="row" spacing={2}>
                         <Button variant="contained" color="primary" size="large"
                                 onClick={handleLogin}>
@@ -86,6 +86,10 @@ const Landing = () => {
             <Box display="flex" justifyContent="flex-end" sx={{ width: '100%', mb: 5 }}>
                 <AuthFooter />
             </Box>
+            <script
+                type="text/javascript"
+                src="https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on"
+            ></script>
         </Container>
     );
 };
