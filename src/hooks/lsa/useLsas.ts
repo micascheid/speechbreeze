@@ -1,7 +1,6 @@
 import useUser from "@/hooks/useUser";
 import useSWR, {mutate} from "swr";
 import {fetcher} from "@/utils/axios";
-import { Patient} from "@/data/Patients";
 
 export default function useLsas() {
     const {user} = useUser();

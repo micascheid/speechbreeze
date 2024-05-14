@@ -92,7 +92,7 @@ export default function NewLsaForm({selectedPatient, onLsaAdd}: NewLsaFormProps)
             let errorMsg = 'Error saving LSA. Please, try again.';
             if (error.response) {
                 // The request was made and server responded with a status outside of the 2xx range
-                errorMsg = error.message || 'Error saving LSA. Please, try again.';
+                errorMsg = 'Error saving LSA. Please, try again.';
             } else if (error.request) {
                 // The request was made but no response was received
                 errorMsg = 'We\'re having trouble saving at this time. Contact us or try again later';

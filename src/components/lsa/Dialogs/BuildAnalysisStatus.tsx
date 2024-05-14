@@ -105,18 +105,20 @@ export default function BuildAnalysisStatus({
         });
     };
 
-    const assisMluInstructionsUI = () => {
+    const assistMluInstructionsUI = () => {
         return (
             <Box>
-                <ListItemText primaryTypographyProps={{variant: "subtitle1"}}>Below is a list of words SpeechBreeze needs help to determine the MLU count:</ListItemText>
+                <ListItemText primaryTypographyProps={{variant: "subtitle1"}}>SpeechBreeze needs MLU count<br/> assistance for these words:</ListItemText>
                 <ListItemText sx={{ml: 2}}></ListItemText>
             </Box>
         )
     }
 
+
     const assistMluUI = () => {
         return (
             <Box>
+                {assistMluInstructionsUI()}
                 {wordData && Object.entries(wordData).map(([utteranceId, words]) =>
                     Object.entries(words as Record<string, WordData>).map(([wordId, {word, morph_count}]) => (
                         <Grid container key={`${utteranceId}-${wordId}`} alignItems="center">

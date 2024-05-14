@@ -12,7 +12,6 @@ import {
     Stack,
     Box, Skeleton, Typography, IconButton, DialogTitle, DialogContent, TextField, DialogActions, Dialog
 } from "@mui/material";
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import usePatients from "@/hooks/lsa/usePatients";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
@@ -311,7 +310,7 @@ export default function PatientSelector() {
                                         {lsas
                                             ?.filter((lsa: Lsa) => lsa.patient_id === selectedPatient.patient_id)
                                             .map((lsa: Lsa, i: number) => {
-                                                const date = new Date(lsa.timestamp);
+                                                const date = new Date(lsa.created_at * 1000);
                                                 const formattedDate = date.toLocaleDateString();
                                                 const formattedTime = date.toLocaleTimeString('en-us', {
                                                     hour: '2-digit',
