@@ -1,57 +1,37 @@
 'use client';
 
-import {useEffect, useState, ChangeEvent} from 'react';
+import {useEffect} from 'react';
 
 // material-ui
-import {alpha, useTheme} from '@mui/material/styles';
-import {Button, Box, Container, Typography, Stack, Grid} from '@mui/material';
-
-// project import
-
-
-// third-party
-import {presetDarkPalettes, presetPalettes, PalettesProps} from '@ant-design/colors';
-
-// types
-import {PresetColor, ThemeDirection, ThemeMode} from '@/types/config';
+import {Button, Box, Container, Typography, Stack} from '@mui/material';
 
 // assets
 import LogoIcon from "@/components/logo/LogoIcon";
 import {useRouter} from "next/navigation";
-import {signIn} from "next-auth/react";
-import Loader from "@/components/Loader";
 import AuthFooter from "@/components/cards/AuthFooter";
-
-
-interface ColorProps {
-    id: PresetColor;
-    primary: string;
-}
-
-// ==============================|| LANDING PAGE ||============================== //
 
 const Landing = () => {
     const router = useRouter();
 
+    useEffect(() => {
+        // Create a script element
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on';
+        script.async = true;
+
+        // Append the script to the document head
+        document.head.appendChild(script);
+
+        // Cleanup function to remove the script when the component unmounts
+        return () => {
+            document.head.removeChild(script);
+        };
+    }, []);
+
     const handleLogin = async () => {
         router.push('/login');
     }
-
-    // useEffect(() => {
-    //     const existingScript = document.querySelector('#termly-resource-blocker');
-    //
-    //     if (!existingScript) {
-    //         const script = document.createElement('script');
-    //         script.id = 'termly-resource-blocker';
-    //         script.type = 'text/javascript';
-    //         script.src = 'https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on';
-    //         document.head.appendChild(script);
-    //     }
-    //
-    //     return () => {
-    //         if (existingScript) document.head.removeChild(existingScript);
-    //     };
-    // }, []);
 
     return (
         <Container maxWidth="sm" style={{
@@ -86,10 +66,6 @@ const Landing = () => {
             <Box display="flex" justifyContent="flex-end" sx={{ width: '100%', mb: 5 }}>
                 <AuthFooter />
             </Box>
-            <script
-                type="text/javascript"
-                src="https://app.termly.io/resource-blocker/ae391312-5b87-44b7-bc80-618fb5b29bf7?autoBlock=on"
-            ></script>
         </Container>
     );
 };
