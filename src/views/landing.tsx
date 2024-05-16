@@ -58,7 +58,7 @@ const Landing = () => {
                     <Stack direction="row" spacing={2}>
                         <Button variant="contained" color="primary" size="large"
                                 onClick={handleLogin}>
-                            Login/Sign Up
+                            Login | Sign Up
                         </Button>
                     </Stack>
                 </Box>
