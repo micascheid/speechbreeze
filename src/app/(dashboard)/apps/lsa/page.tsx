@@ -264,7 +264,7 @@ export default function LsaTool() {
             </Dialog>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <MainCard title={"1) Patient Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
+                    <MainCard title={"1) Student Management"} collapsible={true} dialogComponent={<ManagedPatientInfoDialog/>}>
                         <PatientSelector/>
                     </MainCard>
                 </Grid>

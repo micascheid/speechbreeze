@@ -93,7 +93,7 @@ export const NewPatientForm = ({onPatientAdd}: NewPatientFormProps) => {
                     mx: 'auto',
                 },
             }}>
-                <DialogTitle>Add Patient</DialogTitle>
+                <DialogTitle>Add Student</DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" color="text.secondary">Fields marked with * are required</Typography>
                     <TextField

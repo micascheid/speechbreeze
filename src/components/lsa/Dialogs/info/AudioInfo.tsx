@@ -30,7 +30,7 @@ const AudioInfo = (props: AudioInfoProps) => {
                 <Box ml={2} mb={2}>
                     <ListItem dense>
                         <Typography variant="body1">
-                            <i>a.) Record:</i> This option allows you to record the patient. Once finished, you finalize the audio. When you finalize the audio, SpeechBreeze will create a transcription for you which will be shown in the &quot;Utterance Identification&quot; section below.
+                            <i>a.) Record:</i> This option allows you to record the student. Once finished, you finalize the audio. When you finalize the audio, SpeechBreeze will create a transcription for you which will be shown in the &quot;Utterance Identification&quot; section below.
                         </Typography>
                     </ListItem>
                     <ListItem dense>
