@@ -5,7 +5,6 @@ import {useTheme} from "@mui/material/styles";
 
 export default function MLU() {
     const {lsa, isLoading, isError, mutateLsa} = useLsa();
-    const theme = useTheme();
 
 
     if (isLoading) {
@@ -47,7 +46,7 @@ export default function MLU() {
     return (
         <Grid item>
             <Stack display={"flex"} alignItems={"center"} sx={{borderRadius: '16px'}}>
-                <Typography variant={"h1"}>MLU</Typography>
+                <Typography variant={"h1"}>MLU-M</Typography>
                 <Typography variant="h1">
                     {lsa.mlu}
                 </Typography>

@@ -154,7 +154,7 @@ export default function PatientSelector() {
                     <Box display={"flex"}>
                         <NewPatientForm onPatientAdd={(newPatient: Patient) => setSelectedPatient(newPatient)}/>
                         <Typography variant="h3" sx={{mb: 1, ml: 1}}>
-                            Patients
+                            Students
                         </Typography>
                     </Box>
 
@@ -247,7 +247,7 @@ export default function PatientSelector() {
                                 handleLsaRowClick(newLsa);
                             }}/>
                             <Typography variant="h3" sx={{mb: 1, ml: 1}}>
-                                Patient LSA&apos;s
+                                Student LSA&apos;s
                             </Typography>
                         </Box>
 
@@ -293,7 +293,7 @@ export default function PatientSelector() {
                                 <TableRow>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Date</TableCell>
-                                    <TableCell>MLU</TableCell>
+                                    <TableCell>MLU-M</TableCell>
                                     <TableCell>TNW</TableCell>
                                     <TableCell>WPS</TableCell>
                                     <TableCell>CPS</TableCell>

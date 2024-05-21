@@ -6,11 +6,11 @@ type PatientManagementInfoProps = Omit<InfoDialogProps, 'title' | 'children'>
 
 export default function PatientManagementInfoDialog(props: PatientManagementInfoProps) {
     return (
-        <InfoDialog title="Patient and LSA Creation" {...props}>
+        <InfoDialog title="Student and LSA Creation" {...props}>
             <Box mb={2}>
                 <Typography variant="subtitle1">About:</Typography>
                 <Typography variant="body1">
-                    In this section, you can add new patients and then create new LSAs for those patients.
+                    In this section, you can add new students and then create new LSAs for those students.
                 </Typography>
             </Box>
 
@@ -19,13 +19,13 @@ export default function PatientManagementInfoDialog(props: PatientManagementInfo
 
                 <ListItem dense>
                     <Typography variant="body1" component="div">
-                        <i>Patients Table:</i> Click the plus icon to add a new patient. The age field is not required.
+                        <i>Students Table:</i> Click the plus icon to add a new student. The age field is not required.
                     </Typography>
                 </ListItem>
 
                 <ListItem dense>
                     <Typography variant="body1" component="div">
-                        <i>Patients LSA Table:</i> A patient must be selected before continuing to add a new LSA for that patient.
+                        <i>Students LSA Table:</i> A student must be selected before continuing to add a new LSA for that student.
                     </Typography>
                 </ListItem>
 

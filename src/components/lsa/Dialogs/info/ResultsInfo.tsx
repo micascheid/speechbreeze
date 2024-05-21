@@ -15,7 +15,7 @@ const ResultsInfo = (props: ResultsInfoProps) => {
                 <List>
                     <ListItem dense>
                         <Typography variant="body1">
-                            MLU (Mean Length of Utterance)
+                            MLU-M (Mean Length of Utterance in Morphemes)
                         </Typography>
                     </ListItem>
                     <ListItem dense>
