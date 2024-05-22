@@ -247,7 +247,7 @@ export default function PatientSelector() {
                                 handleLsaRowClick(newLsa);
                             }}/>
                             <Typography variant="h3" sx={{mb: 1, ml: 1}}>
-                                Student LSA&apos;s
+                                Student&apos;s LSAs
                             </Typography>
                         </Box>
 
