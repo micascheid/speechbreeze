@@ -206,7 +206,7 @@ export default function PatientSelector() {
                                 <TableRow style={{pointerEvents: 'none'}}>
                                     <TableCell colSpan={2} style={{ height: `calc(${36 * 7}px - 52px)` }}>
                                         <Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"100%"}>
-                                            <Typography variant={"h3"} fontStyle={'oblique'} textAlign={"center"}>Add a patient to get started</Typography>
+                                            <Typography variant={"h3"} fontStyle={'oblique'} textAlign={"center"}>Add a student to get started</Typography>
                                         </Box>
                                     </TableCell>
                                 </TableRow>
