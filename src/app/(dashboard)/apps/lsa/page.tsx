@@ -3,16 +3,13 @@ import React, {CSSProperties, useEffect, useRef, useState} from 'react';
 import {
     Box,
     Button,
-    Card,
     CircularProgress,
     Dialog,
     Grid,
-    Modal,
     Skeleton,
     Stack,
-    Tab,
-    Tabs,
-    Typography
+    Typography,
+    useMediaQuery
 } from '@mui/material';
 import MainCard from '@/components/MainCard';
 import Transcription from "@/components/lsa/Transcription";
@@ -39,6 +36,8 @@ import Link from "next/link";
 import { health_check } from '@/utils/utilityFunctions';
 import { openSnackbar } from '@/api/snackbar';
 import { SnackbarProps } from '@/types/snackbar';
+import { useTheme } from '@mui/material/styles';
+import { detectDevice } from '@/utils/detectDevice';
 
 type DialogComponentProps = Omit<AudioInfoProps, 'isOpen' | 'onClose'>;
 interface ContentProps {
@@ -68,6 +67,7 @@ function Content() {
 
         const formData = new FormData();
         formData.append('audio', blobData);
+        formData.append('mime_type', blobData.type);
 
         if (selectedLsaId !== null) {
             formData.append('lsa_id', selectedLsaId.toString());
@@ -201,9 +201,13 @@ function Content() {
                                 </Grid>
 
                             ) : audio_type === 'record' ? (
-                                <Grid item xs={12}>
-                                    <AudioRecord/>
-                                    <AudioFinalize setFinalize={setFinalize} disabled={!localAudioSource}/>
+                                <Grid container item xs={12} spacing={1}>
+                                    <Grid item xs={12}>
+                                        <AudioRecord/>
+                                    </Grid>
+                                    <Grid item>
+                                        <AudioFinalize setFinalize={setFinalize} disabled={!localAudioSource}/>
+                                    </Grid>
                                 </Grid>
                             ) : audio_type === 'upload' ? (
                                 <Grid item xs={12}>
@@ -228,6 +232,39 @@ function Content() {
     )
 }
 
+function UtteranceIdentification() {
+    const theme = useTheme();
+    const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
+
+    if (isMobileOrTablet) {
+        return (
+            <Typography variant="subtitle1" color="error">
+                Utterance Identification is not available on mobile devices.
+            </Typography>
+        );
+    }
+
+    return <Transcription />;
+}
+
+
+function ResultsAdapted() {
+    const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+
+    useEffect(() => {
+        setIsMobileOrTablet(detectDevice());
+    }, []);
+
+    if (isMobileOrTablet) {
+        return (
+            <Typography variant="subtitle1" color="error">
+                On mobile, please see results for an LSA under the LSAs Table
+            </Typography>
+        );
+    }
+
+    return <Results />;
+}
 
 
 
@@ -271,12 +308,12 @@ export default function LsaTool() {
                 <Content />
                 <Grid item xs={12}>
                     <MainCard title={"3) Utterance Identification"} collapsible={true} dialogComponent={<UtteranceIdentificationInfoDialog />}>
-                        <Transcription />
+                        <UtteranceIdentification />
                     </MainCard>
                 </Grid>
                 <Grid item xs={12}>
                     <MainCard title={"Results"} collapsible={true} dialogComponent={<ResultsInfoDialog />}>
-                        <Results />
+                        <ResultsAdapted />
                     </MainCard>
                 </Grid>
             </Grid>

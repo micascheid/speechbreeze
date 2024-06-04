@@ -92,7 +92,7 @@ const AuthRegister = ({providers, csrfToken}: any) => {
                         email: "micascheid@gmail.com",
                         password: "passworD123@",
                         phone_number: "+19079422446",
-                        callbackUrl: `https://localhost:3000/${APP_DEFAULT_PATH}`
+                        callbackUrl: `https://42a3-2605-59c8-539c-1010-ad9b-61af-9b8f-115.ngrok-free.app:3000/${APP_DEFAULT_PATH}`
                     }).then((res: any) => {
                         if (res && res.error) {
                             setErrors({submit: res.error});

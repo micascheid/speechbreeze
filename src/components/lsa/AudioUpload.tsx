@@ -28,7 +28,7 @@ export default function AudioUpload() {
     const [open, setOpen] = useState<boolean>(false);  // controls the modal visibility
     const [uploadStatus, setUploadStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [fileName, setFileName] = useState('');
-    const {selectedLsaId, setAudioFileUrl, localAudioSource, setLocalAudioSource} = useSelectedLSA();
+    const {localAudioSource, setLocalAudioSource} = useSelectedLSA();
     const theme = useTheme();
 
     const handleUpload = () => {
