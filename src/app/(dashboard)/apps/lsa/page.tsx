@@ -233,8 +233,10 @@ function Content() {
 }
 
 function UtteranceIdentification() {
-    const theme = useTheme();
-    const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
+    const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+    useEffect(() => {
+        setIsMobileOrTablet(detectDevice());
+    }, []);
 
     if (isMobileOrTablet) {
         return (
