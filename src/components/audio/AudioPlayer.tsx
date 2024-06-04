@@ -93,7 +93,7 @@ export default function AudioPlayer() {
                     <div id="timeline"/>
                 </WaveSurfer>
             </Card>
-            <Button sx={{mt: 1}} variant={"outlined"} onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</Button>
+            <Button sx={{mt: 1}} disabled={loading} variant={"outlined"} onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</Button>
         </Box>
 
     );

@@ -2,9 +2,12 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 // next
 import { getSession } from "next-auth/react";
-
-const axiosServices = axios.create({ baseURL: process.env.NEXT_API_BASE_URL || 'http://localhost:3010/' });
-
+import * as https from 'https';
+const httpsAgent = new https.Agent({
+    rejectUnauthorized: false,
+});
+const axiosServices = axios.create({ baseURL: process.env.NEXT_API_BASE_URL || 'https://192.168.1.22:5000/', httpsAgent });
+// const axiosServices = axios.create({ baseURL: 'http://192.168.1.21:5000' });
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 
 axiosServices.interceptors.request.use(
@@ -34,6 +37,7 @@ export default axiosServices;
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
     const [url, config] = Array.isArray(args) ? args : [args];
+    console.log("Fetcher called with: ", url);
     const res = await axiosServices.get(url, { ...config });
 
     return res.data;
