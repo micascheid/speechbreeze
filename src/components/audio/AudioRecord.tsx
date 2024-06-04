@@ -1,10 +1,10 @@
 import React, {ChangeEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import { WaveSurfer, WaveForm } from 'wavesurfer-react';
 import RecordPlugin from 'wavesurfer.js/plugins/record';
-import {Button, Select, MenuItem, Stack, SelectChangeEvent} from '@mui/material';
+import { Button, Select, MenuItem, Stack, SelectChangeEvent, Box, Typography } from '@mui/material';
 import TimelinePlugin from "wavesurfer.js/plugins/timeline";
 import MainCard from '@/components/MainCard';
-import RegionsPlugin from "wavesurfer.js/plugins/regions";
+import MicrophonePlugin from 'wavesurfer.js/plugins/record';
 import WarningModal from "@/components/WarningModal";
 import {useTheme} from "@mui/material/styles";
 import {useSelectedLSA} from "@/contexts/SelectedLSAContext"; // Assuming this is your custom component
@@ -16,6 +16,8 @@ interface DeviceInfo {
 
 function AudioRecord() {
     const [selectedDevice, setSelectedDevice] = useState<string>('');
+    const [recordingTime, setRecordingTime] = useState(0);
+    const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const [recordedBlobUrl, setRecordedBlobUrl] = useState<string | null>(null);
     const [devices, setDevices] = useState<DeviceInfo[]>([]);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -38,36 +40,51 @@ function AudioRecord() {
         barWidth: 2,
         cursorWidth: 2,
     }
+
     const plugins = useMemo(() => {
-        return [
-            {
-                key: "record",
-                plugin: RecordPlugin,
-                options: {
-                    audioBitsPerSecond: 128000,
-                    scrollingWaveform: true,
-                    mimeType: 'audio/webm',
-                    scrollingWaveformWindow: 20,
-                    renderRecordedAudio: true
-                }
-            },
-            {
-                key: "timeline",
-                plugin: TimelinePlugin,
-                options: {
-                    height: 20,
-                    style:
-                        {
-                            color: '#6A3274'
-                        },
-                }
+        // Determine supported MIME type
+        let supportedMimeType: string | null = 'audio/webm'; // Default to webm
+        if (!MediaRecorder.isTypeSupported('audio/webm')) {
+            if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                supportedMimeType = 'audio/mp4';
+            } else {
+                // Handle unsupported MIME types, fallback to another option or show an error
+                console.error('No supported audio MIME type found.');
+                supportedMimeType = null;
             }
-        ].filter(Boolean);
+        }
+
+        // If no supported MIME type is found, do not include the record plugin
+        const recordPlugin = supportedMimeType ? {
+            key: "record",
+            plugin: RecordPlugin,
+            options: {
+                audioBitsPerSecond: 128000,
+                scrollingWaveform: false,
+                mimeType: supportedMimeType,
+                scrollingWaveformWindow: 20,
+                renderMicStream: true,
+            }
+        } : null;
+
+        const timelinePlugin = {
+            key: "timeline",
+            plugin: TimelinePlugin,
+            options: {
+                height: 20,
+                style: {
+                    color: '#6A3274'
+                },
+            }
+        };
+
+        return [recordPlugin, timelinePlugin].filter(Boolean);
     }, []);
 
     const handleWSMount = useCallback((waveSurfer: any) => {
         wavesurferRef.current = waveSurfer;
         if (waveSurfer) {
+
             RecordPlugin.getAvailableAudioDevices().then((deviceList) => {
                 const mappedDevices = deviceList.map(device => ({
                     deviceId: device.deviceId,
@@ -92,6 +109,10 @@ function AudioRecord() {
                 setRecordedBlobUrl(url);
                 setLocalAudioSource(url);
             });
+
+            waveSurfer.on('finish', () => {
+                setIsPlaying(false);
+            })
         }
     }, [setLocalAudioSource]);
 
@@ -115,6 +136,9 @@ function AudioRecord() {
         setRecordedBlobUrl(null);
         setLocalAudioSource(null);
         setIsRecording(true);
+        recordingIntervalRef.current = setInterval(() => {
+            setRecordingTime((prevTime) => prevTime + 1);
+        }, 1000);
     };
 
     const stopRecording = () => {
@@ -125,6 +149,8 @@ function AudioRecord() {
         const recordPlugin = wavesurferRef.current.getActivePlugins()[0];
         recordPlugin.stopRecording();
         setIsRecording(false);
+        if (recordingIntervalRef.current) clearInterval(recordingIntervalRef.current);
+        setRecordingTime(0);
     };
 
 
@@ -175,8 +201,19 @@ function AudioRecord() {
         setModalAction(null);
     };
 
+    const formatTime = (time: number) => {
+        const mins = Math.floor(time / 60);
+        const secs = time % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
     return (
         <MainCard>
+            {isRecording && (
+                <Box>
+                    <Typography variant="h6" color="error">Recording: {formatTime(recordingTime)}</Typography>
+                </Box>
+            )}
             <WaveSurfer
                 onMount={handleWSMount}
                 // @ts-ignore
@@ -185,9 +222,10 @@ function AudioRecord() {
                 {...waveformStylingProps}
             >
                 <WaveForm id={"waveform"}/>
-                <div id="timeline"></div>
+                {!isRecording && <div id="timeline"></div>}
+
             </WaveSurfer>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} alignItems="center">
                 <Select value={selectedDevice} onChange={handleDeviceChange} displayEmpty>
                     {devices.map(device => (
                         <MenuItem key={device.deviceId} value={device.deviceId}>
@@ -195,14 +233,24 @@ function AudioRecord() {
                         </MenuItem>
                     ))}
                 </Select>
-                <Button variant="outlined" onClick={isRecording ? stopRecording : startRecording}>
-                    {isRecording ? "Stop Recording" : "Start Recording"}
-                </Button>
-                <Button variant="outlined" onClick={togglePlayPause} disabled={!recordedBlobUrl}
-                        sx={{width: 75}}>{isPlaying ? "Pause" : "Play"}</Button>
-                <Button variant="outlined" disabled={!recordedBlobUrl} component="a" href={recordedBlobUrl || '#'}
-                        download="recording.mp3">Download</Button>
-                <Button variant="outlined" disabled={!recordedBlobUrl} onClick={handleDiscardRecording}>Discard </Button>
+                <Stack direction={"row"} spacing={1} sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    width: '100%',
+                    '-webkit-overflow-scrolling': 'touch' // for momentum based scrolling in iOS
+                }}>
+                    <Button variant="outlined" onClick={isRecording ? stopRecording : startRecording}>
+                        {isRecording ? "Stop" : "Record"}
+                    </Button>
+                    <Button variant="outlined" onClick={togglePlayPause} disabled={!recordedBlobUrl}
+                            sx={{width: 75}}>{isPlaying ? "Pause" : "Play"}</Button>
+                    <Button variant="outlined" disabled={!recordedBlobUrl} component="a" href={recordedBlobUrl || '#'}
+                            download="recording.mp3" sx={{minWidth: '100px'}}>Download</Button>
+                    <Button variant="outlined" disabled={!recordedBlobUrl} onClick={handleDiscardRecording}>Discard </Button>
+                </Stack>
+
 
             </Stack>
             <WarningModal
