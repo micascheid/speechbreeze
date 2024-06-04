@@ -209,6 +209,14 @@ function AudioRecord() {
 
     return (
         <MainCard>
+            <Typography>Available Microphones</Typography>
+            <Select value={selectedDevice} onChange={handleDeviceChange} sx={{minWidth: '150px'}} displayEmpty>
+                {devices.map(device => (
+                    <MenuItem key={device.deviceId} value={device.deviceId}>
+                        {device.label}
+                    </MenuItem>
+                ))}
+            </Select>
             {isRecording && (
                 <Box>
                     <Typography variant="h6" color="error">Recording: {formatTime(recordingTime)}</Typography>
@@ -225,14 +233,7 @@ function AudioRecord() {
                 {!isRecording && <div id="timeline"></div>}
 
             </WaveSurfer>
-            <Stack direction="row" spacing={1} alignItems="center">
-                <Select value={selectedDevice} onChange={handleDeviceChange} displayEmpty>
-                    {devices.map(device => (
-                        <MenuItem key={device.deviceId} value={device.deviceId}>
-                            {device.label}
-                        </MenuItem>
-                    ))}
-                </Select>
+            <Stack spacing={1} alignItems="center">
                 <Stack direction={"row"} spacing={1} sx={{
                     display: 'flex',
                     flexDirection: 'row',
