@@ -1,3 +1,3 @@
-## Web App for Speech Lanaguage Pathologists to have an all in one place solution to perform Language Sample Analysis
+## All in one place web app solution for Speech Language Pathologists to perform Language Sample Analysis
 
 
